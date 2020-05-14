@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_actividad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/size_subTitulos"
+        android:text="RECOLECCION" />
+
+    <TextView
+        android:id="@+id/tv_tipo_actividad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/size_subTitulos"
+        android:text="TAREA" />
+
+    <TextView
+        android:id="@+id/tv_mallas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/size_subTitulos"
+        android:text="sec 01 malla 02" />
+</LinearLayout>

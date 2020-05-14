@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.example.paseasistencia.ui.home.HomeFragment"
+        android:label="@string/menu_listaCuadrilla"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_nav_home_to_vehicleDetailFragment"
+            app:destination="@id/DetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_home_second"
+        android:name="com.example.paseasistencia.ui.home.HomeSecondFragment"
+        android:label="@string/home_second"
+        tools:layout="@layout/fragment_home_second">
+        <action
+            android:id="@+id/action_HomeSecondFragment_to_HomeFragment"
+            app:destination="@id/nav_home" />
+
+        <argument
+            android:name="myArg"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_importacion"
+        android:name="com.example.paseasistencia.ui.importacion.ImportacionFragment"
+        android:label="@string/menu_actualizar"
+        tools:layout="@layout/fragment_importacion" />
+
+    <fragment
+        android:id="@+id/nav_slideshow"
+        android:name="com.example.paseasistencia.ui.slideshow.SlideshowFragment"
+        android:label="@string/menu_enviar"
+        tools:layout="@layout/fragment_slideshow" />
+    <fragment
+        android:id="@+id/DetailFragment"
+        android:name="com.example.paseasistencia.ui.detail.DetailFragment"
+        android:label="DetailFragment">
+        <argument
+            android:name="detailFragmentArgs "
+            app:argType="com.example.paseasistencia.model.Cuadrillas" />
+        <action
+            android:id="@+id/action_DetailFragment_to_actividadesFragment"
+            app:destination="@id/actividadesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_configuracion"
+        android:name="com.example.paseasistencia.ui.configuracion.ConfiguracionFragment"
+        android:label="@string/menu_configruacion"
+        tools:layout="@layout/fragment_configuracion" />
+    <fragment
+        android:id="@+id/actividadesFragment"
+        android:name="com.example.paseasistencia.ui.actividad.ActividadesFragment"
+        android:label="fragment_actividades"
+        tools:layout="@layout/fragment_actividades" >
+        <argument
+            android:name="cuadrilla"
+            app:argType="com.example.paseasistencia.model.Cuadrillas" />
+        <argument
+            android:name="trabajadores"
+            app:argType="com.example.paseasistencia.model.ListaAsistencia[]" />
+        <argument android:name="asistencia"
+            app:argType="string" />
+    </fragment>
+</navigation>

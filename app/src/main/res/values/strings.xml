@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">PaseAsistencia</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_listaCuadrilla">Cuadrillas</string>
+    <string name="menu_actualizar">actualizar</string>
+    <string name="menu_enviar">enviar informacion</string>
+    <string name="menu_configruacion">Configuracion</string>
+
+    <string name="home_second">Home Second</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--TODO: titulos-->
+    <string name="titulo_importacion">Actualizacion de catalogos</string>
+
+    <!--TODO: mensajes-->
+    <string name="msn_inicio">INICIANDO ACTUALIZACION DE DATOS</string>
+    <string name="msn_buscando">BUSCANDO DATOS</string>
+    <string name="msn_fin">IMPORTACION DE DATOS EXITOSAMENTE</string>
+    <string name="msn_sinConexion">CONEXION CON EL SERVIDOR NO ESTABLECIDA</string>
+    <string name="msn_lista_vacios">NO SE ENCONTRARON DATOS</string>
+    <string name="msn_enesperado">!!!ERROR INESPERADO</string>
+
+    <!--TODO: titulos botonoes-->
+    <string name="btn_guardar">guardar</string>
+    <string name="btn_cancelar">cancelar</string>
+    <string name="btn_continuar">continuar</string>
+</resources>
