@@ -64,6 +64,7 @@ public class DetailAdapter extends ArrayAdapter<ListaAsistencia> {
         final Spinner spPuesto = convertView.findViewById(R.id.sp_puesto);
 
         final ListaAsistencia trabajadorSeleccionado = trabajadores.get(position);
+
         tvConsecutivo.setText(trabajadorSeleccionado.getTrabajadores().getConsecutivo().toString());
         tvNombre.setText(trabajadorSeleccionado.getTrabajadores().getNombre());
 
@@ -71,8 +72,8 @@ public class DetailAdapter extends ArrayAdapter<ListaAsistencia> {
         spPuesto.setAdapter(puestosAdapter);
 
         //if(trabajadorSeleccionado.getAsistencia()==null){
-            //spPuesto.setSelection(Complementos.getIndex(spPuesto,trabajadorSeleccionado.getTrabajadores().getPuesto().getNombre()));
-            //tvTotalHoras.setText("00:00");
+        //   spPuesto.setSelection(Complementos.getIndex(spPuesto,trabajadorSeleccionado.getTrabajadores().getPuesto().getNombre()));
+        //    tvTotalHoras.setText("00:00");
         //}else{
             spPuesto.setSelection(Complementos.getIndex(spPuesto,trabajadorSeleccionado.getAsistencia().getPuesto().getNombre()));
             tvTotalHoras.setText(Complementos.getTotalHoras(trabajadorSeleccionado.getAsistencia().getDateInicio(),trabajadorSeleccionado.getAsistencia().getDateFin()));

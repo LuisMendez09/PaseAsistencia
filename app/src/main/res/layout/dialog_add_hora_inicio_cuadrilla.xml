@@ -9,12 +9,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Seleccionar hora"
+        android:layout_marginLeft="@dimen/margin_left"
+        android:layout_marginRight="@dimen/margin_right"
         android:textSize="@dimen/size_subTitulos"/>
 
     <TextView
         android:id="@+id/tv_horaInicio"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50sp"
         android:text=""
+        android:gravity="center_vertical"
+        android:background="@drawable/border_layout"
+        android:layout_marginLeft="@dimen/margin_left"
+        android:layout_marginRight="@dimen/margin_right"
         android:textSize="@dimen/size_texto"/>
 </LinearLayout>

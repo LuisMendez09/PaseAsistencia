@@ -62,7 +62,7 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
         final View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
         final TextView numCuadrillaTextView = view.findViewById(R.id.detail_cuadrilla_name_text_view);
-        final TextView vehicleTextView = view.findViewById(R.id.trabajador);
+        final TextView mayordomoTextView = view.findViewById(R.id.trabajador);
         lvTrabajadores = view.findViewById(R.id.lv_lista_cuadrilla);
         tvAsistencia = view.findViewById(R.id.tv_asistencia);
         Button btnAguardar = view.findViewById(R.id.btn_guardar);
@@ -77,7 +77,7 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
             @Override
             public void onChanged(Cuadrillas cuadrillas) {
                 numCuadrillaTextView.setText(cuadrillas.getCuadrilla().toString());
-                vehicleTextView.setText(cuadrillas.getMayordomo());
+                mayordomoTextView.setText(cuadrillas.getMayordomo());
 
                 mDetailAdapter = new DetailAdapter(getContext(), viewModel.getSelectedTrabajadores(),DetailFragment.this);
                 lvTrabajadores.setAdapter(mDetailAdapter);

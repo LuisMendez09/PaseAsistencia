@@ -22,6 +22,7 @@ import com.example.paseasistencia.model.Trabajadores;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Controlador {
 
@@ -142,6 +143,15 @@ public class Controlador {
             return true;
     }
 
+    private void inicarFinalizarSettings(int iniciarJorjana, int finalizarJorjana, int enviarDatos, Date horaInicio, Date horaFin, Settings settings) {
+
+        settings.setJornadaIniciada(iniciarJorjana);
+        settings.setJornadaFinalizada(finalizarJorjana);
+        settings.setEnvioDatos(enviarDatos);
+        settings.setInicio(horaInicio);
+        settings.setFin(horaFin);
+    }
+
     public STATUS_SESION validarSesion(){
         Settings settings = getSettings();
         STATUS_SESION sesion = null;
@@ -180,7 +190,7 @@ public class Controlador {
             return STATUS_SESION.SESION_ACTIVA;
         }else{
             String fecha = Complementos.getDateActualToString();
-
+            Log.i("inicio", settings.getFecha() + " -- " + fecha);
             if(!settings.getFecha().equals(fecha)){
                 if(settings.getJornadaFinalizada()==0){
                     //finalizar asistencias
@@ -200,11 +210,7 @@ public class Controlador {
                     }
                 }
 
-                settings.setJornadaIniciada(1);
-                settings.setJornadaFinalizada(0);
-                settings.setEnvioDatos(0);
-                settings.setInicio(new Date());
-                settings.setFin(new Date(0));
+                inicarFinalizarSettings(1, 0, 0, new Date(), new Date(0), settings);
 
                 boolean b = actualizarSetting(settings);
                 if(b){
@@ -220,6 +226,18 @@ public class Controlador {
                     return STATUS_SESION.SESION_ACTIVA;
                 }
             }
+        }
+    }
+
+    public STATUS_SESION finalizarSesion() {
+
+        if (validarSesion() == STATUS_SESION.SESION_ACTIVA) {
+            Settings settings = getSettings();
+            Date fin = new Date();
+            inicarFinalizarSettings(0, 1, 0, settings.getInicio(), fin, settings);
+            return STATUS_SESION.SESION_FINALIZADA;
+        } else {
+            return STATUS_SESION.SESION_FINALIZADA;
         }
     }
 
@@ -367,7 +385,7 @@ public class Controlador {
         return Controlador.CONEXION.getAsistencia(fecha);
     }
 
-    public ArrayList<ListaAsistencia> getAsistencia(String fecha,Integer cuadrilla){
+    public ArrayList<ListaAsistencia> getAsistencia(String fecha, Cuadrillas cuadrilla) {
         return Controlador.CONEXION.getAsistencia(fecha,cuadrilla);
     }
 
@@ -375,7 +393,7 @@ public class Controlador {
         return Controlador.CONEXION.getAsistencia(fecha,trabajador);
     }
 
-    public boolean iniciarCuadrilla(String fecha,Integer cuadrilla){
+    public boolean iniciarCuadrilla(String fecha, Cuadrillas cuadrilla) {
 
         ArrayList<ListaAsistencia> a = getAsistencia(fecha, cuadrilla);
 
@@ -387,6 +405,19 @@ public class Controlador {
         }
 
         return true;
+    }
+
+    public void finalizarCuadrilla(String fecha, Cuadrillas cuadrilla, String fin) {
+        try {
+            Settings settings = getSettings();
+            Date horaFin = new Date(Complementos.convertirStringAlong(settings.getFecha(), fin));
+            ArrayList<ListaAsistencia> asistencia = getAsistencia(fecha, cuadrilla);
+            for (ListaAsistencia la : asistencia) {
+                finalizarAsistencias(la.getAsistencia(), horaFin);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean finalizarAsistencias(Asistencia asistencia,Date fin){
@@ -412,7 +443,7 @@ public class Controlador {
         return r;
     }
 
-    public boolean setNuevaAsistencias(Cuadrillas cuadrilla, ArrayList<Trabajadores> trabajadores, String hora, String fecha){
+    public boolean setNuevasAsistencias(Cuadrillas cuadrilla, List<ListaAsistencia> trabajadores, String hora, String fecha) {
         Long aLong = Long.valueOf(-1);
         Date horainicio = new Date();
         try {
@@ -422,14 +453,16 @@ public class Controlador {
             return false;
         }
 
-        for (Trabajadores t : trabajadores) {
-            if(t.getId()==null){
-                Controlador.CONEXION.addTrabajador(t);
+        for (ListaAsistencia t : trabajadores) {
+            /*if(t.getTrabajadores().getId()==null){
+                Controlador.CONEXION.addTrabajador(t.getTrabajadores());
             }
 
-            Asistencia a = new Asistencia(t,t.getPuesto(),horainicio,new Date(0),0);
-            aLong = Controlador.CONEXION.addAsistencia(a);
+           // Asistencia a = new Asistencia(t,t.get.getPuesto(),horainicio,new Date(0),0);
+            aLong = Controlador.CONEXION.addAsistencia(t.getAsistencia());
+            */
 
+            aLong = actualizarListaAsistencia(t);
             if(aLong == -1){
                 borrarAsistencias(trabajadores,fecha);
                 break;
@@ -439,19 +472,20 @@ public class Controlador {
         }
 
         if(aLong!=-1){
-            cuadrilla.setFechaInicio(horainicio);
-            cuadrilla.setFechaFin(new Date(0));
-            aLong = Controlador.CONEXION.addCuadrillaRevisada(cuadrilla);
-            if(aLong!=-1)
-                cuadrilla.setId(Integer.parseInt(aLong.toString()));
-
+            if (cuadrilla.getId() == null) {
+                cuadrilla.setFechaInicio(horainicio);
+                cuadrilla.setFechaFin(new Date(0));
+                aLong = Controlador.CONEXION.addCuadrillaRevisada(cuadrilla);
+                if (aLong != -1)
+                    cuadrilla.setId(Integer.parseInt(aLong.toString()));
+            }
         }
 
 
         return true;
     }
 
-    public boolean actualizarListaAsistencia(ListaAsistencia listaAsistencia){
+    private Long actualizarListaAsistencia(ListaAsistencia listaAsistencia) {
         Long aLong = Long.valueOf(-1);
         if(listaAsistencia.getTrabajadores().getId()==null){
             aLong = Controlador.CONEXION.addTrabajador(listaAsistencia.getTrabajadores());
@@ -468,14 +502,14 @@ public class Controlador {
         }
 
         if(aLong !=-1)
-            return true;
+            return aLong;
         else
-            return false;
+            return Long.valueOf(0);
     }
 
-    private void borrarAsistencias(ArrayList<Trabajadores> trabajadores,String fecha){
-        for (Trabajadores t : trabajadores) {
-            Controlador.CONEXION.deleteAsistencias(fecha,t.getId().toString());
+    private void borrarAsistencias(List<ListaAsistencia> trabajadores, String fecha) {
+        for (ListaAsistencia t : trabajadores) {
+            Controlador.CONEXION.deleteAsistencias(fecha, t.getTrabajadores().getId().toString());
         }
     }
 

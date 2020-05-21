@@ -29,7 +29,8 @@ public class DetailFragmentViewModel extends AndroidViewModel {
             c = application.getBaseContext();
 
         this.controlador = Controlador.getInstance(c);
-        selectedTrabajadores = controlador.getAsistencia(Complementos.obtenerFechaString(Complementos.getDateActual()),cuadrillas.getCuadrilla());
+
+        selectedTrabajadores = controlador.getAsistencia(Complementos.obtenerFechaString(Complementos.getDateActual()), cuadrillas);
     }
 
     public Controlador.STATUS_SESION getStatusSesion(){

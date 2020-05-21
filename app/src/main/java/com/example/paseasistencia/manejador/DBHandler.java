@@ -23,6 +23,7 @@ import com.example.paseasistencia.model.TiposPermisos;
 import com.example.paseasistencia.model.Trabajadores;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class DBHandler extends SQLiteOpenHelper {
 
@@ -1008,6 +1009,7 @@ public class DBHandler extends SQLiteOpenHelper {
         ArrayList<Cuadrillas> cuadrillas = new ArrayList<>() ;
 
         String selectQuery = "SELECT "+KEY_CUADRILLA_TRABAJADORES+" FROM " + TABLE_TRABAJADORES +" GROUP BY "+KEY_CUADRILLA_TRABAJADORES+" ORDER BY "+KEY_CUADRILLA_TRABAJADORES;
+
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
@@ -1149,11 +1151,11 @@ public class DBHandler extends SQLiteOpenHelper {
         return asistencias;
     }
 
-    public ArrayList<ListaAsistencia> getAsistencia(String fecha,Integer cuadrilla) {
+    public ArrayList<ListaAsistencia> getAsistencia(String fecha, Cuadrillas cuadrilla) {
 
         ArrayList<ListaAsistencia> listaAsistencias = new ArrayList<>() ;
 
-        ArrayList<Trabajadores> trabajadoresCuadrilla = getTrabajadoresCuadrilla(cuadrilla);
+        ArrayList<Trabajadores> trabajadoresCuadrilla = getTrabajadoresCuadrilla(cuadrilla.getCuadrilla());
         for (Trabajadores t : trabajadoresCuadrilla) {
             ArrayList<Asistencia> asistencia = getAsistencia(fecha, t);
 
@@ -1162,7 +1164,7 @@ public class DBHandler extends SQLiteOpenHelper {
                     listaAsistencias.add(new ListaAsistencia(t,a));
                 }
             }else{
-                listaAsistencias.add(new ListaAsistencia(t,null));
+                listaAsistencias.add(new ListaAsistencia(t, new Asistencia(t, t.getPuesto(), cuadrilla.getFechaInicio(), new Date(0), 0)));
             }
 
         }

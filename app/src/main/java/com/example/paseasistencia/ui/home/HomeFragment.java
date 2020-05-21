@@ -23,6 +23,7 @@ import com.example.paseasistencia.R;
 import com.example.paseasistencia.complementos.Complementos;
 import com.example.paseasistencia.controlador.Controlador;
 import com.example.paseasistencia.model.Cuadrillas;
+import com.example.paseasistencia.model.Settings;
 import com.example.paseasistencia.model.Trabajadores;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -37,6 +38,7 @@ public class HomeFragment extends Fragment {
     private HomeAdapter mHomeAdapter;
     private HomeViewModel viewModel;
 
+
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -48,6 +50,7 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view =inflater.inflate(R.layout.fragment_home, container, false);
         mRecyclerView = view.findViewById(R.id.vehicle_recycler_view);
+
 
         FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -158,10 +161,18 @@ public class HomeFragment extends Fragment {
                                     //guardar los cambios en el adapter
 
                                     if(!hora.getText().toString().equals("")){
-                                        ArrayList<Trabajadores> asistencia = Controlador.getInstance(HomeFragment.this.getContext()).getTrabajadoresXcuadrilla(cuadrillas.getCuadrilla());
-                                        if(Controlador.getInstance(HomeFragment.this.getContext()).setNuevaAsistencias(cuadrillas,asistencia,hora.getText().toString(),Complementos.getDateActualToString())){
+                                        //ArrayList<Trabajadores> asistencia = Controlador.getInstance(HomeFragment.this.getContext()).getTrabajadoresXcuadrilla(cuadrillas.getCuadrilla());
+                                        //if(Controlador.getInstance(HomeFragment.this.getContext()).setNuevaAsistencias(cuadrillas,asistencia,hora.getText().toString(),Complementos.getDateActualToString())){
+                                        try {
+                                            Date dateInicio = new Date(Complementos.convertirStringAlong(viewModel.getControlador().getSettings().getFecha(), hora.getText().toString()));
+                                            cuadrillas.setFechaInicio(dateInicio);
+                                            cuadrillas.setFechaFin(new Date(0));
                                             Navigation.findNavController(view).navigate(HomeFragmentDirections.actionNavHomeToVehicleDetailFragment(cuadrillas));
+                                        } catch (ParseException e) {
+                                            e.printStackTrace();
                                         }
+
+                                        //}
                                     }
 
                                 }
