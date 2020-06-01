@@ -117,6 +117,37 @@ Log.i("nuevo",timeI+" ---- "+timeF);
         return sdf.format(fecha);
     }
 
+    public static String fechaInicioSemana() {
+        Date date = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+
+
+        while (c.get(Calendar.DAY_OF_WEEK) != Calendar.THURSDAY) {
+            Log.i("enviar", c.get(Calendar.DAY_OF_WEEK) + "----");
+            c.add(Calendar.DAY_OF_YEAR, -1);
+        }
+        return obtenerFechaServidor(c.getTime());
+    }
+
+    public static String fechaFinSemana() {
+        Date d = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(d);
+
+        while (c.get(Calendar.DAY_OF_WEEK) != Calendar.WEDNESDAY) {
+            c.add(Calendar.DAY_OF_YEAR, 1);
+        }
+
+        return obtenerFechaServidor(c.getTime());
+    }
+
+    public static String obtenerFechaServidor(Date fecha) {
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        return sdf.format(fecha);
+    }
+
     public static String obtenerHoraString(Date hora){
 
         if(hora.getTime()!=Long.valueOf(0)){

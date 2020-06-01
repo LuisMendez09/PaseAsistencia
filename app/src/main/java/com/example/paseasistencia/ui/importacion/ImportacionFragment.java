@@ -74,12 +74,22 @@ public class ImportacionFragment extends Fragment implements IactualizacionDatos
     }
 
     @Override
-    public void iniciarAnimacion() {
+    public void actualizacionMensajesEnvio(Object value, Controlador.STATUS_CONEXION status_conexion) {
+
+    }
+
+    @Override
+    public void iniciarAnimacion(Integer min, Integer max) {
         setLoadingAnimation();
     }
 
     @Override
     public void finalizarAnimacion() {
         unSetLoadingAnimation();
+    }
+
+    @Override
+    public void incrementar(Integer incremento) {
+
     }
 }

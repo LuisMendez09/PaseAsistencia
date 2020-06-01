@@ -3,29 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_home">
+    app:startDestination="@id/nav_homeFragmen">
 
     <fragment
-        android:id="@+id/nav_home"
+        android:id="@+id/nav_homeFragmen"
         android:name="com.example.paseasistencia.ui.home.HomeFragment"
         android:label="@string/menu_listaCuadrilla"
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_nav_home_to_vehicleDetailFragment"
-            app:destination="@id/DetailFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/nav_home_second"
-        android:name="com.example.paseasistencia.ui.home.HomeSecondFragment"
-        android:label="@string/home_second"
-        tools:layout="@layout/fragment_home_second">
-        <action
-            android:id="@+id/action_HomeSecondFragment_to_HomeFragment"
-            app:destination="@id/nav_home" />
-
-        <argument
-            android:name="myArg"
-            app:argType="string" />
+            app:destination="@id/DetailFragment"
+            app:enterAnim="@anim/fragment_close_enter"
+            app:exitAnim="@anim/fragment_close_exit" />
     </fragment>
 
     <fragment
@@ -35,20 +24,23 @@
         tools:layout="@layout/fragment_importacion" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.example.paseasistencia.ui.slideshow.SlideshowFragment"
+        android:id="@+id/nav_finalizarCuadrilla"
+        android:name="com.example.paseasistencia.ui.finalizarCuadrilla.FinalizarCuadrillaFragment"
         android:label="@string/menu_enviar"
         tools:layout="@layout/fragment_slideshow" />
     <fragment
         android:id="@+id/DetailFragment"
         android:name="com.example.paseasistencia.ui.detail.DetailFragment"
+        tools:layout="@layout/fragment_detail"
         android:label="DetailFragment">
         <argument
             android:name="detailFragmentArgs "
             app:argType="com.example.paseasistencia.model.Cuadrillas" />
         <action
             android:id="@+id/action_DetailFragment_to_actividadesFragment"
-            app:destination="@id/actividadesFragment" />
+            app:destination="@id/actividadesFragment"
+            app:enterAnim="@anim/fragment_close_enter"
+            app:exitAnim="@anim/fragment_close_exit" />
     </fragment>
     <fragment
         android:id="@+id/nav_configuracion"
@@ -69,4 +61,9 @@
         <argument android:name="asistencia"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/nav_exportar"
+        android:name="com.example.paseasistencia.ui.exportar.ExportarFragment"
+        android:label="@string/menu_enviar"
+        tools:layout="@layout/fragment_exportar" />
 </navigation>

@@ -4,6 +4,13 @@ import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.paseasistencia.complementos.Complementos;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 public class ActividadesRealizadas implements Parcelable {
@@ -74,6 +81,13 @@ public class ActividadesRealizadas implements Parcelable {
         this.fecha = fecha;
     }
 
+    private String getFechaServidor() {
+        String[] date = this.fecha.split("/");
+        String fecha = date[2] + "-" + date[1] + "-" + date[0];
+
+        return fecha;
+    }
+
     public Integer getSended() {
         return sended;
     }
@@ -97,10 +111,22 @@ public class ActividadesRealizadas implements Parcelable {
                 ", cuadrlla=" + cuadrlla +
                 ", actividad=" + actividad +
                 ", mallas=" + mallas +
-                ", fecha='" + fecha + '\'' +
+                ", fecha='" + fecha +
                 ", sended=" + sended +
                 ", tipoActividad=" + tipoActividad +
                 '}';
+    }
+
+    public JSONObject toJson() throws JSONException {
+        JSONObject json = new JSONObject();
+
+        json.put("fecha", this.getFechaServidor());
+        json.put("cuadrilla", this.getCuadrlla());
+        json.put("idActividad", this.getActividad().getId());
+        json.put("tipoActividad", this.getTipoActividad());
+        json.put("idMalla", this.getMalla().getId());
+
+        return json;
     }
 
     @Override

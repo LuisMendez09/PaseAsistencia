@@ -30,11 +30,24 @@ public class Controlador {
     private static Context CONTEXT = null;
     private static DBHandler CONEXION = null;
     public static  final String TIPOS_ACTIVIDADES [] = new String [] {"Slecciones tipo Actividad","RECOLECCION","HORAS","TAREA"};
-    public static enum STATUS_SESION{
+
+    public enum STATUS_SESION {
         SESION_ACTIVA,
         SESION_NO_INICIADA,
         SESION_NO_FINALIZADA,
         SESION_FINALIZADA
+    }
+
+    public enum STATUS_CONEXION {
+        SIN_CONEXION,
+        ERROR_INESPERADO,
+        ENVIO_EXITOSO,
+        REGISTRO_DUPLICADO,
+        ERROR_SERVIDOR,
+        ERROR_JSON,
+        ERROR_ENVIO,
+        INICIO_ENVIO,
+        FINALIZACION_ENVIO,
     }
 
     private Controlador(Context context){
@@ -86,8 +99,12 @@ public class Controlador {
         Controlador.CONEXION.recrearTablaListaTrabajadores();
     }
 
-    public void reiniciarListaCuadrillasRevisadas(){
+    /*public void reiniciarListaCuadrillasRevisadas(){
         Controlador.CONEXION.recrearTablacuadrillasRevisadas();
+    }*/
+
+    public Integer totalRegistrosPendientesPorEnviar() {
+        return Controlador.CONEXION.getTotalPendientePorEnviar();
     }
 
     /********************************Configuracion*****************************************************/
@@ -181,13 +198,28 @@ public class Controlador {
         return sesion;
     }
 
+    public boolean sesionNoFinalizada() {
+        if (validarSesion() == STATUS_SESION.SESION_NO_FINALIZADA)
+            return true;
+        else
+            return false;
+    }
+
+    public boolean sesionActiva() {
+        if (validarSesion() == Controlador.STATUS_SESION.SESION_ACTIVA)
+            return true;
+        else
+            return false;
+    }
+
     public STATUS_SESION iniciarSession(){
         Settings settings = getSettings();
+        STATUS_SESION status = null;
 
         if(settings==null){
             setSetting(new Date(),new Date(0),0,1,0);
-            Controlador.CONEXION.recrearTablacuadrillasRevisadas();
-            return STATUS_SESION.SESION_ACTIVA;
+            //Controlador.CONEXION.recrearTablacuadrillasRevisadas();
+            status = STATUS_SESION.SESION_ACTIVA;
         }else{
             String fecha = Complementos.getDateActualToString();
             Log.i("inicio", settings.getFecha() + " -- " + fecha);
@@ -206,7 +238,7 @@ public class Controlador {
 
                     } catch (ParseException e) {
                         e.printStackTrace();
-                        return STATUS_SESION.SESION_NO_INICIADA;
+                        status = STATUS_SESION.SESION_NO_INICIADA;
                     }
                 }
 
@@ -214,32 +246,24 @@ public class Controlador {
 
                 boolean b = actualizarSetting(settings);
                 if(b){
-                    Controlador.CONEXION.recrearTablacuadrillasRevisadas();
-                    return STATUS_SESION.SESION_ACTIVA;
+                    //Controlador.CONEXION.recrearTablacuadrillasRevisadas();
+                    status = STATUS_SESION.SESION_ACTIVA;
                 }else{
-                    return STATUS_SESION.SESION_NO_INICIADA;
+                    status = STATUS_SESION.SESION_NO_INICIADA;
                 }
             }else{
                 if(settings.getJornadaFinalizada()==1){
-                    return STATUS_SESION.SESION_FINALIZADA;
+                    status = STATUS_SESION.SESION_FINALIZADA;
                 }else{
-                    return STATUS_SESION.SESION_ACTIVA;
+                    status = STATUS_SESION.SESION_ACTIVA;
                 }
             }
         }
+
+        Log.i("inicio", status + "---- iniciarSession");
+        return status;
     }
 
-    public STATUS_SESION finalizarSesion() {
-
-        if (validarSesion() == STATUS_SESION.SESION_ACTIVA) {
-            Settings settings = getSettings();
-            Date fin = new Date();
-            inicarFinalizarSettings(0, 1, 0, settings.getInicio(), fin, settings);
-            return STATUS_SESION.SESION_FINALIZADA;
-        } else {
-            return STATUS_SESION.SESION_FINALIZADA;
-        }
-    }
 
     /********************************Catalogo de puestos*****************************************************/
     public ArrayList<Puestos> getPuestos(){
@@ -331,11 +355,20 @@ public class Controlador {
 
         if(cuadrilla!=null && consecutivo!=null && !nombre.equals("") && numero!=null && !puesto.equals("")){
 
-            i = Controlador.CONEXION.addTrabajador(new Trabajadores(cuadrilla,consecutivo,nombre,numero,getPuestos(puesto),0));
+            i = Controlador.CONEXION.addTrabajador(new Trabajadores(cuadrilla, consecutivo, nombre, numero, getPuestos(puesto), 1));
         }
 
         return i==-1? false : true;
     }
+
+    public ArrayList<Trabajadores> getTrabajadoresPendientesPorEnviar() {
+        return Controlador.CONEXION.getTrabajadoresPendientesPorEnviar();
+    }
+
+    public int updateTrabajador(Trabajadores trabajador) {
+        return Controlador.CONEXION.updateTrabajador(trabajador);
+    }
+
     /******************************Catalogo Cuadrillas*****************************************************/
 
 
@@ -343,12 +376,23 @@ public class Controlador {
         return Controlador.CONEXION.getCuadrillas();
     }
 
-    public boolean setCuadrilla(Cuadrillas cuadrillas){
+    public ArrayList<Cuadrillas> getCuadrillasActivas() {
+        String fecha = getSettings().getFecha();
+        return Controlador.CONEXION.getCuadrillasActiva(fecha);
+    }
 
-
+    /*public boolean setCuadrilla(Cuadrillas cuadrillas){
 
         Long aLong = Controlador.CONEXION.addCuadrillaRevisada(cuadrillas);
         if(aLong!=-1)
+            return true;
+        else
+            return false;
+    }*/
+
+    public boolean updateCuadrilla(Cuadrillas cuadrilla) {
+        int aLong = Controlador.CONEXION.updateCuadrilla(cuadrilla);
+        if (aLong != -1)
             return true;
         else
             return false;
@@ -370,15 +414,39 @@ public class Controlador {
     }
 
     public boolean validarCuadrilla(Integer cuadrilla){
-        Cuadrillas c = Controlador.CONEXION.getCuadrillaActiva(getSettings().getFecha(),cuadrilla);
+        Cuadrillas c = Controlador.CONEXION.getCuadrillasActiva(getSettings().getFecha(), cuadrilla);
         if(c==null)
             return false;
         else
             return true;
     }
 
-    public Integer getConsecutivoSiguiente(Integer cuadrilla){
-        return Controlador.CONEXION.getConsecutivo(cuadrilla);
+    public Integer getCuadrillasPendientesPorFinalizar() {
+        return CONEXION.getCuadrillasPendientesPorFinalizar(getSettings().getFecha());
+    }
+
+    public ArrayList<Cuadrillas> getCuadrillasPendientesPorEnviar() {
+        return CONEXION.getCuadrillasPendientesPorEnviar();
+    }
+
+    public void finalizarCuadrilla(Cuadrillas cuadrilla, String fin) {
+        try {
+
+            Settings settings = getSettings();
+            Date date = new Date(Complementos.convertirStringAlong(settings.getFecha(), fin));
+            cuadrilla.setFechaFin(date);
+
+
+            ArrayList<ListaAsistencia> asistencia = getAsistencia(getSettings().getFecha(), cuadrilla);
+            for (ListaAsistencia la : asistencia) {
+                finalizarAsistencias(la.getAsistencia(), date);
+            }
+
+            updateCuadrilla(cuadrilla);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
     /******************************Catalogo Asistencias*****************************************************/
     public ArrayList<Asistencia> getAsistencias(String fecha){
@@ -405,19 +473,6 @@ public class Controlador {
         }
 
         return true;
-    }
-
-    public void finalizarCuadrilla(String fecha, Cuadrillas cuadrilla, String fin) {
-        try {
-            Settings settings = getSettings();
-            Date horaFin = new Date(Complementos.convertirStringAlong(settings.getFecha(), fin));
-            ArrayList<ListaAsistencia> asistencia = getAsistencia(fecha, cuadrilla);
-            for (ListaAsistencia la : asistencia) {
-                finalizarAsistencias(la.getAsistencia(), horaFin);
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
     }
 
     public boolean finalizarAsistencias(Asistencia asistencia,Date fin){
@@ -454,30 +509,19 @@ public class Controlador {
         }
 
         for (ListaAsistencia t : trabajadores) {
-            /*if(t.getTrabajadores().getId()==null){
-                Controlador.CONEXION.addTrabajador(t.getTrabajadores());
-            }
-
-           // Asistencia a = new Asistencia(t,t.get.getPuesto(),horainicio,new Date(0),0);
-            aLong = Controlador.CONEXION.addAsistencia(t.getAsistencia());
-            */
-
             aLong = actualizarListaAsistencia(t);
             if(aLong == -1){
                 borrarAsistencias(trabajadores,fecha);
                 break;
             }
-
-
         }
 
         if(aLong!=-1){
             if (cuadrilla.getId() == null) {
                 cuadrilla.setFechaInicio(horainicio);
                 cuadrilla.setFechaFin(new Date(0));
-                aLong = Controlador.CONEXION.addCuadrillaRevisada(cuadrilla);
-                if (aLong != -1)
-                    cuadrilla.setId(Integer.parseInt(aLong.toString()));
+                cuadrilla.setSended(0);
+                Controlador.CONEXION.addCuadrillaRevisada(cuadrilla);
             }
         }
 
@@ -490,7 +534,7 @@ public class Controlador {
         if(listaAsistencia.getTrabajadores().getId()==null){
             aLong = Controlador.CONEXION.addTrabajador(listaAsistencia.getTrabajadores());
         }else{
-            int i = Controlador.CONEXION.UpdateTrabajador(listaAsistencia.getTrabajadores());
+            int i = Controlador.CONEXION.updateTrabajador(listaAsistencia.getTrabajadores());
             aLong = Long.valueOf(i);
         }
 
@@ -513,35 +557,12 @@ public class Controlador {
         }
     }
 
+    public ArrayList<Asistencia> getAsistenciasPendientesPorEnviar() {
+        return Controlador.CONEXION.getAsistenciaPendientesPorEnviar();
+    }
 
-    public boolean validarAsistencia(Asistencia asistencia){
-        if(asistencia!=null){
-            ArrayList<Asistencia> puestos = Controlador.CONEXION.getAsistencia(asistencia.getFecha(), asistencia.getTrabajador());
-
-            for (Asistencia a : puestos) {
-                if(a.getDateInicio()!=null){
-                    if(a.getDateInicio().getTime() >= asistencia.getDateInicio().getTime() && a.getDateFin().getTime() < asistencia.getDateInicio().getTime()){
-                        return false;
-                    }
-                }
-
-
-
-            /*    if(a.getDateInicio().getTime() <= asistencia.getAsistencia().getDateInicio().getTime() && a.getDateFin().getTime() > asistencia.getAsistencia().getDateFin().getTime()){
-                    return false;
-                }else if (a.getDateInicio().getTime() >= asistencia.getAsistencia().getDateInicio().getTime() && a.getDateFin().getTime() < asistencia.getAsistencia().getDateFin().getTime()){
-                    return false;
-                }else if(a.getDateInicio().getTime() > asistencia.getAsistencia().getDateFin().getTime() && a.getDateFin().getTime() > asistencia.getAsistencia().getDateFin().getTime()){
-                    return false;
-                }else if (a.getDateInicio().getTime() <= asistencia.getAsistencia().getDateInicio().getTime() && a.getDateFin().getTime() > asistencia.getAsistencia().getDateFin().getTime()){
-                    return false;
-                }*/
-            }
-        }
-
-
-
-        return true;
+    public int updateAsistencias(Asistencia asistencia) {
+        return Controlador.CONEXION.updateAsistencia(asistencia);
     }
     /******************************actividades realizadas*****************************************************/
     public ArrayList<ActividadesRealizadas> getActividadesResalizadas(String fecha,Cuadrillas cuadrillas){
@@ -561,5 +582,13 @@ public class Controlador {
             return true;
         else
             return false;
+    }
+
+    public ArrayList<ActividadesRealizadas> getActividadesRealizadasPendientesPorEnviar() {
+        return Controlador.CONEXION.getActividadesRealizadasPendientesPorEnviar();
+    }
+
+    public int updateActividadesRealizadas(ActividadesRealizadas actividadRealizada) {
+        return Controlador.CONEXION.updateActividadesRealizadas(actividadRealizada);
     }
 }

@@ -7,6 +7,9 @@ import android.util.Log;
 
 import com.example.paseasistencia.complementos.Complementos;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Date;
 
 public class Asistencia implements Parcelable {
@@ -85,6 +88,10 @@ public class Asistencia implements Parcelable {
     public String getFecha() {
         return Complementos.obtenerFechaString(this.dateInicio);
     }
+
+    private String getFechaServidor() {
+        return Complementos.obtenerFechaServidor(this.dateInicio);
+    }
 /*
     public void setFecha(String fecha) {
         this.fecha = Complementos.obtenerFechaString(getDateInicio());
@@ -138,6 +145,20 @@ public class Asistencia implements Parcelable {
                 ", horaFinal='" + getHoraFinal() + '\'' +
                 ", sended=" + sended +
                 '}';
+    }
+
+    public JSONObject toJson() throws JSONException {
+        JSONObject json = new JSONObject();
+
+        json.put("fecha", this.getFechaServidor());
+        json.put("cuadrilla", this.getTrabajador().getCuadrilla());
+        json.put("consecutivo", this.getTrabajador().getConsecutivo());
+        json.put("numero", this.getTrabajador().getNumero());
+        json.put("idPuesto", this.getPuesto().getId());
+        json.put("horaInicio", getHoraInicio());
+        json.put("horaFinal", getHoraFinal());
+
+        return json;
     }
 
 

@@ -36,7 +36,7 @@ public class BuscarListaActividades extends AsyncTask<Void, Integer, String> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        iactualizacionDatos.iniciarAnimacion();
+        iactualizacionDatos.iniciarAnimacion(0, 0);
         iactualizacionDatos.actualizacionMensajes(Controlador.getCONTEXT().getString(R.string.msn_inicio));
     }
 

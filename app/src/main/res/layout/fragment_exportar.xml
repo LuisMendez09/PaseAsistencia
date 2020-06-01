@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.exportar.ExportarFragment">
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="59dp"
+        android:layout_marginLeft="@dimen/margin_left"
+        android:layout_marginTop="@dimen/margin_top"
+        android:layout_marginRight="@dimen/margin_left"
+        android:layout_marginBottom="@dimen/margin_bottom"
+        android:text="@string/titulo_exportacion"
+        android:textAlignment="center"
+        android:textSize="@dimen/size_titulos"
+        android:textStyle="bold" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="71dp"
+        android:layout_marginLeft="@dimen/margin_left"
+        android:layout_marginTop="@dimen/margin_top"
+        android:layout_marginRight="@dimen/margin_left"
+        android:layout_marginBottom="@dimen/margin_bottom"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tv_mensajes"
+        android:layout_width="match_parent"
+        android:layout_height="59dp"
+        android:textStyle="bold"
+        android:textSize="30dp"
+        android:textAlignment="center"
+        android:text=""
+        android:layout_marginLeft="@dimen/margin_left"
+        android:layout_marginTop="@dimen/margin_top"
+        android:layout_marginRight="@dimen/margin_left"
+        android:layout_marginBottom="@dimen/margin_bottom" />
+
+    <Button
+        android:id="@+id/btn_guardar"
+        android:layout_marginLeft="@dimen/margin_left"
+        android:layout_marginTop="@dimen/margin_top"
+        android:layout_marginRight="@dimen/margin_left"
+        android:layout_marginBottom="@dimen/margin_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:text="Enviar" />
+
+</LinearLayout>

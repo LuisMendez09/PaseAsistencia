@@ -19,9 +19,11 @@
 
     <!--TODO: titulos-->
     <string name="titulo_importacion">Actualizacion de catalogos</string>
+    <string name="titulo_exportacion">enviar asistencias</string>
 
     <!--TODO: mensajes-->
     <string name="msn_inicio">INICIANDO ACTUALIZACION DE DATOS</string>
+    <string name="msn_inicio_envio">INICIANDO ENVIO DE DATOS</string>
     <string name="msn_buscando">BUSCANDO DATOS</string>
     <string name="msn_fin">IMPORTACION DE DATOS EXITOSAMENTE</string>
     <string name="msn_sinConexion">CONEXION CON EL SERVIDOR NO ESTABLECIDA</string>

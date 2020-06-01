@@ -28,19 +28,9 @@ import com.example.paseasistencia.model.ActividadesRealizadas;
 import com.example.paseasistencia.model.Cuadrillas;
 import com.example.paseasistencia.model.ListaAsistencia;
 import com.example.paseasistencia.model.Mallas;
-import com.example.paseasistencia.model.Puestos;
-import com.example.paseasistencia.model.Trabajadores;
-import com.example.paseasistencia.ui.detail.DetailAdapter;
-import com.example.paseasistencia.ui.detail.DetailFragment;
-import com.example.paseasistencia.ui.detail.DetailFragmentArgs;
-import com.example.paseasistencia.ui.detail.DetailFragmentViewModel;
-import com.example.paseasistencia.ui.detail.DetailFragmentViewModelFactory;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
-import org.w3c.dom.Text;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -183,32 +173,21 @@ public class ActividadesFragment extends Fragment {
         boolean b = false;
         if (actividadesResalizadasAdapter.getCount() > 0) {
             Controlador c = Controlador.getInstance(this.getContext());
-            //c.setCuadrilla(cuadrillas);
 
-            //if(this.cuadrillas.getId()==null){//ingresa los trabajadores nuevo, la cuadrilla y sus asistencias
-            /*ArrayList<Trabajadores> t = new ArrayList<>();
-            for(int i =0;i<listaAsistencia.length;i++){
-                t.add(listaAsistencia[i].getTrabajadores());
-            }*/
             List<ListaAsistencia> t = Arrays.asList(listaAsistencia);
             b = c.setNuevasAsistencias(cuadrillas, t, Complementos.obtenerHoraString(cuadrillas.getFechaInicio()), cuadrillas.getFecha());
-            //}else{//actualiza los trabajadores o ingresa los trabajadores nuevos. actualiza o ingresa la nuevas asistencias
-            //    for(int i =0;i<listaAsistencia.length;i++){
-            //        b = c.actualizarListaAsistencia(listaAsistencia[i]);
-            //   }
-            //}
+
 
             if (b) {//ingresa las actividades realizadas
                 ArrayList<ActividadesRealizadas> act = new ArrayList<>();
                 for (ActividadesRealizadas ar : actividadesResalizadasAdapter.getActividades()) {
 
                     b = c.setActividadesRealizadas(ar);
-
                 }
             }
 
             if (b)
-                NavHostFragment.findNavController(ActividadesFragment.this).popBackStack(R.id.nav_home, false);
+                NavHostFragment.findNavController(ActividadesFragment.this).popBackStack(R.id.nav_homeFragmen, false);
         }
 
     }

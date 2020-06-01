@@ -220,7 +220,7 @@ public class DetailAdapter extends ArrayAdapter<ListaAsistencia> {
 
     public void addTrabajador(Cuadrillas cuadrilla, String consecutivo , String nombre, Puestos puestos){
         if(!nombre.equals("")){
-            Trabajadores t = new Trabajadores(cuadrilla.getCuadrilla(),Integer.parseInt(consecutivo),nombre.toUpperCase(),0,puestos,0);
+            Trabajadores t = new Trabajadores(cuadrilla.getCuadrilla(), Integer.parseInt(consecutivo), nombre.toUpperCase(), Integer.parseInt(consecutivo), puestos, 0);
             Asistencia a = new Asistencia(t,puestos,cuadrilla.getFechaInicio(),cuadrilla.getFechaFin(),0);
             ListaAsistencia la = new ListaAsistencia(t,a);
             trabajadores.add(la);

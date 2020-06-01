@@ -3,6 +3,12 @@ package com.example.paseasistencia.model;
 import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+
+import com.example.paseasistencia.complementos.Complementos;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Trabajadores implements Parcelable {
     private Integer id;
@@ -107,6 +113,19 @@ public class Trabajadores implements Parcelable {
                 '}';
     }
 
+    public JSONObject toJson() throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("numero", this.getNumero());
+        json.put("nombre", this.getNombre());
+        json.put("puesto", this.getPuesto().getNombre());
+        json.put("cuadrilla", this.getCuadrilla());
+        json.put("consecutivo", this.getConsecutivo());
+        json.put("fechaExportacion", Complementos.fechaInicioSemana());
+        json.put("fechaFinSem", Complementos.fechaFinSemana());
+
+        Log.i("enviar", toString());
+        return json;
+    }
 
     @Override
     public int describeContents() {

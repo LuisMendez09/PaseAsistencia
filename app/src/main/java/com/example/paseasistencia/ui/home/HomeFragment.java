@@ -4,17 +4,17 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,20 +23,19 @@ import com.example.paseasistencia.R;
 import com.example.paseasistencia.complementos.Complementos;
 import com.example.paseasistencia.controlador.Controlador;
 import com.example.paseasistencia.model.Cuadrillas;
-import com.example.paseasistencia.model.Settings;
-import com.example.paseasistencia.model.Trabajadores;
+import com.example.paseasistencia.ui.finalizarCuadrilla.FinalizarCuadrillaModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
     private RecyclerView mRecyclerView;
-    private HomeAdapter mHomeAdapter;
+    private CuadrillasAdapter mCuadrillasAdapter;
     private HomeViewModel viewModel;
+    private Controlador controlador;
 
 
     public HomeFragment() {
@@ -48,11 +47,13 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         View view =inflater.inflate(R.layout.fragment_home, container, false);
-        mRecyclerView = view.findViewById(R.id.vehicle_recycler_view);
 
-
+        controlador = Controlador.getInstance(getContext());
+        mRecyclerView = view.findViewById(R.id.cuadrillas_recycler_view);
         FloatingActionButton fab = view.findViewById(R.id.fab);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -60,25 +61,40 @@ public class HomeFragment extends Fragment {
                 crearNuevaCuadrilla(view);
             }
         });
-
-
         return view;
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+
+        if (controlador.sesionNoFinalizada()) {
+            if (controlador.getCuadrillasPendientesPorFinalizar() > 0) {
+                Navigation.findNavController(view).navigate(R.id.nav_finalizarCuadrilla);
+            } else {
+                controlador.iniciarSession();
+                inicializarListadoCuadrillas();
+            }
+        } else {
+            controlador.iniciarSession();
+            inicializarListadoCuadrillas();
+        }
+
+    }
+
+    private void inicializarListadoCuadrillas() {
+
         viewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         viewModel.setControlador(Controlador.getInstance(this.getContext()));
         viewModel.getmCuadrillasData().observe(getViewLifecycleOwner(), new Observer<List<Cuadrillas>>() {
             @Override
             public void onChanged(List<Cuadrillas> cuadrillas) {
-                mHomeAdapter = new HomeAdapter(getContext(),cuadrillas, new VehicleListener());
-                mRecyclerView.setAdapter(mHomeAdapter);
+
+                mCuadrillasAdapter = new CuadrillasAdapter(getContext(), cuadrillas, new HomeListener());
+                mRecyclerView.setAdapter(mCuadrillasAdapter);
             }
         });
-
-
     }
 
     private void crearNuevaCuadrilla(final View view){
@@ -108,7 +124,7 @@ public class HomeFragment extends Fragment {
                             Log.i("inicio","guardar cuadrilla");
                             try {
                                 Date dateInicio = new Date(Complementos.convertirStringAlong(viewModel.getControlador().getSettings().getFecha(),horaInicio.getText().toString()));
-                                Cuadrillas nuevaCuadrilla = new Cuadrillas(cuadrilla.getText().toString(),"",dateInicio,new Date(0));
+                                Cuadrillas nuevaCuadrilla = new Cuadrillas(cuadrilla.getText().toString(), "", dateInicio, new Date(0), 0);
                                 Navigation.findNavController(view).navigate(HomeFragmentDirections.actionNavHomeToVehicleDetailFragment(nuevaCuadrilla));
                             } catch (ParseException e) {
                                 Log.i("inicio","error");
@@ -133,10 +149,10 @@ public class HomeFragment extends Fragment {
                 .show();
     }
 
-    private class VehicleListener implements HomeAdapter.VehicleAdapterListener {
+    private class HomeListener implements CuadrillasAdapter.HomeAdapterListener {
 
         @Override
-        public void onVehicleSelected(final Cuadrillas cuadrillas, final View view) {
+        public void onCuadrillaSelected(final Cuadrillas cuadrillas, final View view) {
             // pending implementation
             if(Controlador.getInstance(HomeFragment.this.getContext()).validarSesion()==Controlador.STATUS_SESION.SESION_ACTIVA){
                 if(!Controlador.getInstance(HomeFragment.this.getContext()).validarCuadrilla(cuadrillas.getCuadrilla())){
@@ -161,8 +177,6 @@ public class HomeFragment extends Fragment {
                                     //guardar los cambios en el adapter
 
                                     if(!hora.getText().toString().equals("")){
-                                        //ArrayList<Trabajadores> asistencia = Controlador.getInstance(HomeFragment.this.getContext()).getTrabajadoresXcuadrilla(cuadrillas.getCuadrilla());
-                                        //if(Controlador.getInstance(HomeFragment.this.getContext()).setNuevaAsistencias(cuadrillas,asistencia,hora.getText().toString(),Complementos.getDateActualToString())){
                                         try {
                                             Date dateInicio = new Date(Complementos.convertirStringAlong(viewModel.getControlador().getSettings().getFecha(), hora.getText().toString()));
                                             cuadrillas.setFechaInicio(dateInicio);
@@ -171,8 +185,6 @@ public class HomeFragment extends Fragment {
                                         } catch (ParseException e) {
                                             e.printStackTrace();
                                         }
-
-                                        //}
                                     }
 
                                 }
@@ -186,8 +198,12 @@ public class HomeFragment extends Fragment {
                             .create()
                             .show();
                 }else{
-                    Log.i("inicio","con asistencia");
-                    Navigation.findNavController(view).navigate(HomeFragmentDirections.actionNavHomeToVehicleDetailFragment(cuadrillas));
+                    if (cuadrillas.getFechaFin().getTime() == Long.valueOf(0)) {
+                        Navigation.findNavController(view).navigate(HomeFragmentDirections.actionNavHomeToVehicleDetailFragment(cuadrillas));
+                    } else {
+                        Snackbar.make(view, "cuadrilla finalizada", Snackbar.LENGTH_SHORT)
+                                .setAction("Action", null).show();
+                    }
                 }
             }else{
                 Log.i("inicio","sesion ya finalizada o no iniciada");

@@ -117,7 +117,7 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
                             ListaAsistencia arrray [] = new ListaAsistencia[mDetailAdapter.getTrabajadores().size()];
                             ListaAsistencia[] listaAsistencias = mDetailAdapter.getTrabajadores().toArray(arrray);
                             Navigation.findNavController(view).navigate(DetailFragmentDirections.actionDetailFragmentToActividadesFragment(cuadrillas,listaAsistencias,mDetailAdapter.getTotalAsistencia()));
-                            //NavHostFragment.findNavController(DetailFragment.this).popBackStack(R.id.nav_home,false);
+
                         }else{
                             Log.i("inicio","error 1");
                             Snackbar.make(view, "sin trabajadores", Snackbar.LENGTH_LONG)

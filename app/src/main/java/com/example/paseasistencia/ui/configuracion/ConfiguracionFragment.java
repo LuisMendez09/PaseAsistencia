@@ -60,7 +60,7 @@ public class ConfiguracionFragment extends Fragment {
                 Log.v("Error",tvId.getText().toString());
                 Boolean respuesta = Controlador.getInstance(mContext).setConfiguracion(textView.getText().toString(),tvId.getText().toString());
                 if(respuesta){
-                    NavHostFragment.findNavController(ConfiguracionFragment.this).popBackStack(R.id.nav_home,false);
+                    NavHostFragment.findNavController(ConfiguracionFragment.this).popBackStack(R.id.nav_homeFragmen, false);
 
                 }else{
 
