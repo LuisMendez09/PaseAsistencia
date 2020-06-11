@@ -21,11 +21,10 @@ public class CuadrillasAdapter extends RecyclerView.Adapter<CuadrillasAdapter.Cu
     private HomeAdapterListener mListener;
 
     public CuadrillasAdapter(Context mContext, List<Cuadrillas> mCuadrillasList, HomeAdapterListener mListener) {
+
         this.mContext = mContext;
         this.mCuadrillasList = mCuadrillasList;
         this.mListener = mListener;
-
-
     }
 
     /***
@@ -33,6 +32,8 @@ public class CuadrillasAdapter extends RecyclerView.Adapter<CuadrillasAdapter.Cu
      */
     public interface HomeAdapterListener {
         void onCuadrillaSelected(Cuadrillas cuadrillas, View view);
+
+        void onDeleteCuadrilla(Cuadrillas cuadrillas);
     }
 
     class CuadrillaViewHolder extends RecyclerView.ViewHolder {
@@ -47,6 +48,7 @@ public class CuadrillasAdapter extends RecyclerView.Adapter<CuadrillasAdapter.Cu
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Log.v("clic", "clic en la view ");
                     mListener.onCuadrillaSelected(mCuadrillasList.get(getAdapterPosition()), itemView);
                 }
             });
@@ -54,8 +56,14 @@ public class CuadrillasAdapter extends RecyclerView.Adapter<CuadrillasAdapter.Cu
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    Log.i("enviar", "click largo");
-                    return false;
+                    Log.v("clic", "clic largo en la view ");
+                    Cuadrillas cuadrillas = mCuadrillasList.get(getAdapterPosition());
+                    if (cuadrillas != null) {
+                        if (cuadrillas.getId() != null) {
+                            mListener.onDeleteCuadrilla(cuadrillas);
+                        }
+                    }
+                    return true;
                 }
             });
         }

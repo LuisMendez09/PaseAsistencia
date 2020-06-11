@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name">PaseAsistencia</string>
+    <string name="app_name">Lista Asistencia</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_title">Asistencia de personal</string>
+    <string name="nav_header_subtitle">Pinos agricola</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
@@ -11,6 +11,9 @@
     <string name="menu_actualizar">actualizar</string>
     <string name="menu_enviar">enviar informacion</string>
     <string name="menu_configruacion">Configuracion</string>
+    <string name="menu_detalle">Trabajadores</string>
+    <string name="menu_actividades">Actividades realizadas</string>
+    <string name="menu_finalizar">Finalizar cudrillas</string>
 
     <string name="home_second">Home Second</string>
 
@@ -29,6 +32,7 @@
     <string name="msn_sinConexion">CONEXION CON EL SERVIDOR NO ESTABLECIDA</string>
     <string name="msn_lista_vacios">NO SE ENCONTRARON DATOS</string>
     <string name="msn_enesperado">!!!ERROR INESPERADO</string>
+    <string name="msn_errorTipoActividad">!!!ERROR. Tipo de actividad no valida</string>
 
     <!--TODO: titulos botonoes-->
     <string name="btn_guardar">guardar</string>

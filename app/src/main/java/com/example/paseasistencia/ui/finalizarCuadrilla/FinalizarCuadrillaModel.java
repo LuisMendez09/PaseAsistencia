@@ -25,7 +25,6 @@ public class FinalizarCuadrillaModel extends ViewModel {
         }
 
         controlador = Controlador.getInstance(context);
-        Log.i("inicio", "recargar datos");
         loadAllCuadrillasPendientes();
         return mCuadrillasData;
     }
@@ -42,12 +41,16 @@ public class FinalizarCuadrillaModel extends ViewModel {
     public boolean finalizarCuadrilla(Cuadrillas cuadrilla, String hora) {
         if (!hora.equals("")) {
             controlador.finalizarCuadrilla(cuadrilla, hora);
-            Log.i("inicio", "recargar datos");
             loadAllCuadrillasPendientes();
             return true;
         } else {
             return false;
         }
+    }
 
+    public boolean eliminarCuadrilla(Cuadrillas c) {
+        controlador.deleteListaAsistencia(c);
+        loadAllCuadrillasPendientes();
+        return true;
     }
 }

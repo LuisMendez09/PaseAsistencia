@@ -59,10 +59,8 @@ public class Complementos {
         return new Date().getTime();
     }
 
-public static String getTotalHoras(Date timeI, Date timeF){
-Log.i("nuevo",timeI+" ---- "+timeF);
+    public static String getTotalHoras(Date timeI, Date timeF) {
         if(timeF.getTime()!= Long.valueOf(0)){
-
             Long dif = timeF.getTime() - timeI.getTime();
             Long horas,minutos,segundos;
 
@@ -75,7 +73,7 @@ Log.i("nuevo",timeI+" ---- "+timeF);
             return String.format("%02d", horas)+":"+String.format("%02d", minutos);
         }
         return "00:00";
-}
+    }
 
     public static Date getDateActual(){
         return new Date();
@@ -98,14 +96,6 @@ Log.i("nuevo",timeI+" ---- "+timeF);
         return (sdf.parse(fecha+" "+hora)).getTime();
     }
 
-
-/*
-    public static Long convertirStringSegundosAlong(String fecha,String hora) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        Long time = (sdf.parse(fecha+" "+hora)).getTime();
-        return time;
-    }*/
-
     /***
      * obtener la fecha en formato dd/MM/yyyy
      * @param fecha tipo date
@@ -124,7 +114,6 @@ Log.i("nuevo",timeI+" ---- "+timeF);
 
 
         while (c.get(Calendar.DAY_OF_WEEK) != Calendar.THURSDAY) {
-            Log.i("enviar", c.get(Calendar.DAY_OF_WEEK) + "----");
             c.add(Calendar.DAY_OF_YEAR, -1);
         }
         return obtenerFechaServidor(c.getTime());

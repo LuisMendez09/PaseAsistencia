@@ -9,8 +9,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_left"
-        android:layout_marginRight="@dimen/margin_right"
+        android:paddingRight="@dimen/margin_left"
+        android:paddingLeft="@dimen/margin_right"
+        android:paddingBottom="@dimen/margin_bottom"
+        android:background="@color/colorImput"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -28,15 +30,15 @@
                     android:id="@+id/textView17"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/size_subTitulos"
-                    android:text="cuadrilla: " />
+                    android:text="cuadrilla: "
+                    android:textSize="@dimen/size_subTitulos" />
 
                 <TextView
                     android:id="@+id/tv_cuadrilla"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/size_subTitulos"
-                    android:text="400" />
+                    android:text="400"
+                    android:textSize="@dimen/size_subTitulos" />
             </LinearLayout>
 
 
@@ -44,15 +46,15 @@
                 android:id="@+id/textView18"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/size_subTitulos"
-                android:text="Mayordomo: " />
+                android:text="Mayordomo: "
+                android:textSize="@dimen/size_subTitulos" />
 
             <TextView
                 android:id="@+id/tv_mayordomo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/size_subTitulos"
-                android:text="juan perez" />
+                android:text="juan perez"
+                android:textSize="@dimen/size_subTitulos" />
         </LinearLayout>
 
         <LinearLayout
@@ -71,17 +73,18 @@
                     android:id="@+id/textView16"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/size_subTitulos"
-                    android:text="Total asistencia: " />
+                    android:text="Total asistencia: "
+                    android:textSize="@dimen/size_subTitulos" />
 
                 <TextView
                     android:id="@+id/tv_asistencia"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/size_subTitulos"
-                    android:text="50" />
+                    android:text="50"
+                    android:textSize="@dimen/size_subTitulos" />
 
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -99,14 +102,14 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="16dp"
                         android:layout_weight="1"
+                        android:background="@drawable/buttom_redondo"
+                        android:drawableEnd="@drawable/ic_save_24px"
                         android:text="@string/btn_guardar"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </LinearLayout>
-
-
         </LinearLayout>
 
     </LinearLayout>
@@ -115,7 +118,6 @@
         android:id="@+id/lv_actividades"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/margin_top"
         android:layout_marginLeft="@dimen/margin_left"
         android:layout_marginRight="@dimen/margin_right"/>
 

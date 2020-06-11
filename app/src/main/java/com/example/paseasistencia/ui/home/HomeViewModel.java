@@ -37,7 +37,6 @@ public class HomeViewModel extends ViewModel {
 
     private void loadAllCuadrillas() {
         String s = controlador.getSettings() == null ? "" : controlador.getSettings().toString();
-        Log.i("inicio", "3.1----loadAllCuadrillas -----" + s);
         if(controlador.validarSesion() == Controlador.STATUS_SESION.SESION_ACTIVA)
             mCuadrillasData.postValue(this.controlador.getCuadrillas());
     }

@@ -19,12 +19,13 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-public class BuscarListaActividades extends AsyncTask<Void, Integer, String> {
+public class ImportarCatalogos extends AsyncTask<Void, Integer, String> {
     private Controlador controlador;
     private IactualizacionDatos iactualizacionDatos;
     private String servidor;
+    private static final String TAG = "ImportarCatalogos";
 
-    public BuscarListaActividades(IactualizacionDatos iactualizacionDatos, Controlador controlador) {
+    public ImportarCatalogos(IactualizacionDatos iactualizacionDatos, Controlador controlador) {
         this.controlador = controlador;
         this.iactualizacionDatos = iactualizacionDatos;
 
@@ -38,6 +39,7 @@ public class BuscarListaActividades extends AsyncTask<Void, Integer, String> {
         super.onPreExecute();
         iactualizacionDatos.iniciarAnimacion(0, 0);
         iactualizacionDatos.actualizacionMensajes(Controlador.getCONTEXT().getString(R.string.msn_inicio));
+        FileLog.i(TAG, "iniciar la importacion de catalogos");
     }
 
     @Override
@@ -45,6 +47,7 @@ public class BuscarListaActividades extends AsyncTask<Void, Integer, String> {
         super.onPostExecute(mensaje);
         iactualizacionDatos.actualizacionMensajes(mensaje);
         iactualizacionDatos.finalizarAnimacion();
+        FileLog.i(TAG, "finalizo la importacion");
     }
 
     @Override
@@ -70,7 +73,6 @@ public class BuscarListaActividades extends AsyncTask<Void, Integer, String> {
             }
         }
 
-        Log.i("PETICION","<+++++++++++++++++BUSQUEDA DE PUESTOS FINALIZADA+++++++++++++++++> ");
         return respuesta;
     }
 
@@ -78,7 +80,7 @@ public class BuscarListaActividades extends AsyncTask<Void, Integer, String> {
         String respuesta=null;
         try {
             String url = this.servidor+"ListaPuestoes";
-            Log.i("PETICION","Inicia peticion de puestos ");
+            FileLog.i(TAG, "Inicia peticion de puestos ");
 
             try{
                 Request request = Bridge.get(url).throwIfNotSuccess().request();
@@ -87,7 +89,7 @@ public class BuscarListaActividades extends AsyncTask<Void, Integer, String> {
 
                 if(listaPuestos.size() == 0){
                     respuesta = Controlador.getCONTEXT().getString(R.string.msn_lista_vacios);
-                    Log.i("ERROR",Controlador.getCONTEXT().getString(R.string.msn_lista_vacios));
+                    FileLog.i(TAG, Controlador.getCONTEXT().getString(R.string.msn_lista_vacios));
                 }else if (listaPuestos.size() > 0){
                     controlador.reiniciarListaPuestos();
                     for (Puestos puesto : listaPuestos) {
@@ -96,21 +98,21 @@ public class BuscarListaActividades extends AsyncTask<Void, Integer, String> {
                     respuesta = Controlador.getCONTEXT().getString(R.string.msn_fin);
                 }else{
                     respuesta = Controlador.getCONTEXT().getString(R.string.msn_enesperado);
-                    Log.i("ERROR",Controlador.getCONTEXT().getString(R.string.msn_enesperado));
+                    FileLog.i(TAG, Controlador.getCONTEXT().getString(R.string.msn_enesperado));
                 }
 
-                Log.i("PETICION","termina peticion de mallas, Total mallas "+listaPuestos.size());
+                FileLog.i(TAG, "termina peticion de mallas, Total mallas " + listaPuestos.size());
             }catch(BridgeException e){
                 respuesta = Controlador.getCONTEXT().getString(R.string.msn_sinConexion);
-                Log.i("PETICION","Error al conectar con el servidor "+ e.getMessage());
+                FileLog.i(TAG, "Error al conectar con el servidor " + e.getMessage());
             }
         }catch (RuntimeException ee){
             respuesta = Controlador.getCONTEXT().getString(R.string.msn_enesperado);
-            Log.i("PETICION",ee.getMessage());
+            FileLog.i(TAG, ee.getMessage());
 
         }catch (Exception e){
             respuesta = Controlador.getCONTEXT().getString(R.string.msn_enesperado);
-            Log.i("PETICION",e.getMessage());
+            FileLog.i(TAG, e.getMessage());
         }
 
         return  respuesta;
@@ -121,7 +123,7 @@ public class BuscarListaActividades extends AsyncTask<Void, Integer, String> {
         try {
             String url = this.servidor+"ACTIVIDADEs";
 
-            Log.i("PETICION","Inicia peticion de Actividades "+url);
+            FileLog.i(TAG, "Inicia peticion de Actividades ");
 
             try{
                 Request request = Bridge.get(url).throwIfNotSuccess().request();
@@ -130,7 +132,7 @@ public class BuscarListaActividades extends AsyncTask<Void, Integer, String> {
 
                 if(listaActividades.size() == 0){
                     respuesta = Controlador.getCONTEXT().getString(R.string.msn_lista_vacios);
-                    Log.i("ERROR",Controlador.getCONTEXT().getString(R.string.msn_lista_vacios));
+                    FileLog.i(TAG, Controlador.getCONTEXT().getString(R.string.msn_lista_vacios));
                 }else if (listaActividades.size() > 0){
                     controlador.reiniciarListaActividades();
                     for (Actividades actividad : listaActividades) {
@@ -139,21 +141,21 @@ public class BuscarListaActividades extends AsyncTask<Void, Integer, String> {
                     respuesta = Controlador.getCONTEXT().getString(R.string.msn_fin);
                 }else{
                     respuesta = Controlador.getCONTEXT().getString(R.string.msn_enesperado);
-                    Log.i("ERROR",Controlador.getCONTEXT().getString(R.string.msn_enesperado));
+                    FileLog.i(TAG, Controlador.getCONTEXT().getString(R.string.msn_enesperado));
                 }
 
-                Log.i("PETICION","termina peticion de mallas, Total mallas "+listaActividades.size());
+                FileLog.i(TAG, "termina peticion de mallas, Total mallas " + listaActividades.size());
             }catch(BridgeException e){
                 respuesta = Controlador.getCONTEXT().getString(R.string.msn_sinConexion);
-                Log.i("PETICION","Error al conectar con el servidor "+ e.getMessage());
+                FileLog.i(TAG, "Error al conectar con el servidor " + e.getMessage());
             }
         }catch (RuntimeException ee){
             respuesta = Controlador.getCONTEXT().getString(R.string.msn_enesperado);
-            Log.i("PETICION",ee.getMessage());
+            FileLog.i(TAG, ee.getMessage());
 
         }catch (Exception e){
             respuesta = Controlador.getCONTEXT().getString(R.string.msn_enesperado);
-            Log.i("PETICION",e.getMessage());
+            FileLog.i(TAG, e.getMessage());
         }
 
         return  respuesta;
@@ -163,7 +165,7 @@ public class BuscarListaActividades extends AsyncTask<Void, Integer, String> {
         String respuesta=null;
         try {
             String url = this.servidor+"mallas";
-            Log.i("PETICION","Inicia peticion de mallas ");
+            FileLog.i(TAG, "Inicia peticion de mallas ");
 
             try{
                 Request request = Bridge.get(url).throwIfNotSuccess().request();
@@ -172,7 +174,7 @@ public class BuscarListaActividades extends AsyncTask<Void, Integer, String> {
 
                 if(listaMallas.size() == 0){
                     respuesta = Controlador.getCONTEXT().getString(R.string.msn_lista_vacios);
-                    Log.i("ERROR",Controlador.getCONTEXT().getString(R.string.msn_lista_vacios));
+                    FileLog.i(TAG, Controlador.getCONTEXT().getString(R.string.msn_lista_vacios));
                 }else if (listaMallas.size() > 0){
                     controlador.reiniciarListaMallas();
                     for (Mallas mallas : listaMallas) {
@@ -181,21 +183,21 @@ public class BuscarListaActividades extends AsyncTask<Void, Integer, String> {
                     respuesta = Controlador.getCONTEXT().getString(R.string.msn_fin);
                 }else{
                     respuesta = Controlador.getCONTEXT().getString(R.string.msn_enesperado);
-                    Log.i("ERROR",Controlador.getCONTEXT().getString(R.string.msn_enesperado));
+                    FileLog.i(TAG, Controlador.getCONTEXT().getString(R.string.msn_enesperado));
                 }
 
-                Log.i("PETICION","termina peticion de mallas, Total mallas "+listaMallas.size());
+                FileLog.i(TAG, "termina peticion de mallas, Total mallas " + listaMallas.size());
             }catch(BridgeException e){
                 respuesta = Controlador.getCONTEXT().getString(R.string.msn_sinConexion);
-                Log.i("PETICION","Error al conectar con el servidor "+ e.getMessage());
+                FileLog.i(TAG, "Error al conectar con el servidor " + e.getMessage());
             }
         }catch (RuntimeException ee){
             respuesta = Controlador.getCONTEXT().getString(R.string.msn_enesperado);
-            Log.i("PETICION",ee.getMessage());
+            FileLog.i(TAG, ee.getMessage());
 
         }catch (Exception e){
             respuesta = Controlador.getCONTEXT().getString(R.string.msn_enesperado);
-            Log.i("PETICION",e.getMessage());
+            FileLog.i(TAG, e.getMessage());
         }
 
         return  respuesta;
@@ -205,7 +207,7 @@ public class BuscarListaActividades extends AsyncTask<Void, Integer, String> {
         String respuesta=null;
         try {
             String url = this.servidor+"tiposPermisoes";
-            Log.i("PETICION","Inicia peticion de tipos de permisos ");
+            FileLog.i(TAG, "Inicia peticion de tipos de permisos ");
 
             try{
                 Request request = Bridge.get(url).throwIfNotSuccess().request();
@@ -214,7 +216,7 @@ public class BuscarListaActividades extends AsyncTask<Void, Integer, String> {
 
                 if(listaPermisos.size() == 0){
                     respuesta = Controlador.getCONTEXT().getString(R.string.msn_lista_vacios);
-                    Log.i("ERROR",Controlador.getCONTEXT().getString(R.string.msn_lista_vacios));
+                    FileLog.i(TAG, Controlador.getCONTEXT().getString(R.string.msn_lista_vacios));
                 }else if (listaPermisos.size() > 0){
                     controlador.reiniciarListaTiposPermisos();
                     for (TiposPermisos permisos : listaPermisos) {
@@ -223,21 +225,21 @@ public class BuscarListaActividades extends AsyncTask<Void, Integer, String> {
                     respuesta = Controlador.getCONTEXT().getString(R.string.msn_fin);
                 }else{
                     respuesta = Controlador.getCONTEXT().getString(R.string.msn_enesperado);
-                    Log.i("ERROR",Controlador.getCONTEXT().getString(R.string.msn_enesperado));
+                    FileLog.i(TAG, Controlador.getCONTEXT().getString(R.string.msn_enesperado));
                 }
 
-                Log.i("PETICION","termina peticion de mallas, Total mallas "+listaPermisos.size());
+                FileLog.i(TAG, "termina peticion de mallas, Total mallas " + listaPermisos.size());
             }catch(BridgeException e){
                 respuesta = Controlador.getCONTEXT().getString(R.string.msn_sinConexion);
-                Log.i("PETICION","Error al conectar con el servidor "+ e.getMessage());
+                FileLog.i(TAG, "Error al conectar con el servidor " + e.getMessage());
             }
         }catch (RuntimeException ee){
             respuesta = Controlador.getCONTEXT().getString(R.string.msn_enesperado);
-            Log.i("PETICION",ee.getMessage());
+            FileLog.i(TAG, ee.getMessage());
 
         }catch (Exception e){
             respuesta = Controlador.getCONTEXT().getString(R.string.msn_enesperado);
-            Log.i("PETICION",e.getMessage());
+            FileLog.i(TAG, e.getMessage());
         }
 
         return  respuesta;
@@ -247,19 +249,18 @@ public class BuscarListaActividades extends AsyncTask<Void, Integer, String> {
         String respuesta=null;
         try {
             String url = this.servidor+"TRABAJADOREs?fechaInicioSem="+ Complementos.getDateActualToStringServidor();
-            Log.i("PETICION","Inicia peticion de tipos de permisos ");
+            FileLog.i(TAG, "Inicia peticion de tipos de permisos ");
 
             try{
                 Request request = Bridge.get(url).throwIfNotSuccess().request();
                 Response response = request.response();
 
                 JSONArray jsonArray = response.asJsonArray();
-                Log.i("json",jsonArray.toString());
                 List<TiposPermisos>listaPermisos = response.asClassList(TiposPermisos.class);
 
                 if(jsonArray.length() == 0){
                     respuesta = Controlador.getCONTEXT().getString(R.string.msn_lista_vacios);
-                    Log.i("ERROR",Controlador.getCONTEXT().getString(R.string.msn_lista_vacios));
+                    FileLog.i(TAG, Controlador.getCONTEXT().getString(R.string.msn_lista_vacios));
                 }else if (jsonArray.length() > 0){
                     controlador.reiniciarListaTrabajadores();
 
@@ -276,21 +277,21 @@ public class BuscarListaActividades extends AsyncTask<Void, Integer, String> {
                     respuesta = Controlador.getCONTEXT().getString(R.string.msn_fin);
                 }else{
                     respuesta = Controlador.getCONTEXT().getString(R.string.msn_enesperado);
-                    Log.i("ERROR",Controlador.getCONTEXT().getString(R.string.msn_enesperado));
+                    FileLog.i(TAG, Controlador.getCONTEXT().getString(R.string.msn_enesperado));
                 }
 
-                Log.i("PETICION","termina peticion de mallas, Total mallas "+listaPermisos.size());
+                FileLog.i(TAG, "termina peticion de mallas, Total mallas " + listaPermisos.size());
             }catch(BridgeException e){
                 respuesta = Controlador.getCONTEXT().getString(R.string.msn_sinConexion);
-                Log.i("PETICION","Error al conectar con el servidor "+ e.getMessage());
+                FileLog.i(TAG, "Error al conectar con el servidor " + e.getMessage());
             }
         }catch (RuntimeException ee){
             respuesta = Controlador.getCONTEXT().getString(R.string.msn_enesperado);
-            Log.i("PETICION",ee.getMessage()+"");
+            FileLog.i(TAG, ee.getMessage() + "");
 
         }catch (Exception e){
             respuesta = Controlador.getCONTEXT().getString(R.string.msn_enesperado);
-            Log.i("PETICION",e.getMessage());
+            FileLog.i(TAG, e.getMessage());
         }
 
         return  respuesta;

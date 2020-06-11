@@ -18,6 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/zoom_plate"/>
+        app:backgroundTint="@color/colorImput"
+        app:srcCompat="@drawable/ic_person_add_24px" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -11,6 +11,11 @@
     <dimen name="margin_top">25dp</dimen>
     <dimen name="margin_bottom">25dp</dimen>
 
+    <dimen name="marginButtom_left">10dp</dimen>
+    <dimen name="marginButtom_right">10dp</dimen>
+    <dimen name="marginButtom_top">10dp</dimen>
+    <dimen name="marginButtom_bottom">10dp</dimen>
+
     <!--TODO: zise titulos -->
     <dimen name="size_titulos">36dp</dimen>
     <dimen name="size_subTitulos">24dp</dimen>

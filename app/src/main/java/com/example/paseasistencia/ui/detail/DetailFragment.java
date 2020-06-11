@@ -27,6 +27,7 @@ import com.example.paseasistencia.MainActivity;
 import com.example.paseasistencia.R;
 import com.example.paseasistencia.complementos.Complementos;
 import com.example.paseasistencia.controlador.Controlador;
+import com.example.paseasistencia.controlador.FileLog;
 import com.example.paseasistencia.model.Asistencia;
 import com.example.paseasistencia.model.Cuadrillas;
 import com.example.paseasistencia.model.ListaAsistencia;
@@ -49,6 +50,8 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
     ListView lvTrabajadores;
     String items[] = null;
     Cuadrillas cuadrillas;
+    private static final String TAG = "DetailFragment";
+    private static final String PUESTO_BASE = "PERSONAL CAMPO";
 
     public DetailFragment() {
         // Required empty public constructor
@@ -59,6 +62,7 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        FileLog.i(TAG, "iniciar DetailFragment");
         final View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
         final TextView numCuadrillaTextView = view.findViewById(R.id.detail_cuadrilla_name_text_view);
@@ -70,6 +74,7 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
         Application application = Objects.requireNonNull(getActivity()).getApplication();
 
         cuadrillas = DetailFragmentArgs.fromBundle(Objects.requireNonNull(getArguments())).getDetailFragmentArgs();
+
         DetailFragmentViewModelFactory factory = new DetailFragmentViewModelFactory(application,cuadrillas);
         viewModel = ViewModelProviders.of(this,factory).get(DetailFragmentViewModel.class);
 
@@ -114,12 +119,13 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
                         //guardar
 
                         if(mDetailAdapter.getTrabajadores().size()>0){
+                            FileLog.i(TAG, "avanzar a ActividadesFragment");
+                            cuadrillas.setMayordomo(mDetailAdapter.getResponsable());
                             ListaAsistencia arrray [] = new ListaAsistencia[mDetailAdapter.getTrabajadores().size()];
                             ListaAsistencia[] listaAsistencias = mDetailAdapter.getTrabajadores().toArray(arrray);
                             Navigation.findNavController(view).navigate(DetailFragmentDirections.actionDetailFragmentToActividadesFragment(cuadrillas,listaAsistencias,mDetailAdapter.getTotalAsistencia()));
 
                         }else{
-                            Log.i("inicio","error 1");
                             Snackbar.make(view, "sin trabajadores", Snackbar.LENGTH_LONG)
                                     .setAction("Action", null).show();
                         }
@@ -164,15 +170,15 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if(items[position]=="Editar trabajador"){
-                Log.i("puesto","editar nombre Trabajador");
+                FileLog.i(TAG, "editar nombre Trabajador");
                editarnombre(asistencia);
                dialog.dismiss();
             }else if (items[position]=="Editar puesto"){
-                Log.i("puesto","editar hora inicio y final puesto");
+                FileLog.i(TAG, "editar hora inicio y final puesto");
                 editarPuesto(asistencia,fila);
                 dialog.dismiss();
             }else{
-                Log.i("puesto","agregar un nuevo puesto");
+                FileLog.i(TAG, "agregar un nuevo puesto");
                 agregarPuesto(asistencia);
                 dialog.dismiss();
             }
@@ -181,41 +187,36 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
     }
 
     public void editarnombre(final ListaAsistencia asistencia) {
+        FileLog.v(TAG, "inicia edicion del nombre del trabajador");
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
 
-            final AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
+        LayoutInflater layoutInflater = this.getActivity().getLayoutInflater();
+        View viewDialog = layoutInflater.inflate(R.layout.dialog_edicion_trabajador, null);
+        final TextView nombre = viewDialog.findViewById(R.id.et_nombre);
+        nombre.setText(asistencia.getTrabajadores().getNombre());
 
-            LayoutInflater layoutInflater = this.getActivity().getLayoutInflater();
-            View viewDialog = layoutInflater.inflate(R.layout.dialog_edicion_trabajador,null);
-            final TextView nombre = viewDialog.findViewById(R.id.et_nombre);
-            nombre.setText(asistencia.getTrabajadores().getNombre());
+        builder.setView(viewDialog)
+                .setTitle("Editando a " + asistencia.getTrabajadores().getNombre())
+                .setPositiveButton(R.string.btn_guardar, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //guardar los cambios en el adapter
+                        if (!nombre.getText().toString().equals("")) {
+                            mDetailAdapter.actualizarTrabajador(asistencia.getTrabajadores().getNombre(), nombre.getText().toString());
+                            asistencia.getTrabajadores().setNombre(nombre.getText().toString().toUpperCase());
+                            asistencia.setEdicionTrabajador(1);
 
-            builder.setView(viewDialog)
-                    .setTitle("Editando a "+asistencia.getTrabajadores().getNombre())
-                    .setPositiveButton(R.string.btn_guardar, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            //guardar los cambios en el adapter
-                            if(!nombre.getText().toString().equals("")){
-                                mDetailAdapter.actualizarTrabajador(asistencia.getTrabajadores().getNombre(),nombre.getText().toString());
-                                asistencia.getTrabajadores().setNombre(nombre.getText().toString().toUpperCase());
-                                asistencia.setEdicionTrabajador(1);
-
-                                mDetailAdapter.notifyDataSetChanged();
-                            }
+                            mDetailAdapter.notifyDataSetChanged();
                         }
-                    })
-                    .setNegativeButton(R.string.btn_cancelar, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            //
-                        }
-                    })
-                    .create()
-                    .show();
+                    }
+                })
+                .create()
+                .show();
 
     }
 
     public void editarPuesto(final ListaAsistencia a, final int fila) {
+        FileLog.v(TAG, "inicia edicion de de puesto " + a.toString());
         final AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
 
         LayoutInflater layoutInflater = this.getActivity().getLayoutInflater();
@@ -258,16 +259,12 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
                                 a.getAsistencia().setDateInicio(ai);
                                 a.getAsistencia().setDateFin(af);
                                 mDetailAdapter.notifyDataSetChanged();
+                                FileLog.v(TAG, "aplicar cambio de edicion de puesto");
                             }
                         } catch (ParseException e) {
                             e.printStackTrace();
+                            FileLog.v(TAG, e.getMessage());
                         }
-                    }
-                })
-                .setNegativeButton(R.string.btn_cancelar, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //
                     }
                 })
                 .create()
@@ -275,6 +272,7 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
     }
 
     public void agregarPuesto(final ListaAsistencia a) {
+        FileLog.v(TAG, "agregar nuevo puesto " + a.toString());
         final AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
 
         LayoutInflater layoutInflater = this.getActivity().getLayoutInflater();
@@ -301,6 +299,7 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
 
                         if(a.getAsistencia().getDateFin().getTime()==new Date(0).getTime()) {
                             try {
+                                FileLog.v(TAG, "guardar los cambios");
                                 Long time = Complementos.convertirStringAlong(Complementos.getDateActualToString(), hora.getText().toString());
 
                                 Asistencia nuevaAsistencia = new Asistencia(a.getTrabajadores(),(Puestos) spPuesto.getSelectedItem(),new Date(time),new Date(0),0);
@@ -308,21 +307,19 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
                                 if(mDetailAdapter.validarHoras(nuevaAsistencia,-1,cuadrillas)){
                                     a.getAsistencia().setDateFin(new Date(time));
                                     mDetailAdapter.add(new ListaAsistencia(a.getTrabajadores(),nuevaAsistencia));
+                                } else {
+                                    FileLog.v(TAG, "horas no validas");
                                 }
 
                             }catch (Exception e){
-
+                                FileLog.v(TAG, "ERROR " + e.getMessage());
                             }
 
+                        } else {
+                            FileLog.v(TAG, "campos no validos");
                         }
 
                         mDetailAdapter.notifyDataSetChanged();
-                    }
-                })
-                .setNegativeButton(R.string.btn_cancelar, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //
                     }
                 })
                 .create()
@@ -330,6 +327,7 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
     }
 
     public void agregarTrabajador(){
+        FileLog.v(TAG, "agregar nuevo trabajador");
         final AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
 
         LayoutInflater layoutInflater = this.getActivity().getLayoutInflater();
@@ -339,13 +337,12 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
         final Spinner spPuesto = viewDialog.findViewById(R.id.sp_puesto);
         final TextView tvHoraInicio = viewDialog.findViewById(R.id.et_horaInicio);
 
-
-        //Controlador.getInstance(this.getContext()).getConsecutivoSiguiente(cuadrillas.getCuadrilla()).toString()
         tvConsecutivo.setText(mDetailAdapter.getConsecutivo().toString());
         tvHoraInicio.setText(Complementos.obtenerHoraString(cuadrillas.getFechaInicio()));
 
         ArrayAdapter<Puestos> puestosAdapter = new ArrayAdapter<>(this.getContext(),R.layout.support_simple_spinner_dropdown_item,Controlador.getInstance(this.getContext()).getPuestos());
         spPuesto.setAdapter(puestosAdapter);
+        spPuesto.setSelection(Complementos.getIndex(spPuesto, PUESTO_BASE));
 
         tvHoraInicio.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -360,13 +357,8 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //crear trabajador
+                        FileLog.v(TAG, "guardar cambios");
                         mDetailAdapter.addTrabajador(cuadrillas,tvConsecutivo.getText().toString(),tvNombre.getText().toString(),(Puestos) spPuesto.getSelectedItem());
-                    }
-                })
-                .setNegativeButton(R.string.btn_cancelar, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //
                     }
                 })
                 .create()

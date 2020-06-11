@@ -26,13 +26,13 @@
     <fragment
         android:id="@+id/nav_finalizarCuadrilla"
         android:name="com.example.paseasistencia.ui.finalizarCuadrilla.FinalizarCuadrillaFragment"
-        android:label="@string/menu_enviar"
+        android:label="@string/menu_finalizar"
         tools:layout="@layout/fragment_slideshow" />
     <fragment
         android:id="@+id/DetailFragment"
         android:name="com.example.paseasistencia.ui.detail.DetailFragment"
         tools:layout="@layout/fragment_detail"
-        android:label="DetailFragment">
+        android:label="@string/menu_detalle">
         <argument
             android:name="detailFragmentArgs "
             app:argType="com.example.paseasistencia.model.Cuadrillas" />
@@ -50,7 +50,7 @@
     <fragment
         android:id="@+id/actividadesFragment"
         android:name="com.example.paseasistencia.ui.actividad.ActividadesFragment"
-        android:label="fragment_actividades"
+        android:label="@string/menu_actividades"
         tools:layout="@layout/fragment_actividades" >
         <argument
             android:name="cuadrilla"

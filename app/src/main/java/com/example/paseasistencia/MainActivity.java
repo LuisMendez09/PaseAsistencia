@@ -3,11 +3,14 @@ package com.example.paseasistencia;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.example.paseasistencia.complementos.Complementos;
 import com.example.paseasistencia.controlador.Controlador;
+import com.example.paseasistencia.controlador.FileLog;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.navigation.NavController;
@@ -30,7 +33,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        FileLog.open(this.getBaseContext(), Log.VERBOSE, 3000000);
+        FileLog.i(this.getClass().getClass().toString(), "Log iniciado");
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 

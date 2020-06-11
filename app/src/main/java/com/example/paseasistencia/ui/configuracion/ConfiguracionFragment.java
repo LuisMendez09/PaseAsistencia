@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.example.paseasistencia.R;
 import com.example.paseasistencia.controlador.Controlador;
+import com.example.paseasistencia.controlador.FileLog;
 import com.example.paseasistencia.model.Configuracion;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -26,7 +27,7 @@ import com.google.android.material.snackbar.Snackbar;
 public class ConfiguracionFragment extends Fragment {
     private ConfiguracionViewModel configuracionViewModel;
     private Context mContext;
-
+    private static final String TAG = "ConfiguracionFragment";
 
     public ConfiguracionFragment() {
         // Required empty public constructor
@@ -36,6 +37,7 @@ public class ConfiguracionFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        FileLog.i(TAG, "inciar ConfiguracionFragment");
         configuracionViewModel =  ViewModelProviders.of(this).get(ConfiguracionViewModel.class);
         configuracionViewModel.setLiveDate(this.getContext());
         mContext = this.getContext();
@@ -57,11 +59,10 @@ public class ConfiguracionFragment extends Fragment {
         tbnGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.v("Error",tvId.getText().toString());
+                FileLog.i(TAG, "guardar los cambio de configuracion");
                 Boolean respuesta = Controlador.getInstance(mContext).setConfiguracion(textView.getText().toString(),tvId.getText().toString());
                 if(respuesta){
                     NavHostFragment.findNavController(ConfiguracionFragment.this).popBackStack(R.id.nav_homeFragmen, false);
-
                 }else{
 
                     Snackbar.make(v, "ERROR, CAMPO VACIO", Snackbar.LENGTH_LONG)

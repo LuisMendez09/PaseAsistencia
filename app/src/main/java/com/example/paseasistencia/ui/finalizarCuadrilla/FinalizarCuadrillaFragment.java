@@ -3,7 +3,6 @@ package com.example.paseasistencia.ui.finalizarCuadrilla;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,21 +21,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.paseasistencia.MainActivity;
 import com.example.paseasistencia.R;
 import com.example.paseasistencia.complementos.Complementos;
-import com.example.paseasistencia.controlador.Controlador;
+import com.example.paseasistencia.controlador.FileLog;
 import com.example.paseasistencia.model.Cuadrillas;
 import com.example.paseasistencia.ui.home.CuadrillasAdapter;
 
 import java.util.List;
 
 public class FinalizarCuadrillaFragment extends Fragment {
+    private static final String TAG = "FinalizarCuadrillaFragment";
+
     private FinalizarCuadrillaModel viewModel;
     private RecyclerView mRecyclerView;
-
     private CuadrillasAdapter mCuadrillasAdapter;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        FileLog.i(TAG, "iniciar FinalizarCuadrillaFragment");
         View root = inflater.inflate(R.layout.fragment_slideshow, container, false);
         mRecyclerView = root.findViewById(R.id.cuadrillas_recycler_view);
         return root;
@@ -52,7 +53,6 @@ public class FinalizarCuadrillaFragment extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                Log.i("finalizar", "retroceso");
                 navController.popBackStack(R.id.nav_homeFragmen, false);
             }
         });
@@ -74,8 +74,7 @@ public class FinalizarCuadrillaFragment extends Fragment {
     private class finalizacionCuadrillaLisener implements CuadrillasAdapter.HomeAdapterListener {
         @Override
         public void onCuadrillaSelected(final Cuadrillas cuadrillas, final View view) {
-            //finalizar cuadrilla
-            //if(Controlador.getInstance(FinalizarCuadrillaFragment.this.getContext()).validarSesion()==Controlador.STATUS_SESION.SESION_ACTIVA){
+            FileLog.i(TAG, "iniciar la camtura de finalizacion de cuadrilla");
             final AlertDialog.Builder builder = new AlertDialog.Builder(FinalizarCuadrillaFragment.this.getContext());
 
             LayoutInflater layoutInflater = FinalizarCuadrillaFragment.this.getActivity().getLayoutInflater();
@@ -100,6 +99,7 @@ public class FinalizarCuadrillaFragment extends Fragment {
                     .setPositiveButton(R.string.btn_guardar, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            FileLog.i(TAG, "guardar los cambios");
                             //guardar los cambios en el adapter
                             viewModel.finalizarCuadrilla(cuadrillas, horaFin.getText().toString());
 
@@ -108,6 +108,33 @@ public class FinalizarCuadrillaFragment extends Fragment {
                     .create()
                     .show();
             //}
+        }
+
+        @Override
+        public void onDeleteCuadrilla(final Cuadrillas cuadrillas) {
+            FileLog.i(TAG, "iniciar dialogo para eliminar una cuadrilla revisada");
+            AlertDialog.Builder builder = new AlertDialog.Builder(FinalizarCuadrillaFragment.this.getContext());
+            builder.setTitle("Eliminar cuadrilla " + cuadrillas.getCuadrilla())
+                    .setMessage("esta seguro de eliminar las asistencias de la cuadrilla: " + cuadrillas.getCuadrilla())
+                    .setPositiveButton(R.string.btn_continuar, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //guardar los cambios en el adapter
+                            FileLog.i(TAG, "eliminar la cuadrilla " + cuadrillas.getCuadrilla());
+                            viewModel.eliminarCuadrilla(cuadrillas);
+
+                        }
+                    })
+                    .setNegativeButton(R.string.btn_cancelar, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .create()
+                    .show();
+
+
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.example.paseasistencia.controlador;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -19,6 +18,7 @@ import com.example.paseasistencia.model.Settings;
 import com.example.paseasistencia.model.TiposPermisos;
 import com.example.paseasistencia.model.Trabajadores;
 
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,7 +29,8 @@ public class Controlador {
     private static Controlador INSTANCIA = null;
     private static Context CONTEXT = null;
     private static DBHandler CONEXION = null;
-    public static  final String TIPOS_ACTIVIDADES [] = new String [] {"Slecciones tipo Actividad","RECOLECCION","HORAS","TAREA"};
+    public static final String TIPOS_ACTIVIDADES[] = new String[]{"Slecciones tipo Actividad", "RECOLECCION", "HORAS", "TAREA"};
+    public static final String TAG = "Controlador";
 
     public enum STATUS_SESION {
         SESION_ACTIVA,
@@ -99,10 +100,6 @@ public class Controlador {
         Controlador.CONEXION.recrearTablaListaTrabajadores();
     }
 
-    /*public void reiniciarListaCuadrillasRevisadas(){
-        Controlador.CONEXION.recrearTablacuadrillasRevisadas();
-    }*/
-
     public Integer totalRegistrosPendientesPorEnviar() {
         return Controlador.CONEXION.getTotalPendientePorEnviar();
     }
@@ -117,7 +114,10 @@ public class Controlador {
         if(id.equals("")){
             if(!url.equals("")){
                 Configuracion c = new Configuracion(url);
+                FileLog.i(TAG, "agregar configuraion");
                 i = Controlador.CONEXION.addConfiguracion(c);
+            } else {
+                FileLog.i(TAG, "sin cambio");
             }
         }else {
             return updateConfiguracion(id,url);
@@ -131,6 +131,7 @@ public class Controlador {
         Integer i = -1;
         if(!url.equals("")){
             Configuracion c = new Configuracion(Long.parseLong(id),url);
+            FileLog.i(TAG, "actualizar configuracion");
             i = Controlador.CONEXION.updateConfiguracion(c);
         }
 
@@ -144,15 +145,15 @@ public class Controlador {
     }
 
     private Settings setSetting(Date dateInicio,Date dateFin,Integer jornadaFinalizada,Integer jornadaInicia,Integer envioDatos){
-
         Settings s = new Settings(dateInicio,dateFin,jornadaFinalizada,jornadaInicia,envioDatos);
+        FileLog.i(TAG, "agregar settings");
         Long aLong = Controlador.CONEXION.addSettings(s);
         s.setId(aLong);
-        Log.i("sesion",s.toString());
         return s;
     }
 
     private boolean actualizarSetting(Settings settings){
+        FileLog.i(TAG, "actualizar settings");
         int i = Controlador.CONEXION.updateSetting(settings);
         if(i==-1)
             return false;
@@ -161,7 +162,7 @@ public class Controlador {
     }
 
     private void inicarFinalizarSettings(int iniciarJorjana, int finalizarJorjana, int enviarDatos, Date horaInicio, Date horaFin, Settings settings) {
-
+        FileLog.i(TAG, "inicializar o finalizar settings");
         settings.setJornadaIniciada(iniciarJorjana);
         settings.setJornadaFinalizada(finalizarJorjana);
         settings.setEnvioDatos(enviarDatos);
@@ -176,7 +177,6 @@ public class Controlador {
         if(settings==null){
             sesion = STATUS_SESION.SESION_NO_INICIADA;
         }else{
-            Log.i("sesion",settings.toString());
             String fecha = Complementos.getDateActualToString();
 
             if(!settings.getFecha().equals(fecha)){
@@ -194,7 +194,7 @@ public class Controlador {
             }
         }
 
-        Log.i("sesion",sesion.name());
+        FileLog.i(TAG, "status settings " + sesion);
         return sesion;
     }
 
@@ -218,11 +218,9 @@ public class Controlador {
 
         if(settings==null){
             setSetting(new Date(),new Date(0),0,1,0);
-            //Controlador.CONEXION.recrearTablacuadrillasRevisadas();
             status = STATUS_SESION.SESION_ACTIVA;
         }else{
             String fecha = Complementos.getDateActualToString();
-            Log.i("inicio", settings.getFecha() + " -- " + fecha);
             if(!settings.getFecha().equals(fecha)){
                 if(settings.getJornadaFinalizada()==0){
                     //finalizar asistencias
@@ -246,7 +244,6 @@ public class Controlador {
 
                 boolean b = actualizarSetting(settings);
                 if(b){
-                    //Controlador.CONEXION.recrearTablacuadrillasRevisadas();
                     status = STATUS_SESION.SESION_ACTIVA;
                 }else{
                     status = STATUS_SESION.SESION_NO_INICIADA;
@@ -260,7 +257,6 @@ public class Controlador {
             }
         }
 
-        Log.i("inicio", status + "---- iniciarSession");
         return status;
     }
 
@@ -320,7 +316,6 @@ public class Controlador {
     }
 
     public ArrayList<String> getSectores(){
-        Log.i("actividad","get sectores");
         return Controlador.CONEXION.getSectores();
     }
 
@@ -373,22 +368,13 @@ public class Controlador {
 
 
     public ArrayList<Cuadrillas> getCuadrillas(){
-        return Controlador.CONEXION.getCuadrillas();
+        return Controlador.CONEXION.getCuadrillas(getSettings().getFecha());
     }
 
     public ArrayList<Cuadrillas> getCuadrillasActivas() {
         String fecha = getSettings().getFecha();
         return Controlador.CONEXION.getCuadrillasActiva(fecha);
     }
-
-    /*public boolean setCuadrilla(Cuadrillas cuadrillas){
-
-        Long aLong = Controlador.CONEXION.addCuadrillaRevisada(cuadrillas);
-        if(aLong!=-1)
-            return true;
-        else
-            return false;
-    }*/
 
     public boolean updateCuadrilla(Cuadrillas cuadrilla) {
         int aLong = Controlador.CONEXION.updateCuadrilla(cuadrilla);
@@ -402,7 +388,6 @@ public class Controlador {
         try{
             int i = Integer.parseInt(cuadrilla);
             Integer consecutivo = Controlador.CONEXION.getConsecutivo(i);
-            Log.i("inicio","error "+consecutivo+" -- "+horaInicio);
             if(consecutivo==1 && !horaInicio.equals(""))
                 return true;
             else
@@ -431,11 +416,9 @@ public class Controlador {
 
     public void finalizarCuadrilla(Cuadrillas cuadrilla, String fin) {
         try {
-
             Settings settings = getSettings();
             Date date = new Date(Complementos.convertirStringAlong(settings.getFecha(), fin));
             cuadrilla.setFechaFin(date);
-
 
             ArrayList<ListaAsistencia> asistencia = getAsistencia(getSettings().getFecha(), cuadrilla);
             for (ListaAsistencia la : asistencia) {
@@ -461,20 +444,6 @@ public class Controlador {
         return Controlador.CONEXION.getAsistencia(fecha,trabajador);
     }
 
-    public boolean iniciarCuadrilla(String fecha, Cuadrillas cuadrilla) {
-
-        ArrayList<ListaAsistencia> a = getAsistencia(fecha, cuadrilla);
-
-        for (ListaAsistencia la : a) {
-
-            if(la.getAsistencia()==null){
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     public boolean finalizarAsistencias(Asistencia asistencia,Date fin){
         Boolean r = true;
 
@@ -488,17 +457,8 @@ public class Controlador {
             return false;
     }
 
-    public boolean setAsistencia(ListaAsistencia asistencia){
-        Boolean r = true;
 
-            Long aLong = Controlador.CONEXION.addAsistencia(new Asistencia(asistencia.getTrabajadores(), asistencia.getAsistencia().getPuesto(), asistencia.getAsistencia().getDateInicio(), asistencia.getAsistencia().getDateFin(), 0));
-            if(aLong == -1)
-                r = false;
-
-        return r;
-    }
-
-    public boolean setNuevasAsistencias(Cuadrillas cuadrilla, List<ListaAsistencia> trabajadores, String hora, String fecha) {
+    public boolean setNuevasAsistencias(Cuadrillas cuadrilla, List<ListaAsistencia> trabajadores, List<ActividadesRealizadas> actividadesRealizadas, String hora, String fecha) {
         Long aLong = Long.valueOf(-1);
         Date horainicio = new Date();
         try {
@@ -508,25 +468,37 @@ public class Controlador {
             return false;
         }
 
-        for (ListaAsistencia t : trabajadores) {
-            aLong = actualizarListaAsistencia(t);
-            if(aLong == -1){
-                borrarAsistencias(trabajadores,fecha);
-                break;
+        FileLog.i(TAG, "iniciar guardado de actividades realizadas");
+        boolean b = setActividadesRealizadas(actividadesRealizadas, cuadrilla.getCuadrilla());
+
+        if (b) {
+            FileLog.i(TAG, "iniciar guardado de asistencia");
+            for (ListaAsistencia t : trabajadores) {
+                aLong = actualizarListaAsistencia(t);
+                if (aLong == -1) {
+                    borrarAsistencias(trabajadores, fecha);
+                    break;
+                }
             }
+
+            if (aLong != -1) {
+                FileLog.i(TAG, "iniciar guardado de cuadrilla revisadas");
+                if (cuadrilla.getId() == null) {
+                    cuadrilla.setFechaInicio(horainicio);
+                    cuadrilla.setFechaFin(new Date(0));
+                    cuadrilla.setSended(0);
+                    Controlador.CONEXION.addCuadrillaRevisada(cuadrilla);
+                } else {
+                    FileLog.i(TAG, "error al guardar la cuadrilla");
+                }
+            } else {
+                FileLog.i(TAG, "error al guardar las asistencias");
+            }
+        } else {
+            FileLog.i(TAG, "error al guardar las actividades");
         }
 
-        if(aLong!=-1){
-            if (cuadrilla.getId() == null) {
-                cuadrilla.setFechaInicio(horainicio);
-                cuadrilla.setFechaFin(new Date(0));
-                cuadrilla.setSended(0);
-                Controlador.CONEXION.addCuadrillaRevisada(cuadrilla);
-            }
-        }
-
-
-        return true;
+        return b;
     }
 
     private Long actualizarListaAsistencia(ListaAsistencia listaAsistencia) {
@@ -569,14 +541,15 @@ public class Controlador {
         return Controlador.CONEXION.getActividadesRealizadas(fecha,cuadrillas);
     }
 
-    public boolean setActividadesRealizadas(ActividadesRealizadas actividadesRealizadas){
+    private boolean setActividadesRealizadas(List<ActividadesRealizadas> actividadesRealizadas, Integer cuadrilla) {
         Long aLong = Long.valueOf(-1);
-        if(actividadesRealizadas.getId()!=null){
-            int i = Controlador.CONEXION.updateActividadesRealizadas(actividadesRealizadas);
-            aLong = Long.valueOf(i);
-        }else{
-            aLong = Controlador.CONEXION.addActividadesRealizadas(actividadesRealizadas);
+
+        Controlador.CONEXION.deleteMallasRealizadas(getSettings().getFecha(), cuadrilla.toString());
+
+        for (ActividadesRealizadas lar : actividadesRealizadas) {
+            aLong = Controlador.CONEXION.addActividadesRealizadas(lar);
         }
+
 
         if(aLong!=-1)
             return true;
@@ -590,5 +563,19 @@ public class Controlador {
 
     public int updateActividadesRealizadas(ActividadesRealizadas actividadRealizada) {
         return Controlador.CONEXION.updateActividadesRealizadas(actividadRealizada);
+    }
+
+    public void deleteListaAsistencia(Cuadrillas cuadrilla) {
+        String fecha = getSettings().getFecha();
+        ArrayList<ListaAsistencia> asistencia = getAsistencia(fecha, cuadrilla);
+        String ids = "";
+        for (ListaAsistencia la : asistencia) {
+            ids += la.getAsistencia().getId() + ",";
+        }
+
+        ids = ids.substring(0, ids.length() - 1);
+
+        Controlador.CONEXION.deletePaseLista(cuadrilla.getCuadrilla().toString(), fecha, ids);
+
     }
 }

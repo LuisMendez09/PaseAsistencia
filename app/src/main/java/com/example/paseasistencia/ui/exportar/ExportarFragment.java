@@ -1,6 +1,5 @@
 package com.example.paseasistencia.ui.exportar;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,27 +20,29 @@ import androidx.navigation.Navigation;
 import com.example.paseasistencia.R;
 import com.example.paseasistencia.controlador.Controlador;
 import com.example.paseasistencia.controlador.EnviarDatos;
+import com.example.paseasistencia.controlador.FileLog;
 import com.example.paseasistencia.controlador.IactualizacionDatos;
 import com.example.paseasistencia.model.Cuadrillas;
 import com.example.paseasistencia.ui.finalizarCuadrilla.FinalizarCuadrillaModel;
 
 import java.util.List;
-import java.util.Objects;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ExportarFragment extends Fragment implements IactualizacionDatos {
-    private FinalizarCuadrillaModel viewModel;
+    private static final String TAG = "ExportarFragment";
     private Button btnAceptar;
     private TextView tvMensaje;
     private ProgressBar progressBar;
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_exportar, container, false);
+        FileLog.v(TAG, "iniciar ExportarFragment");
 
         btnAceptar = root.findViewById(R.id.btn_guardar);
         tvMensaje = root.findViewById(R.id.tv_mensajes);
@@ -54,16 +55,14 @@ public class ExportarFragment extends Fragment implements IactualizacionDatos {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.i("finalizar", "view create " + view.toString());
 
-        viewModel = ViewModelProviders.of(requireActivity()).get(FinalizarCuadrillaModel.class);
+        FinalizarCuadrillaModel viewModel = ViewModelProviders.of(requireActivity()).get(FinalizarCuadrillaModel.class);
 
         final NavController navController = Navigation.findNavController(view);
 
         viewModel.getmCuadrillasData(getContext()).observe(getViewLifecycleOwner(), new Observer<List<Cuadrillas>>() {
             @Override
             public void onChanged(List<Cuadrillas> cuadrillas) {
-                Log.i("finalizar", "view create -----");
                 if (cuadrillas.size() > 0) {
                     navController.navigate(R.id.nav_finalizarCuadrilla);
                 }
@@ -74,6 +73,7 @@ public class ExportarFragment extends Fragment implements IactualizacionDatos {
             @Override
             public void onClick(View v) {
                 //iniciar el envio
+                FileLog.i(TAG, "iniciar envios de datos");
                 EnviarDatos ed = new EnviarDatos(ExportarFragment.this, ExportarFragment.this.getContext());
                 ed.execute();
             }

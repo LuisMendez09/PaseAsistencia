@@ -1,8 +1,6 @@
 package com.example.paseasistencia.ui.actividad;
 
-import android.app.AlertDialog;
 import android.app.Application;
-import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -14,22 +12,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.paseasistencia.R;
 import com.example.paseasistencia.complementos.Complementos;
 import com.example.paseasistencia.controlador.Controlador;
-import com.example.paseasistencia.model.Actividades;
-import com.example.paseasistencia.model.ActividadesRealizadas;
+import com.example.paseasistencia.controlador.FileLog;
 import com.example.paseasistencia.model.Cuadrillas;
 import com.example.paseasistencia.model.ListaAsistencia;
-import com.example.paseasistencia.model.Mallas;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,21 +34,18 @@ import java.util.Objects;
  * A simple {@link Fragment} subclass.
  */
 public class ActividadesFragment extends Fragment {
-    ActividadesViewModel viewModel;
-    Cuadrillas cuadrillas;
-    ListaAsistencia listaAsistencia [];
-    ActividadesResalizadasAdapter actividadesResalizadasAdapter;
-    actividadXmallaAdapter mallasAdapter;
+    private ActividadesViewModel viewModel;
+    private Cuadrillas cuadrillas;
+    private ListaAsistencia listaAsistencia[];
+    private ActividadesResalizadasAdapter actividadesResalizadasAdapter;
+    private static final String TAG = "ActividadesFragment";
 
-
-    public ActividadesFragment() {
-        // Required empty public constructor
-    }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        FileLog.i(TAG, "iniciar ActividadesFragment");
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_actividades, container, false);
         final TextView tvCuadrilla = view.findViewById(R.id.tv_cuadrilla);
@@ -67,6 +58,7 @@ public class ActividadesFragment extends Fragment {
 
 
         cuadrillas = ActividadesFragmentArgs.fromBundle(Objects.requireNonNull(getArguments())).getCuadrilla();
+
         listaAsistencia  = ActividadesFragmentArgs.fromBundle(Objects.requireNonNull(getArguments())).getTrabajadores();
         String asistencia = ActividadesFragmentArgs.fromBundle(Objects.requireNonNull(getArguments())).getAsistencia();
 
@@ -82,8 +74,16 @@ public class ActividadesFragment extends Fragment {
                 tvAsistencia.setText(viewModel.getTotalAsistencia());
 
                 Controlador c = Controlador.getInstance(ActividadesFragment.this.getContext());
-                actividadesResalizadasAdapter = new ActividadesResalizadasAdapter(ActividadesFragment.this.getContext(),c.getActividadesResalizadas(c.getSettings().getFecha(),cuadrillas));
+                actividadesResalizadasAdapter = new ActividadesResalizadasAdapter(ActividadesFragment.this.getContext(), new ArrayList<ListaActividades>(), c.getActividadesResalizadas(c.getSettings().getFecha(), cuadrillas));
                 lvActividades.setAdapter(actividadesResalizadasAdapter);
+                lvActividades.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        //editar
+                        new DialogAddActividad(actividadesResalizadasAdapter/*,item.getActividad().getNombre(),item.getTipoActividad(),item.getSector(),ActividadesFragment.*/, position, ActividadesFragment.this.cuadrillas)
+                                .show(getActivity().getSupportFragmentManager(), "nuevaActividad");
+                    }
+                });
 
             }
         });
@@ -109,85 +109,23 @@ public class ActividadesFragment extends Fragment {
 
 
     private void agregarActividad(){
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
-
-        LayoutInflater layoutInflater = this.getActivity().getLayoutInflater();
-        View viewDialog = layoutInflater.inflate(R.layout.dialog_add_actividad,null);
-
-        final Spinner sp_actividad = viewDialog.findViewById(R.id.sp_actividad);
-        final Spinner sp_tipoActividad = viewDialog.findViewById(R.id.sp_tipoActividad);
-        Button btn_agregar = viewDialog.findViewById(R.id.btn_agregar);
-        ListView lv_actividades = viewDialog.findViewById(R.id.lv_mallas);
-
-        ArrayAdapter<Actividades> actividadesAdapter = new ArrayAdapter<>(this.getContext(),R.layout.support_simple_spinner_dropdown_item,Controlador.getInstance(this.getContext()).getActividades());
-        sp_actividad.setAdapter(actividadesAdapter);
-
-
-        ArrayAdapter<String> tipoActividadAdapter = new ArrayAdapter<>(this.getContext(),R.layout.support_simple_spinner_dropdown_item,Controlador.TIPOS_ACTIVIDADES);
-        sp_tipoActividad.setAdapter(tipoActividadAdapter);
-
-        mallasAdapter = new actividadXmallaAdapter(this.getContext(),actividadesResalizadasAdapter.getMallasList(""));
-        lv_actividades.setAdapter(mallasAdapter);
-
-        btn_agregar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if(sp_tipoActividad.getSelectedItemPosition()!=0){
-                    Log.i("actividad","agregar sector y malla "+mallasAdapter.getMallasSeleccionadas().size());
-
-                    mallasAdapter.add(new Mallas("0000","No Seleccionado","No Seleccionado"));
-                    //mallasAdapter.notifyDataSetChanged();
-                }else{
-                    Snackbar.make(v, "tipo tarea no valido", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
-
-            }
-        });
-
-        builder.setView(viewDialog)
-                .setPositiveButton(R.string.btn_guardar, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //guardar los cambios en el adapter
-                        List<Mallas>  seleccion = mallasAdapter.getMallasSeleccionadas();
-
-                        for(Mallas m : seleccion){
-                            actividadesResalizadasAdapter.add(new ActividadesRealizadas(cuadrillas.getCuadrilla(),(Actividades) sp_actividad.getSelectedItem(),m,Controlador.getInstance(ActividadesFragment.this.getContext()).getSettings().getFecha(),sp_tipoActividad.getSelectedItemPosition(),0));
-                        }
-                        Log.i("guardar",seleccion.size()+"---"+actividadesResalizadasAdapter.getCount());
-                    }
-                })
-                .setNegativeButton(R.string.btn_cancelar, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //
-                    }
-                })
-                .create()
-                .show();
+        FileLog.i(TAG, "agregar nueva actividad");
+        new DialogAddActividad(this.actividadesResalizadasAdapter, -1/*"",-1,""*/, this.cuadrillas).show(getActivity().getSupportFragmentManager(), "nuevaActividad");
     }
 
     private void guardarRegistros(){
         boolean b = false;
         if (actividadesResalizadasAdapter.getCount() > 0) {
+            FileLog.i(TAG, "iniciar guardado de los cambio");
             Controlador c = Controlador.getInstance(this.getContext());
 
             List<ListaAsistencia> t = Arrays.asList(listaAsistencia);
-            b = c.setNuevasAsistencias(cuadrillas, t, Complementos.obtenerHoraString(cuadrillas.getFechaInicio()), cuadrillas.getFecha());
-
-
-            if (b) {//ingresa las actividades realizadas
-                ArrayList<ActividadesRealizadas> act = new ArrayList<>();
-                for (ActividadesRealizadas ar : actividadesResalizadasAdapter.getActividades()) {
-
-                    b = c.setActividadesRealizadas(ar);
-                }
-            }
+            b = c.setNuevasAsistencias(cuadrillas, t, actividadesResalizadasAdapter.getActividadesRealizadas(), Complementos.obtenerHoraString(cuadrillas.getFechaInicio()), cuadrillas.getFecha());
 
             if (b)
                 NavHostFragment.findNavController(ActividadesFragment.this).popBackStack(R.id.nav_homeFragmen, false);
+        } else {
+            FileLog.i(TAG, "sin actividades agregadas");
         }
 
     }

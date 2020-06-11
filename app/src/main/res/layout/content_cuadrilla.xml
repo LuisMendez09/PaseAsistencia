@@ -7,62 +7,74 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:background="@color/colorImput"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/detail_cuadrilla_name_text_view"
-            android:layout_width="130dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.1"
-            android:gravity="center"
-            android:textSize="@dimen/size_titulos"
-            android:text="TextView"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
-            android:textColor="@color/colorPrimary" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/trabajador"
-            android:layout_width="253dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.9"
-            android:gravity="center"
-            android:textSize="@dimen/size_titulos"
-            android:text="Motorcycle"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
-            android:textColor="@color/colorPrimary" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="50sp"
-            android:layout_weight="0.4"
-            android:textSize="@dimen/size_titulos"
-            android:textAlignment="textEnd"
-            android:text="ASISTENCIAS: "/>
+            <TextView
+                android:id="@+id/detail_cuadrilla_name_text_view"
+                android:layout_width="130dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.1"
+                android:gravity="center"
+                android:text="TextView"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/size_titulos" />
 
-        <TextView
-            android:id="@+id/tv_asistencia"
-            android:layout_width="0dp"
-            android:layout_height="50sp"
-            android:layout_weight="0.4"
-            android:text=""
-            android:textSize="@dimen/size_titulos" />
+            <TextView
+                android:id="@+id/trabajador"
+                android:layout_width="253dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.9"
+                android:gravity="center"
+                android:text="Motorcycle"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/size_titulos" />
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/btn_guardar"
-            android:layout_width="0dp"
-            android:layout_height="50sp"
-            android:layout_weight="0.2"
-            android:text="@string/btn_continuar" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_bottom">
+
+            <TextView
+                android:layout_width="0sp"
+                android:layout_height="50sp"
+                android:layout_weight="0.4"
+                android:text="ASISTENCIAS: "
+                android:textAlignment="textEnd"
+                android:textSize="@dimen/size_titulos" />
+
+            <TextView
+                android:id="@+id/tv_asistencia"
+                android:layout_width="0sp"
+                android:layout_height="50sp"
+                android:layout_weight="0.5"
+                android:text=""
+                android:textSize="@dimen/size_titulos" />
+
+            <Button
+                android:id="@+id/btn_guardar"
+                android:layout_width="0sp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.1"
+                android:background="@drawable/buttom_redondo"
+                android:drawableEnd="@drawable/ic_queue_play_next_24px"
+                android:paddingRight="@dimen/marginButtom_right" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
     <ListView
         android:id="@+id/lv_lista_cuadrilla"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/margin_top"/>
+        android:layout_height="match_parent" />
 
 </LinearLayout>

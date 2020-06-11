@@ -13,8 +13,6 @@ import com.example.paseasistencia.controlador.Controlador;
 public class ExportarViewModel extends ViewModel {
 
     private MutableLiveData<Integer> totalCuadrillasPendientes = new MutableLiveData<>();
-    //private Controlador controlador;
-    //private Context context;
 
 
     public ExportarViewModel(/*@NonNull Application application*/) {

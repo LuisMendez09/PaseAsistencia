@@ -5,10 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
+import android.text.LoginFilter;
 import android.util.Log;
 
 
 import com.example.paseasistencia.complementos.KeyValues;
+import com.example.paseasistencia.controlador.FileLog;
 import com.example.paseasistencia.model.Actividades;
 import com.example.paseasistencia.model.ActividadesRealizadas;
 import com.example.paseasistencia.model.Asistencia;
@@ -120,15 +123,18 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String KEY_TIPOACTIVIDAD_ACTIVIDADESREALIZADAS = "TipoActividad";
     private static final String KEY_SENDED_ACTIVIDADESREALIZADAS = "Enviado";
 
+    private static final String TAG = "DBHandler";
     //private SQLiteDatabase db;
 
     public DBHandler(final Context context) {
 
         super(new DatabaseContext(context), KeyValues.MY_DATABASE_NAME+KeyValues.EXTENCIO_DATABASE, null, KeyValues.DATABASE_VERSION);
+        FileLog.i(TAG, "iniciar db");
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        FileLog.i(TAG, "creacion de tablas");
 
         String CREATE_CONFIGURACION_TABLE = "CREATE TABLE " + TABLE_CONFIGURACION + "("
                 +KEY_ID_CONFIGURACION + " INTEGER PRIMARY KEY,"
@@ -237,6 +243,8 @@ public class DBHandler extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        FileLog.i(TAG, "actualizacion de tablas");
+
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONFIGURACION);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SETTINGS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MALLAS);
@@ -253,7 +261,7 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public void recrearTablaListaPuestos(){
-        Log.v("RecrearPuestos","REINICIAR LA TABLA ListaPuestos");
+        FileLog.i(TAG, "REINICIAR LA TABLA ListaPuestos");
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PUESTOS);
 
@@ -265,7 +273,7 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public void recrearTablaListaActividades(){
-        Log.v("RecrearPuestos","REINICIAR LA TABLA Actividades");
+        FileLog.v(TAG, "REINICIAR LA TABLA Actividades");
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACTIVIDADES);
 
@@ -277,7 +285,7 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public void recrearTablaListaMallas(){
-        Log.v("RecrearPuestos","REINICIAR LA TABLA mallas");
+        FileLog.v(TAG, "REINICIAR LA TABLA mallas");
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MALLAS);
 
@@ -290,26 +298,8 @@ public class DBHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_CATOLOGO_MALLAS);
     }
 
-    /*public void recrearTablacuadrillasRevisadas(){
-        Log.v("RecrearPuestos","REINICIAR LA TABLA mallas");
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CUADRILLAS_REVISADAS);
-
-        String CREATE_TABLE_CUADRILLASREVISADAS = "CREATE TABLE "+ TABLE_CUADRILLAS_REVISADAS + " ("
-                +KEY_ID_CUADRILLASREVISADAS + " INTEGER PRIMARY KEY,"
-                +KEY_CUADRILLA_CUADRILLASREVISADAS + " Integer,"
-                +KEY_RESPONSABLE_CUADRILLASREVISADAS + " TEXT,"
-                +KEY_DATEINICIO_CUADRILLASREVISADAS + " Integer,"
-                +KEY_FECHA_CUADRILLASREVISADAS+" TEXT,"
-                +KEY_DATEFIN_CUADRILLASREVISADAS + " Integer,"
-                +KEY_SENDED_CUADRILLASREVISADAS +" Integer"
-                +")";
-
-        db.execSQL(CREATE_TABLE_CUADRILLASREVISADAS);
-    }*/
-
     public void recrearTablaListaPermisos(){
-        Log.v("RecrearPuestos","REINICIAR LA TABLA mallas");
+        FileLog.v(TAG, "REINICIAR LA TABLA mallas");
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TIPOS_PERMISOS);
 
@@ -321,7 +311,7 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public void recrearTablaListaTrabajadores(){
-        Log.v("RecrearPuestos","REINICIAR LA TABLA trabajadores");
+        FileLog.v(TAG, "REINICIAR LA TABLA trabajadores");
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRABAJADORES);
 
@@ -338,13 +328,6 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     /*******************************ADD*******************************************************/
-    /*private void iniciarConexion(){
-        db = this.getWritableDatabase();
-    }*/
-
-    /*private void cerrarConexion(){
-        db.close(); // Closing database connection
-    }*/
 
     /***
      * inserta configuracion
@@ -352,6 +335,7 @@ public class DBHandler extends SQLiteOpenHelper {
      * @return return -1 si corrio un error de lo contrara retortar un valor mayor que 0
      */
     public Long addConfiguracion(Configuracion configuracion){
+        FileLog.i(TAG, "agregar configuracion " + configuracion.toString());
         SQLiteDatabase  db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -362,7 +346,7 @@ public class DBHandler extends SQLiteOpenHelper {
         if(insert !=-1)
             configuracion.setId(insert);
         else
-            Log.e("ERROR_DB","error en la inserion de datos en la tabla"+ TABLE_CONFIGURACION);
+            FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_CONFIGURACION);
 
         db.close();
 
@@ -370,6 +354,7 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public Long addSettings(Settings settings){
+        FileLog.i(TAG, "agregar settings " + settings.toString());
         SQLiteDatabase  db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -387,7 +372,7 @@ public class DBHandler extends SQLiteOpenHelper {
         if(insert !=-1)
             settings.setId(insert);
         else
-            Log.e("ERROR_DB","error en la inserion de datos en la tabla"+ TABLE_SETTINGS);
+            FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_SETTINGS);
 
         db.close();
 
@@ -395,6 +380,7 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public Long addMallas(Mallas mallas){
+        FileLog.i(TAG, "agregar Mallas " + mallas.toString());
         SQLiteDatabase  db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -405,7 +391,7 @@ public class DBHandler extends SQLiteOpenHelper {
         Long insert = db.insert(TABLE_MALLAS, null, values);
 
         if(insert == -1)
-            Log.e("ERROR_DB","error en la inserion de datos en la tabla"+ TABLE_MALLAS);
+            FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_MALLAS);
 
         db.close();
 
@@ -413,6 +399,7 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public Long addPuestos(Puestos puestos){
+        FileLog.i(TAG, "agregar catalogo Puestos " + puestos.toString());
         SQLiteDatabase  db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -424,7 +411,7 @@ public class DBHandler extends SQLiteOpenHelper {
         if(insert !=-1)
             puestos.setId(Integer.valueOf(insert.toString()));
         else
-            Log.e("ERROR_DB","error en la inserion de datos en la tabla"+ TABLE_PUESTOS);
+            FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_PUESTOS);
 
         db.close();
 
@@ -432,6 +419,7 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public Long addTiposPermisos(TiposPermisos tiposPermisos){
+        FileLog.i(TAG, "agregar catalogo Tipos de permisos " + tiposPermisos.toString());
         SQLiteDatabase  db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -443,7 +431,7 @@ public class DBHandler extends SQLiteOpenHelper {
         if(insert !=-1)
             tiposPermisos.setId(Integer.parseInt(insert.toString()));
         else
-            Log.e("ERROR_DB","error en la inserion de datos en la tabla"+ TABLE_TIPOS_PERMISOS);
+            FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_TIPOS_PERMISOS);
 
         db.close();
 
@@ -451,6 +439,7 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public Long addActividad(Actividades actividades){
+        FileLog.i(TAG, "agregar catalogo actividades " + actividades.toString());
         SQLiteDatabase  db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -462,7 +451,7 @@ public class DBHandler extends SQLiteOpenHelper {
         if(insert !=-1)
             actividades.setId(insert);
         else
-            Log.e("ERROR_DB","error en la inserion de datos en la tabla"+ TABLE_ACTIVIDADES);
+            FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_ACTIVIDADES);
 
         db.close();
 
@@ -470,10 +459,10 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public Long addTrabajador(Trabajadores trabajadores){
+        FileLog.i(TAG, "agregar trabajador " + trabajadores.toString());
         SQLiteDatabase  db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        //values.put(KEY_ID_TRABAJADORES,trabajadores.getId());
         values.put(KEY_CONSECUTIVO_TRABAJADORES,trabajadores.getConsecutivo());
         values.put(KEY_CUADRILLA_TRABAJADORES,trabajadores.getCuadrilla());
         values.put(KEY_NOMBRE_TRABAJADORES,trabajadores.getNombre());
@@ -486,7 +475,7 @@ public class DBHandler extends SQLiteOpenHelper {
         if(insert !=-1)
             trabajadores.setId(Integer.parseInt(insert.toString()));
         else
-            Log.e("ERROR_DB","error en la inserion de datos en la tabla"+ TABLE_TRABAJADORES);
+            FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_TRABAJADORES);
 
         db.close();
 
@@ -494,6 +483,7 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public Long addReportes(Reportes reportes){
+        FileLog.i(TAG, "agregar reporte " + reportes.toString());
         SQLiteDatabase  db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -510,7 +500,7 @@ public class DBHandler extends SQLiteOpenHelper {
         if(insert !=-1)
             reportes.setId(insert);
         else
-            Log.e("ERROR_DB","error en la inserion de datos en la tabla"+ TABLE_REPORTES);
+            FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_REPORTES);
 
         db.close();
 
@@ -518,7 +508,7 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public Long addAsistencia(Asistencia asistencia){
-
+        FileLog.i(TAG, "agregar Asistencia " + asistencia.toString1());
         SQLiteDatabase  db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -537,7 +527,7 @@ public class DBHandler extends SQLiteOpenHelper {
         if(insert !=-1)
             asistencia.setId(insert);
         else
-            Log.e("ERROR_DB","error en la inserion de datos en la tabla"+ TABLE_ASISTENCIA);
+            FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_ASISTENCIA);
 
         db.close();
 
@@ -545,10 +535,12 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public Long addActividadesRealizadas(ActividadesRealizadas actividadesRealizadas){
+        FileLog.i(TAG, "agregar actividades realizadas " + actividadesRealizadas.toString());
         SQLiteDatabase  db = this.getWritableDatabase();
+
         ContentValues values = new ContentValues();
 
-        values.put(KEY_ID_ACTIVIDADESREALIZADAS,actividadesRealizadas.getId());
+        //values.put(KEY_ID_ACTIVIDADESREALIZADAS,actividadesRealizadas.getId());
         values.put(KEY_CUADRILLA_ACTIVIDADESREALIZADAS,actividadesRealizadas.getCuadrlla());
         values.put(KEY_IDACTIVIDAD_ACTIVIDADESREALIZADAS,actividadesRealizadas.getActividad().getId());
         values.put(KEY_IDMALLA_ACTIVIDADESREALIZADAS,actividadesRealizadas.getMalla().getId());
@@ -561,17 +553,16 @@ public class DBHandler extends SQLiteOpenHelper {
         if(insert !=-1)
             actividadesRealizadas.setId(insert);
         else
-            Log.e("ERROR_DB","error en la inserion de datos en la tabla"+ TABLE_ACTIVIDADES_REALIZADAS);
+            FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_ACTIVIDADES_REALIZADAS);
 
         db.close();
-
         return insert;
     }
 
     public Long addCuadrillaRevisada(Cuadrillas cuadrillas){
+        FileLog.i(TAG, "agregar actividades realizadas " + cuadrillas.toString());
         SQLiteDatabase  db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-
 
         values.put(KEY_CUADRILLA_CUADRILLASREVISADAS,cuadrillas.getCuadrilla());
         values.put(KEY_RESPONSABLE_CUADRILLASREVISADAS,cuadrillas.getMayordomo());
@@ -585,7 +576,7 @@ public class DBHandler extends SQLiteOpenHelper {
         if(insert !=-1)
             cuadrillas.setId(Integer.valueOf(insert.toString()));
         else
-            Log.e("ERROR_DB","error en la inserion de datos en la tabla"+ TABLE_CUADRILLAS_REVISADAS);
+            FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_CUADRILLAS_REVISADAS);
 
         db.close();
 
@@ -593,6 +584,7 @@ public class DBHandler extends SQLiteOpenHelper {
     }
     /*******************************GET*******************************************************/
     public Integer getTotalPendientePorEnviar() {
+        FileLog.i(TAG, "obtener numero de registros pendientes por enviar");
         Integer total = null;
 
         String selectQuery1 = "SELECT Count(*) FROM " + TABLE_TRABAJADORES + " WHERE " + KEY_SENDED_TRABAJADORES + " = 0";
@@ -639,11 +631,12 @@ public class DBHandler extends SQLiteOpenHelper {
         return total;
     }
 
-    public Cuadrillas getCuadrilla(String c) {
-
+    public Cuadrillas getCuadrilla(String c, String fecha) {
+        FileLog.i(TAG, "obtener cuadrilla " + c + " de la fecha " + fecha);
         Cuadrillas cuadrillas = null;
 
-        String selectQuery = "SELECT * FROM " + TABLE_CUADRILLAS_REVISADAS +" WHERE "+KEY_CUADRILLA_CUADRILLASREVISADAS+" = '"+c+"' ";
+        String selectQuery = "SELECT * FROM " + TABLE_CUADRILLAS_REVISADAS + " WHERE " + KEY_CUADRILLA_CUADRILLASREVISADAS + " = '" + c + "' AND " + KEY_FECHA_CUADRILLASREVISADAS + " = '" + fecha + "'";
+
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
@@ -657,12 +650,12 @@ public class DBHandler extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         if(cuadrillas != null)
-            Log.v("RESULTADO_DB",cuadrillas.toString());
+            FileLog.v(TAG, cuadrillas.toString());
         return cuadrillas;
     }
 
     public Configuracion getConfiguracion(Long id) {
-
+        FileLog.i(TAG, "obtener configuracion ");
         Configuracion configuracion = null;
 
         String selectQuery = "SELECT * FROM " + TABLE_CONFIGURACION +" WHERE "+KEY_ID_CONFIGURACION+" = '"+id+"' ";
@@ -679,12 +672,12 @@ public class DBHandler extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         if(configuracion != null)
-            Log.v("RESULTADO_DB",configuracion.toString());
+            FileLog.v(TAG, configuracion.toString());
         return configuracion;
     }
 
     public Settings getSetting(Long id) {
-
+        FileLog.i(TAG, "obtener settings ");
         Settings settings = null;
 
         String selectQuery = "SELECT * FROM " + TABLE_SETTINGS +" WHERE "+KEY_ID_SETTINGS+" = '"+id+"' ";
@@ -701,12 +694,12 @@ public class DBHandler extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         if(settings != null)
-            Log.v("RESULTADO_DB" ,settings.toString());
+            FileLog.v(TAG, settings.toString());
         return settings;
     }
 
     public Mallas getMallas(String id) {
-
+        FileLog.i(TAG, "obtener malla id" + id);
         Mallas mallas = null;
 
         String selectQuery = "SELECT * FROM " + TABLE_MALLAS +" WHERE "+KEY_ID_MALLAS+" = '"+id+"' ";
@@ -723,13 +716,13 @@ public class DBHandler extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         if(mallas != null)
-            Log.v("RESULTADO_DB" ,mallas.toString());
+            FileLog.v(TAG, mallas.toString());
 
         return mallas;
     }
 
     public ArrayList<Mallas> getMallas() {
-
+        FileLog.i(TAG, "obtener catalogo de mallas");
         ArrayList<Mallas> mallas = new ArrayList<Mallas>() ;
 
         String selectQuery = "SELECT * FROM " + TABLE_MALLAS +" ORDER BY "+KEY_ID_MALLAS;
@@ -746,13 +739,13 @@ public class DBHandler extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         if(mallas.size() !=  0)
-            Log.v("RESULTADO_DB" ,""+mallas.size());
+            FileLog.v(TAG, "" + mallas.size());
 
         return mallas;
     }
 
     public ArrayList<String> getSectores() {
-
+        FileLog.i(TAG, "obtener catalogo de sectores");
         ArrayList<String> sectores = new ArrayList<String>() ;
 
         String selectQuery = "SELECT "+KEY_SECTOR_MALLAS+" FROM " + TABLE_MALLAS +" GROUP BY "+KEY_SECTOR_MALLAS;
@@ -769,13 +762,13 @@ public class DBHandler extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         if(sectores.size() !=  0)
-            Log.v("RESULTADO_DB" ,""+sectores.size());
+            FileLog.v(TAG, "" + sectores.size());
 
         return sectores;
     }
 
     public ArrayList<Mallas> getMallasXsector(String sector) {
-
+        FileLog.i(TAG, "obtener catalogo de mallas del sector " + sector);
         ArrayList<Mallas> mallas = new ArrayList<Mallas>() ;
 
         String selectQuery = "SELECT * FROM " + TABLE_MALLAS +" WHERE "+KEY_SECTOR_MALLAS+" = '"+sector+"'";
@@ -792,13 +785,13 @@ public class DBHandler extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         if(mallas.size() !=  0)
-            Log.v("RESULTADO_DB" ,""+mallas.size());
+            FileLog.v(TAG, "" + mallas.size());
 
         return mallas;
     }
 
     public Puestos getPuestos(Integer id) {
-
+        FileLog.i(TAG, "obtener puestos id " + id);
         Puestos puesto = null;
 
         String selectQuery = "SELECT * FROM " + TABLE_PUESTOS +" WHERE "+KEY_ID_PUESTOS+" = '"+id+"' ";
@@ -817,13 +810,13 @@ public class DBHandler extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         if(puesto != null)
-            Log.v("RESULTADO_DB" ,puesto.toString());
+            FileLog.v(TAG, puesto.toString());
 
         return puesto;
     }
 
     public Puestos getPuestos(String descripcion) {
-
+        FileLog.i(TAG, "obtener puesto descripcion " + descripcion);
         Puestos puesto = null;
 
         String selectQuery = "SELECT * FROM " + TABLE_PUESTOS +" WHERE "+KEY_DESCRIPCION_PUESTOS+" = '"+descripcion+"' ";
@@ -845,13 +838,13 @@ public class DBHandler extends SQLiteOpenHelper {
         }
 
         if(puesto != null)
-            Log.v("RESULTADO_DB" ,puesto.toString());
+            FileLog.v(TAG, puesto.toString());
 
         return puesto;
     }
 
     public ArrayList<Puestos> getPuestos() {
-
+        FileLog.i(TAG, "obtener lista de puestos");
         ArrayList<Puestos> puestos = new ArrayList<>() ;
 
         String selectQuery = "SELECT * FROM " + TABLE_PUESTOS +" ORDER BY "+KEY_DESCRIPCION_PUESTOS;
@@ -867,14 +860,14 @@ public class DBHandler extends SQLiteOpenHelper {
 
         cursor.close();
         db.close();
-        if(puestos.size() ==  0)
-            Log.v("RESULTADO_DB" ,""+puestos.size());
+        if (puestos.size() != 0)
+            FileLog.v(TAG, "" + puestos.size());
 
         return puestos;
     }
 
     public TiposPermisos getTiposPermisos(Long id) {
-
+        FileLog.i(TAG, "obtener tipo de permiso id" + id);
         TiposPermisos tiposPermiso = null;
 
         String selectQuery = "SELECT * FROM " + TABLE_TIPOS_PERMISOS +" WHERE "+KEY_ID_TIPOSPERMISOS+" = '"+id+"' ";
@@ -891,13 +884,13 @@ public class DBHandler extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         if(tiposPermiso != null)
-            Log.v("RESULTADO_DB" ,tiposPermiso.toString());
+            FileLog.v(TAG, tiposPermiso.toString());
 
         return tiposPermiso;
     }
 
     public ArrayList<TiposPermisos> getTiposPermisos() {
-
+        FileLog.i(TAG, "obtener catalogo de tipo de permisos");
         ArrayList<TiposPermisos> tiposPermisos = new ArrayList<>() ;
 
         String selectQuery = "SELECT * FROM " + TABLE_TIPOS_PERMISOS +" ORDER BY "+KEY_DESCRIPCION_TIPOSPERMISOS;
@@ -913,13 +906,14 @@ public class DBHandler extends SQLiteOpenHelper {
 
         cursor.close();
         db.close();
-        if(tiposPermisos.size() ==  0)
-            Log.v("RESULTADO_DB" ,""+tiposPermisos.size());
+        if (tiposPermisos.size() != 0)
+            FileLog.v(TAG, "" + tiposPermisos.size());
 
         return tiposPermisos;
     }
-    public Actividades getActividades(Long id) {
 
+    public Actividades getActividades(Long id) {
+        FileLog.i(TAG, "obtener actividad id" + id);
         Actividades actividad = null;
 
         String selectQuery = "SELECT * FROM " + TABLE_ACTIVIDADES +" WHERE "+KEY_ID_ACTIVIDADES+" = '"+id+"' ";
@@ -936,13 +930,13 @@ public class DBHandler extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         if(actividad != null)
-            Log.v("RESULTADO_DB" ,actividad.toString());
+            FileLog.v(TAG, actividad.toString());
 
         return actividad;
     }
 
     public ArrayList<Actividades> getActividades() {
-
+        FileLog.i(TAG, "obtener catalogo de actividades");
         ArrayList<Actividades> actividades = new ArrayList<>() ;
 
         String selectQuery = "SELECT * FROM " + TABLE_ACTIVIDADES +" ORDER BY "+KEY_DESCRIPCION_ACTIVIDADES;
@@ -958,14 +952,14 @@ public class DBHandler extends SQLiteOpenHelper {
 
         cursor.close();
         db.close();
-        if(actividades.size() ==  0)
-            Log.v("RESULTADO_DB" ,""+actividades.size());
+        if (actividades.size() != 0)
+            FileLog.v(TAG, "" + actividades.size());
 
         return actividades;
     }
 
     public Trabajadores getTrabajadores(Long id) {
-
+        FileLog.i(TAG, "obtener trabajadore id" + id);
         Trabajadores trabajador = null;
 
         String selectQuery = "SELECT * FROM " + TABLE_TRABAJADORES +" WHERE "+KEY_ID_TRABAJADORES+" = '"+id+"' ";
@@ -982,18 +976,18 @@ public class DBHandler extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         if(trabajador != null)
-            Log.v("RESULTADO_DB" ,trabajador.toString());
+            FileLog.v(TAG, trabajador.toString());
 
         return trabajador;
     }
 
     public Trabajadores getTrabajadores(Integer cuadrilla,Integer consecutivo) {
-
+        FileLog.i(TAG, "obtener trabajador cuadrilla " + cuadrilla + " consecutivo " + consecutivo);
         Trabajadores trabajador = null;
 
         String selectQuery = "SELECT * FROM " + TABLE_TRABAJADORES +" WHERE "+KEY_CUADRILLA_TRABAJADORES+" = '"+cuadrilla+"' AND "+KEY_CONSECUTIVO_TRABAJADORES+" = "+consecutivo;
         SQLiteDatabase db = this.getWritableDatabase();
-        Log.i("sql",selectQuery);
+
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
@@ -1006,13 +1000,13 @@ public class DBHandler extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         if(trabajador != null)
-            Log.v("RESULTADO_DB" ,trabajador.toString());
+            FileLog.v(TAG, trabajador.toString());
 
         return trabajador;
     }
 
     public Integer getConsecutivo(Integer cuadrilla) {
-
+        FileLog.i(TAG, "obtener ultimo consecutivo cuadrilla" + cuadrilla);
         Integer consecutivo=0;
 
         String selectQuery = "SELECT "+KEY_CONSECUTIVO_TRABAJADORES+" FROM " + TABLE_TRABAJADORES +" WHERE "+KEY_CUADRILLA_TRABAJADORES+" = '"+cuadrilla+"' ORDER BY "+KEY_CONSECUTIVO_TRABAJADORES +" desc limit 1";
@@ -1028,12 +1022,12 @@ public class DBHandler extends SQLiteOpenHelper {
 
         cursor.close();
         db.close();
-
+        FileLog.i(TAG, "ultimo consecutivo " + consecutivo);
         return consecutivo+1;
     }
 
     public ArrayList<Trabajadores> getTrabajadoresCuadrilla(Integer cuadrilla) {
-
+        FileLog.i(TAG, "obtener lista trabajadores cuadrilla " + cuadrilla);
         ArrayList<Trabajadores> trabajadores = new ArrayList<>() ;
 
         String selectQuery = "SELECT * FROM " + TABLE_TRABAJADORES +" WHERE "+KEY_CUADRILLA_TRABAJADORES+" = "+cuadrilla +" ORDER BY "+KEY_CONSECUTIVO_TRABAJADORES;
@@ -1049,14 +1043,14 @@ public class DBHandler extends SQLiteOpenHelper {
 
         cursor.close();
         db.close();
-        if(trabajadores.size() ==  0)
-            Log.v("RESULTADO_DB" ,""+trabajadores.size());
+        if (trabajadores.size() != 0)
+            FileLog.v(TAG, "" + trabajadores.size());
 
         return trabajadores;
     }
 
     public ArrayList<Trabajadores> getTrabajadoresPendientesPorEnviar() {
-
+        FileLog.i(TAG, "obtener trabajadores pendientes por enviar");
         ArrayList<Trabajadores> trabajadores = new ArrayList<>();
 
         String selectQuery = "SELECT * FROM " + TABLE_TRABAJADORES + " WHERE " + KEY_SENDED_TRABAJADORES + " = 0 ORDER BY " + KEY_CUADRILLA_TRABAJADORES + " , " + KEY_CONSECUTIVO_TRABAJADORES;
@@ -1072,14 +1066,14 @@ public class DBHandler extends SQLiteOpenHelper {
 
         cursor.close();
         db.close();
-        if (trabajadores.size() == 0)
-            Log.v("RESULTADO_DB", "" + trabajadores.size());
+        if (trabajadores.size() != 0)
+            FileLog.v(TAG, "" + trabajadores.size());
 
         return trabajadores;
     }
 
-    public ArrayList<Cuadrillas> getCuadrillas() {
-
+    public ArrayList<Cuadrillas> getCuadrillas(String fecha) {
+        FileLog.i(TAG, "obtener catalogo de cuadrillas");
         ArrayList<Cuadrillas> cuadrillas = new ArrayList<>() ;
 
         String selectQuery = "SELECT "+KEY_CUADRILLA_TRABAJADORES+" FROM " + TABLE_TRABAJADORES +" GROUP BY "+KEY_CUADRILLA_TRABAJADORES+" ORDER BY "+KEY_CUADRILLA_TRABAJADORES;
@@ -1087,15 +1081,15 @@ public class DBHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
-        Log.i("sql",selectQuery);
+
         if (cursor.moveToFirst()) {
             do {
                 Integer c = cursor.getInt(0);
-                //Cuadrillas cuadrillas1 = new Cuadrillas(c, getTrabajadores(c, 1).getNombre());
-                Cuadrillas  cuadrillas1 = getCuadrilla(c.toString());
+                Cuadrillas cuadrillas1 = getCuadrilla(c.toString(), fecha);
                 if(cuadrillas1==null){
                     cuadrillas1 = new Cuadrillas(c, getTrabajadores(c, 1).getNombre());
                 }
+
                 cuadrillas.add(cuadrillas1);
             } while (cursor.moveToNext());
         }
@@ -1103,16 +1097,18 @@ public class DBHandler extends SQLiteOpenHelper {
 
         cursor.close();
         db.close();
-        if(cuadrillas.size() ==  0)
-            Log.v("RESULTADO_DB" ,""+cuadrillas.size());
+        if (cuadrillas.size() != 0)
+            FileLog.v(TAG, "" + cuadrillas.size());
 
         return cuadrillas;
     }
 
     public Cuadrillas getCuadrillasActiva(String fecha, Integer c) {
-        Cuadrillas cuadrilla = null;
+        FileLog.i(TAG, "obtener cuadrilla activa cuadrilla" + c + " fecha " + fecha);
 
+        Cuadrillas cuadrilla = null;
         String selectQuery = "SELECT * FROM " + TABLE_CUADRILLAS_REVISADAS +" WHERE "+KEY_FECHA_CUADRILLASREVISADAS+" = '"+fecha+"' AND "+KEY_CUADRILLA_CUADRILLASREVISADAS+" = "+c;
+
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
@@ -1126,14 +1122,15 @@ public class DBHandler extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         if(cuadrilla !=  null)
-            Log.v("RESULTADO_DB" ," id cuadrilla"+cuadrilla.getId());
+            FileLog.v(TAG, " id cuadrilla" + cuadrilla.getId());
 
         return cuadrilla;
     }
 
     public ArrayList<Cuadrillas> getCuadrillasActiva(String fecha) {
-        ArrayList<Cuadrillas> cuadrillas = new ArrayList<>();
+        FileLog.i(TAG, "obtener cuadrillas activas fecha" + fecha);
 
+        ArrayList<Cuadrillas> cuadrillas = new ArrayList<>();
         String selectQuery = "SELECT * FROM " + TABLE_CUADRILLAS_REVISADAS + " WHERE " + KEY_FECHA_CUADRILLASREVISADAS + " = '" + fecha + "' AND " + KEY_DATEFIN_CUADRILLASREVISADAS + " = 0";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -1147,15 +1144,16 @@ public class DBHandler extends SQLiteOpenHelper {
 
         cursor.close();
         db.close();
-        if (cuadrillas.size() > 0)
-            Log.v("RESULTADO_DB", " total registros" + cuadrillas.size());
+        if (cuadrillas.size() != 0)
+            FileLog.v(TAG, " total registros" + cuadrillas.size());
 
         return cuadrillas;
     }
 
     public Integer getCuadrillasPendientesPorFinalizar(String fecha) {
-        Integer totalCuadrillasPorFinalizar = 0;
+        FileLog.i(TAG, "obtener cuadrillas pendientes por finalizar fecha " + fecha);
 
+        Integer totalCuadrillasPorFinalizar = 0;
         String selectQuery = "SELECT COUNT(" + KEY_FECHA_CUADRILLASREVISADAS + ") FROM " + TABLE_CUADRILLAS_REVISADAS + " WHERE " + KEY_FECHA_CUADRILLASREVISADAS + " = '" + fecha + "' AND " + KEY_DATEFIN_CUADRILLASREVISADAS + " = 0 GROUP BY " + KEY_FECHA_CUADRILLASREVISADAS;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -1170,12 +1168,13 @@ public class DBHandler extends SQLiteOpenHelper {
         cursor.close();
         db.close();
 
-        Log.v("RESULTADO_DB", " total cuadrillas por finalizar " + totalCuadrillasPorFinalizar);
+        FileLog.v(TAG, " total cuadrillas por finalizar " + totalCuadrillasPorFinalizar);
 
         return totalCuadrillasPorFinalizar;
     }
 
     public ArrayList<Cuadrillas> getCuadrillasPendientesPorEnviar() {
+        FileLog.i(TAG, "obtener cuadrillas pendientes por enviar ");
         ArrayList<Cuadrillas> cuadrillas = new ArrayList<>();
 
         String selectQuery = "SELECT * FROM " + TABLE_CUADRILLAS_REVISADAS + " WHERE " + KEY_SENDED_CUADRILLASREVISADAS + " = 0";
@@ -1192,13 +1191,13 @@ public class DBHandler extends SQLiteOpenHelper {
         cursor.close();
         db.close();
 
-        Log.v("RESULTADO_DB", " total cuadrillas por finalizar " + cuadrillas.size());
+        FileLog.v(TAG, " total cuadrillas por finalizar " + cuadrillas.size());
 
         return cuadrillas;
     }
 
     public ArrayList<Reportes> getReportesTrabajador(String fecha ,Long idTrabajaor) {
-
+        FileLog.i(TAG, "obtener reportes Trabajadores fecha" + fecha + " id trabajador " + idTrabajaor);
         ArrayList<Reportes> reportesTrabajador = new ArrayList<>();
 
         String selectQuery = "SELECT * FROM " + TABLE_REPORTES +" WHERE "+ KEY_IDTRABAJADOR_REPORTE +" = '"+idTrabajaor+"' AND "+KEY_FECHA_REPORTE+" = "+fecha;
@@ -1215,13 +1214,13 @@ public class DBHandler extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         if(reportesTrabajador != null)
-            Log.v("RESULTADO_DB" ,reportesTrabajador.toString());
+            FileLog.v(TAG, reportesTrabajador.toString());
 
         return reportesTrabajador;
     }
 
     public  ArrayList<Reportes> getReportesTrabajador(String fecha) {
-
+        FileLog.i(TAG, "obtener reporte trabajadores fecha" + fecha);
         ArrayList<Reportes> reportes = new ArrayList<>() ;
 
         String selectQuery = "SELECT * FROM " + TABLE_REPORTES +" WHERE "+KEY_FECHA_REPORTE+" = "+fecha;
@@ -1237,14 +1236,14 @@ public class DBHandler extends SQLiteOpenHelper {
 
         cursor.close();
         db.close();
-        if(reportes.size() ==  0)
-            Log.v("RESULTADO_DB" ,""+reportes.size());
+        if (reportes.size() != 0)
+            FileLog.v(TAG, "" + reportes.size());
 
         return reportes;
     }
 
     public ArrayList<Asistencia> getAsistencia(String fecha) {
-
+        FileLog.i(TAG, "obtener catalogo de actividades fecha " + fecha);
         ArrayList<Asistencia> asistencias = new ArrayList<>() ;
 
         String selectQuery = "SELECT * FROM " + TABLE_ASISTENCIA +" WHERE "+KEY_FECHA_ASISTECNIA+" = '"+fecha+"' ORDER BY "+KEY_IDTRABAJADOR_ASISTECNIA;
@@ -1260,14 +1259,14 @@ public class DBHandler extends SQLiteOpenHelper {
 
         cursor.close();
         db.close();
-        if(asistencias.size() ==  0)
-            Log.v("RESULTADO_DB" ,""+asistencias.size());
+        if (asistencias.size() != 0)
+            FileLog.v(TAG, "" + asistencias.size());
 
         return asistencias;
     }
 
     public ArrayList<Asistencia> getAsistencia(String fecha,Trabajadores trabajador) {
-
+        FileLog.i(TAG, "obtener asistencias fecha " + fecha + " id trabajador " + trabajador.getId());
         ArrayList<Asistencia> asistencias = new ArrayList<>() ;
 
         String selectQuery = "SELECT * FROM " + TABLE_ASISTENCIA +" WHERE "+KEY_IDTRABAJADOR_ASISTECNIA+" = "+trabajador.getId() +" AND "+KEY_FECHA_ASISTECNIA+" = '"+fecha+"' ORDER BY "+KEY_HORAINICIO_ASISTECNIA;
@@ -1285,14 +1284,14 @@ public class DBHandler extends SQLiteOpenHelper {
 
         cursor.close();
         db.close();
-        if(asistencias.size() ==  0)
-            Log.v("RESULTADO_DB" ,""+asistencias.size());
+        if (asistencias.size() != 0)
+            FileLog.v(TAG, "" + asistencias.size());
 
         return asistencias;
     }
 
     public ArrayList<ListaAsistencia> getAsistencia(String fecha, Cuadrillas cuadrilla) {
-
+        FileLog.i(TAG, "obtener lista de sistencias cuadrilla " + cuadrilla + " fecha " + fecha);
         ArrayList<ListaAsistencia> listaAsistencias = new ArrayList<>() ;
 
         ArrayList<Trabajadores> trabajadoresCuadrilla = getTrabajadoresCuadrilla(cuadrilla.getCuadrilla());
@@ -1309,14 +1308,14 @@ public class DBHandler extends SQLiteOpenHelper {
 
         }
 
-        if(listaAsistencias.size() ==  0)
-            Log.v("RESULTADO_DB" ,""+listaAsistencias.size());
+        if (listaAsistencias.size() != 0)
+            FileLog.v(TAG, "" + listaAsistencias.size());
 
         return listaAsistencias;
     }
 
     public ArrayList<ListaAsistencia> getAsistenciaTrabajador(String fecha,Integer idTrabajador) {
-
+        FileLog.i(TAG, "obtener lista asistencia trabajador " + idTrabajador + " fecha " + fecha);
         ArrayList<ListaAsistencia> listaAsistencias = new ArrayList<>() ;
 
         Trabajadores t = getTrabajadores(Long.valueOf(idTrabajador));
@@ -1331,14 +1330,14 @@ public class DBHandler extends SQLiteOpenHelper {
             listaAsistencias.add(new ListaAsistencia(t,null));
         }
 
-        if(listaAsistencias.size() ==  0)
-            Log.v("RESULTADO_DB" ,""+listaAsistencias.size());
+        if (listaAsistencias.size() != 0)
+            FileLog.v(TAG, "" + listaAsistencias.size());
 
         return listaAsistencias;
     }
 
     public ArrayList<Cuadrillas> getAsistenciaCuadrillas(String fecha) {
-
+        FileLog.i(TAG, "obtener asistencia cuadrilla fecha " + fecha);
         ArrayList<Cuadrillas> cuadrillas = new ArrayList<>() ;
 
         String selectQuery = "SELECT t."+KEY_CUADRILLA_TRABAJADORES+", t."+KEY_NOMBRE_TRABAJADORES
@@ -1360,14 +1359,14 @@ public class DBHandler extends SQLiteOpenHelper {
 
         cursor.close();
         db.close();
-        if(cuadrillas.size() ==  0)
-            Log.v("RESULTADO_DB" ,""+cuadrillas.size());
+        if (cuadrillas.size() != 0)
+            FileLog.v(TAG, "" + cuadrillas.size());
 
         return cuadrillas;
     }
 
     public ArrayList<Asistencia> getAsistenciaPendientesPorEnviar() {
-
+        FileLog.i(TAG, "obtener asistencia pendientes por enviar ");
         ArrayList<Asistencia> asistencias = new ArrayList<>();
 
         String selectQuery = "SELECT * FROM " + TABLE_ASISTENCIA + " WHERE " + KEY_SENDED_ASISTECNIA + "= 0  ORDER BY " + KEY_ID_ASISTECNIA;
@@ -1385,17 +1384,18 @@ public class DBHandler extends SQLiteOpenHelper {
 
         cursor.close();
         db.close();
-        if (asistencias.size() == 0)
-            Log.v("RESULTADO_DB", "" + asistencias.size());
+        if (asistencias.size() != 0)
+            FileLog.v(TAG, "" + asistencias.size());
 
         return asistencias;
     }
 
     public  ArrayList<ActividadesRealizadas> getActividadesRealizadas(String fecha, Cuadrillas cuadrilla) {
-
+        FileLog.i(TAG, "obtener actividades realizadas cuadrilla " + cuadrilla + " fecha " + fecha);
         ArrayList<ActividadesRealizadas> actividadesRealizadas = new ArrayList<>() ;
 
         String selectQuery = "SELECT *  FROM " + TABLE_ACTIVIDADES_REALIZADAS +" WHERE "+KEY_FECHA_REPORTE+" = '"+fecha+"' AND "+KEY_CUADRILLA_ACTIVIDADESREALIZADAS+" = "+cuadrilla.getCuadrilla();
+
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
@@ -1406,16 +1406,39 @@ public class DBHandler extends SQLiteOpenHelper {
         }
         // return contact list
 
+
         cursor.close();
         db.close();
-        if (actividadesRealizadas.size() == 0)
-            Log.v("RESULTADO_DB", "" + actividadesRealizadas.size());
+        if (actividadesRealizadas.size() != 0)
+            FileLog.v(TAG, "actividades" + actividadesRealizadas.size());
 
         return actividadesRealizadas;
     }
 
-    public ArrayList<ActividadesRealizadas> getActividadesRealizadasPendientesPorEnviar() {
+    public boolean getActividadesRealizadas(String fecha, Integer cuadrilla, Long idActividad, String idMalla, Integer tipoActividad) {
+        FileLog.i(TAG, "obtener actividades realizadas cuadrilla" + cuadrilla + " fecha " + fecha + " actividad " + idActividad + " malla " + idMalla + " tipoActividad " + tipoActividad);
+        boolean existe = false;
 
+        String selectQuery = "SELECT COUNT(*)  FROM " + TABLE_ACTIVIDADES_REALIZADAS + " WHERE " + KEY_FECHA_REPORTE + " = '" + fecha + "' AND " + KEY_CUADRILLA_ACTIVIDADESREALIZADAS + " = " + cuadrilla +
+                " AND " + KEY_IDACTIVIDAD_ACTIVIDADESREALIZADAS + "= " + idActividad + " AND " + KEY_IDMALLA_ACTIVIDADESREALIZADAS + " = '" + idMalla + "' AND " + KEY_TIPOACTIVIDAD_ACTIVIDADESREALIZADAS + " = " + tipoActividad;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            existe = true;
+        }
+        // return contact list
+
+        cursor.close();
+        db.close();
+
+        FileLog.v(TAG, "Existe " + existe);
+
+        return existe;
+    }
+
+    public ArrayList<ActividadesRealizadas> getActividadesRealizadasPendientesPorEnviar() {
+        FileLog.i(TAG, "obtener actividades pendientes por enviar");
         ArrayList<ActividadesRealizadas> actividadesRealizadas = new ArrayList<>();
 
         String selectQuery = "SELECT *  FROM " + TABLE_ACTIVIDADES_REALIZADAS + " WHERE " + KEY_SENDED_ACTIVIDADESREALIZADAS + " = 0";
@@ -1431,15 +1454,15 @@ public class DBHandler extends SQLiteOpenHelper {
 
         cursor.close();
         db.close();
-        if(actividadesRealizadas.size() ==  0)
-            Log.v("RESULTADO_DB" ,""+actividadesRealizadas.size());
+        if (actividadesRealizadas.size() != 0)
+            FileLog.v("RESULTADO_DB", "" + actividadesRealizadas.size());
 
         return actividadesRealizadas;
     }
 
     /*******************************UPDATE*******************************************************/
     public int updateConfiguracion(Configuracion configuracion){
-        Log.v("UPDATE DB",configuracion.toString());
+        FileLog.v(TAG, "update configuracion " + configuracion.toString());
         int i = -1;
         try{
             SQLiteDatabase db = this.getWritableDatabase();
@@ -1451,13 +1474,13 @@ public class DBHandler extends SQLiteOpenHelper {
                     new String[]{String.valueOf(configuracion.getId().toString())});
             db.close();
         }catch (Exception e){
-            Log.v("ERROR DB","error "+e.getMessage());
+            FileLog.v(TAG, "error " + e.getMessage());
         }
         return i;
     }
 
     public int updateSetting(Settings settings){
-        Log.v("UPDATE DB",settings.toString());
+        FileLog.v(TAG, "update settings" + settings.toString());
         int i = -1;
         try{
             SQLiteDatabase db = this.getWritableDatabase();
@@ -1476,13 +1499,13 @@ public class DBHandler extends SQLiteOpenHelper {
                     new String[]{String.valueOf(settings.getId().toString())});
             db.close();
         }catch (Exception e){
-            Log.v("ERROR DB",e.getMessage());
+            FileLog.v(TAG, e.getMessage());
         }
         return i;
     }
 
     public int updateTrabajador(Trabajadores trabajadores) {
-        Log.v("UPDATE DB",trabajadores.toString());
+        FileLog.v(TAG, "update trabajador " + trabajadores.toString());
         int i = -1;
         try{
             SQLiteDatabase  db = this.getWritableDatabase();
@@ -1500,7 +1523,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
             db.close();
         }catch (Exception e){
-            Log.v("ERROR DB",e.getMessage());
+            FileLog.v(TAG, e.getMessage());
         }
 
         return i;
@@ -1509,7 +1532,7 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public int updateReportes(Reportes reportes){
-        Log.v("UPDATE DB",reportes.toString());
+        FileLog.v(TAG, "update reportes" + reportes.toString());
         int i = -1;
         try{
             SQLiteDatabase  db = this.getWritableDatabase();
@@ -1528,14 +1551,14 @@ public class DBHandler extends SQLiteOpenHelper {
 
             db.close();
         }catch (Exception e){
-            Log.v("ERROR DB",e.getMessage());
+            FileLog.v(TAG, e.getMessage());
         }
 
         return i;
     }
 
     public int updateAsistencia(Asistencia asistencia){
-        Log.v("UPDATE DB",asistencia.toString());
+        FileLog.v(TAG, "update asistencia" + asistencia.toString());
         int i = -1;
         try{
             SQLiteDatabase  db = this.getWritableDatabase();
@@ -1556,14 +1579,14 @@ public class DBHandler extends SQLiteOpenHelper {
 
             db.close();
         }catch (Exception e){
-            Log.v("ERROR DB",e.getMessage());
+            FileLog.v(TAG, e.getMessage());
         }
 
         return i;
     }
 
     public int updateActividadesRealizadas(ActividadesRealizadas actividadesRealizadas){
-        Log.v("UPDATE DB",actividadesRealizadas.toString());
+        FileLog.v(TAG, "update actividades realizadas" + actividadesRealizadas.toString());
         int i = -1;
         try{
             SQLiteDatabase  db = this.getWritableDatabase();
@@ -1582,14 +1605,14 @@ public class DBHandler extends SQLiteOpenHelper {
 
             db.close();
         } catch (Exception e) {
-            Log.v("ERROR DB", e.getMessage() + "");
+            FileLog.v(TAG, e.getMessage() + "");
         }
 
         return i;
     }
 
     public int updateCuadrilla(Cuadrillas cuadrilla) {
-        Log.v("UPDATE DB", cuadrilla.toString());
+        FileLog.v(TAG, "update cuadrilla" + cuadrilla.toString());
         int i = -1;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -1608,7 +1631,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
             db.close();
         }catch (Exception e){
-            Log.v("ERROR DB",e.getMessage()+"");
+            FileLog.v(TAG, e.getMessage() + "");
         }
 
         return i;
@@ -1617,9 +1640,42 @@ public class DBHandler extends SQLiteOpenHelper {
     /************************DELETES*******************************************************/
 
     public void deleteAsistencias(String fecha,String idTrabajador){
+        FileLog.i(TAG, "eliminar asistencia id Trabajador " + idTrabajador + " fecha " + fecha);
         SQLiteDatabase  db = this.getWritableDatabase();
         int delete = db.delete(TABLE_ASISTENCIA, KEY_FECHA_ASISTECNIA + " =? AND " + KEY_IDTRABAJADOR_ASISTECNIA + " =? ", new String[]{fecha, idTrabajador});
         db.close();
     }
 
+    public void deleteMallasRealizadas(String fecha, String cuadrilla) {
+        FileLog.i(TAG, "eliminar mallas realizadas cuadrilla " + cuadrilla + " fecha " + fecha);
+        SQLiteDatabase db = this.getWritableDatabase();
+        int delete = db.delete(TABLE_ACTIVIDADES_REALIZADAS, KEY_FECHA_ACTIVIDADESREALIZADAS + " =? AND " + KEY_CUADRILLA_ACTIVIDADESREALIZADAS + " =? ", new String[]{fecha, cuadrilla});
+        db.close();
+    }
+
+    public void deletePaseLista(String cuadrilla, String fecha, String ids) {
+        FileLog.i(TAG, "eliminar apase lista cuadrilla" + cuadrilla + " fecha " + fecha + " asistencias " + ids);
+        String deleteAsistencia = "DELETE FROM " + TABLE_ASISTENCIA + " WHERE " + KEY_ID_ASISTECNIA + " in (" + ids + ") and " + KEY_FECHA_ASISTECNIA + " = '" + fecha + "'";
+        String deleteActividadesRealizadas = "DELETE FROM " + TABLE_ACTIVIDADES_REALIZADAS + " WHERE " + KEY_FECHA_ACTIVIDADESREALIZADAS + " = '" + fecha + "' AND " + KEY_CUADRILLA_ACTIVIDADESREALIZADAS + " = " + cuadrilla;
+        String deleteCuadrillasRevisadas = "DELETE FROM " + TABLE_CUADRILLAS_REVISADAS + " WHERE " + KEY_FECHA_CUADRILLASREVISADAS + " = '" + fecha + "' AND " + KEY_CUADRILLA_CUADRILLASREVISADAS + " = " + cuadrilla;
+        String deleteTrabajadores = "DELETE FROM " + TABLE_TRABAJADORES + " WHERE " + KEY_CUADRILLA_TRABAJADORES + " = " + cuadrilla + " and " + KEY_SENDED_TRABAJADORES + "= 0";
+
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+
+        try {
+            db.execSQL(deleteAsistencia);
+            db.execSQL(deleteActividadesRealizadas);
+            db.execSQL(deleteCuadrillasRevisadas);
+            db.execSQL(deleteTrabajadores);
+        } catch (Exception e) {
+            FileLog.v(TAG, e.getMessage());
+        } finally {
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            db.close();
+        }
+        FileLog.v(TAG, "transaccion terminada");
+    }
 }

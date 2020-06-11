@@ -29,6 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="63dp"
         android:ems="10"
+        android:background="@drawable/border_layout"
         android:inputType="textPersonName"
         android:textSize="@dimen/size_texto" />
 </LinearLayout>

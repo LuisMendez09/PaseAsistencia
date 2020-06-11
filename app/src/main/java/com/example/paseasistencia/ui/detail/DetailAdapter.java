@@ -235,6 +235,15 @@ public class DetailAdapter extends ArrayAdapter<ListaAsistencia> {
             return  this.trabajadores.get(this.trabajadores.size()-1).getTrabajadores().getConsecutivo()+1;
     }
 
+    public String getResponsable() {
+        for (ListaAsistencia t : this.trabajadores) {
+            if (t.getTrabajadores().getPuesto().getId() == 3)
+                return t.getTrabajadores().getNombre();
+        }
+
+        return "";
+    }
+
     public List<ListaAsistencia> getTrabajadores() {
         return trabajadores;
     }

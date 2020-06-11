@@ -13,6 +13,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
@@ -44,4 +45,5 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     //conexion a apis
     implementation files('libs/bridge-5.1.2.jar')
+    implementation 'androidx.gridlayout:gridlayout:1.0.0'
 }

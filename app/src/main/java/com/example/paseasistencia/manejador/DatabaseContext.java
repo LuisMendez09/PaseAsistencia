@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 
 import com.example.paseasistencia.complementos.Complementos;
+import com.example.paseasistencia.complementos.KeyValues;
 
 import java.io.File;
 
@@ -22,7 +23,7 @@ public class DatabaseContext extends ContextWrapper {
         File storageDir = Complementos.rutaAlmacenamiento(getBaseContext());
         File result = null;
 
-        String dbfile = storageDir.getAbsolutePath() + File.separator+ "databases" + File.separator + name;
+        String dbfile = storageDir.getAbsolutePath() + File.separator + KeyValues.FOLDER_DATABASE + File.separator + name;
 
         result = new File(dbfile);
 

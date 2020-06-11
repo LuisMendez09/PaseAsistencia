@@ -1,8 +1,6 @@
 package com.example.paseasistencia.ui.importacion;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,15 +13,13 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.paseasistencia.R;
-import com.example.paseasistencia.controlador.BuscarListaActividades;
+import com.example.paseasistencia.controlador.FileLog;
+import com.example.paseasistencia.controlador.ImportarCatalogos;
 import com.example.paseasistencia.controlador.Controlador;
 import com.example.paseasistencia.controlador.IactualizacionDatos;
-import com.example.paseasistencia.model.Configuracion;
-import com.example.paseasistencia.model.Puestos;
-
-import java.util.List;
 
 public class ImportacionFragment extends Fragment implements IactualizacionDatos {
+    private static final String TAG = "";
 
     private ImportacionViewModel importacionViewModel;
     private TextView tvMensajes;
@@ -32,24 +28,19 @@ public class ImportacionFragment extends Fragment implements IactualizacionDatos
     private Controlador controlador = null;
 
     public View onCreateView(@NonNull LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState) {
-
+        FileLog.i(TAG, "iniciar ImportacionFragment");
         importacionViewModel =  ViewModelProviders.of(this).get(ImportacionViewModel.class);
         View root = inflater.inflate(R.layout.fragment_importacion, container, false);
         tvMensajes = root.findViewById(R.id.tv_mensajes);
         btnActualziarl = (Button) root.findViewById(R.id.btn_guardar);
         progressBar = (ProgressBar) root.findViewById(R.id.progressBar);
         controlador = Controlador.getInstance(this.getContext());
-        /*importacionViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });*/
 
         btnActualziarl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new BuscarListaActividades(ImportacionFragment.this,controlador).execute();
+                FileLog.i(TAG, "inicia la importacion de catalogos");
+                new ImportarCatalogos(ImportacionFragment.this, controlador).execute();
             }
         });
 

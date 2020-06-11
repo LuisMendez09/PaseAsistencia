@@ -18,9 +18,6 @@ public class Asistencia implements Parcelable {
     private Puestos puesto;
     private Date dateInicio;
     private Date dateFin;
-    /*private String fecha;
-    private String HoraInicio;
-    private String horaFinal;*/
     private Integer sended;
 
     public Asistencia(Trabajadores trabajador, Puestos puesto,Date dateInicio,Date dateFin,Integer sended) {
@@ -39,9 +36,6 @@ public class Asistencia implements Parcelable {
         this.puesto = puesto;
         this.dateInicio = new Date(cursor.getLong(3));
         this.dateFin = new Date(cursor.getLong(4));
-        /*this.fecha = cursor.getString(5);
-        this.HoraInicio = cursor.getString(6);
-        this.horaFinal = cursor.getString(7);*/
         this.sended = cursor.getInt(8);
     }
 
@@ -132,7 +126,7 @@ public class Asistencia implements Parcelable {
                 ", puesto=" + puesto +
                 ", dateInicio=" + dateInicio +
                 ", dateFin=" + dateFin +
-                ", fecha='" + getFecha() + '\'' +
+                ", fecha='" + (getFecha() != null ? getFecha() : "") + '\'' +
                 ", HoraInicio='" + getHoraInicio() + '\'' +
                 ", horaFinal='" + getHoraFinal() + '\'' +
                 ", sended=" + sended +

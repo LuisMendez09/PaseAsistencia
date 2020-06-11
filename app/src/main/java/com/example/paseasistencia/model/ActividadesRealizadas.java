@@ -6,10 +6,12 @@ import android.os.Parcelable;
 
 import com.example.paseasistencia.complementos.Complementos;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -17,14 +19,16 @@ public class ActividadesRealizadas implements Parcelable {
     private Long id;
     private Integer cuadrlla;
     private Actividades actividad;
+    private String sector;
     private Mallas mallas;
     private String fecha;
     private Integer sended;
     private Integer tipoActividad;
 
-    public ActividadesRealizadas(Integer cuadrlla, Actividades actividad, Mallas mallas, String fecha,Integer tipoActividad,Integer sended) {
+    public ActividadesRealizadas(Integer cuadrlla, Actividades actividad, String sector, Mallas mallas, String fecha, Integer tipoActividad, Integer sended) {
         this.cuadrlla = cuadrlla;
         this.actividad = actividad;
+        this.sector = sector;
         this.mallas = mallas;
         this.fecha = fecha;
         this.tipoActividad = tipoActividad;
@@ -35,6 +39,7 @@ public class ActividadesRealizadas implements Parcelable {
         this.id = cursor.getLong(0);
         this.cuadrlla = cursor.getInt(1);
         this.actividad = actividad;
+        this.sector = mallas.getSector();
         this.mallas = mallas;
         this.fecha = cursor.getString(4);
         this.tipoActividad = cursor.getInt(5);
@@ -63,6 +68,14 @@ public class ActividadesRealizadas implements Parcelable {
 
     public void setActividad(Actividades actividad) {
         this.actividad = actividad;
+    }
+
+    public String getSector() {
+        return sector;
+    }
+
+    public void setSector(String sector) {
+        this.sector = sector;
     }
 
     public Mallas getMalla() {
@@ -119,7 +132,6 @@ public class ActividadesRealizadas implements Parcelable {
 
     public JSONObject toJson() throws JSONException {
         JSONObject json = new JSONObject();
-
         json.put("fecha", this.getFechaServidor());
         json.put("cuadrilla", this.getCuadrlla());
         json.put("idActividad", this.getActividad().getId());
@@ -139,6 +151,7 @@ public class ActividadesRealizadas implements Parcelable {
         dest.writeValue(this.id);
         dest.writeValue(this.cuadrlla);
         dest.writeParcelable(this.actividad, flags);
+        dest.writeString(this.sector);
         dest.writeParcelable(this.mallas, flags);
         dest.writeString(this.fecha);
         dest.writeValue(this.sended);
@@ -149,6 +162,7 @@ public class ActividadesRealizadas implements Parcelable {
         this.id = (Long) in.readValue(Long.class.getClassLoader());
         this.cuadrlla = (Integer) in.readValue(Integer.class.getClassLoader());
         this.actividad = in.readParcelable(Actividades.class.getClassLoader());
+        this.sector = in.readString();
         this.mallas = in.readParcelable(Mallas.class.getClassLoader());
         this.fecha = in.readString();
         this.sended = (Integer) in.readValue(Integer.class.getClassLoader());
