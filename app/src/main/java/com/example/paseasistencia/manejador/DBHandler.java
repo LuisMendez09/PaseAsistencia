@@ -1086,8 +1086,12 @@ public class DBHandler extends SQLiteOpenHelper {
             do {
                 Integer c = cursor.getInt(0);
                 Cuadrillas cuadrillas1 = getCuadrilla(c.toString(), fecha);
+
                 if(cuadrillas1==null){
                     cuadrillas1 = new Cuadrillas(c, getTrabajadores(c, 1).getNombre());
+                } else if (cuadrillas1.getMayordomo().equals("")) {
+                    cuadrillas1 = new Cuadrillas(c, getTrabajadores(c, 1).getNombre());
+                    Log.i("cuadrilla", cuadrillas1.getMayordomo());
                 }
 
                 cuadrillas.add(cuadrillas1);

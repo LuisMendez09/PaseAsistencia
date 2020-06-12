@@ -103,7 +103,6 @@
                         android:layout_marginEnd="16dp"
                         android:layout_weight="1"
                         android:background="@drawable/buttom_redondo"
-                        android:drawableEnd="@drawable/ic_save_24px"
                         android:text="@string/btn_guardar"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />

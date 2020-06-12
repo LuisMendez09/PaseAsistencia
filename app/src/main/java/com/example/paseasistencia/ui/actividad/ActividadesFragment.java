@@ -1,12 +1,16 @@
 package com.example.paseasistencia.ui.actividad;
 
 import android.app.Application;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -52,7 +56,22 @@ public class ActividadesFragment extends Fragment {
         final TextView tvMayordomo = view.findViewById(R.id.tv_mayordomo);
         final TextView tvAsistencia = view.findViewById(R.id.tv_asistencia);
         final ListView lvActividades = view.findViewById(R.id.lv_actividades);
-        Button tbnGuardar = view.findViewById(R.id.btn_guardar);
+
+        Button btnGuardar = view.findViewById(R.id.btn_guardar);
+        Drawable rightDrawable = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            rightDrawable = AppCompatResources.getDrawable(getContext(), R.drawable.ic_save_24px);
+        } else {
+            rightDrawable = VectorDrawableCompat.create(getResources(), R.drawable.ic_save_24px, null);
+        }
+        btnGuardar.setCompoundDrawablesWithIntrinsicBounds(null, null, rightDrawable, null);
+
+        btnGuardar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                guardarRegistros();
+            }
+        });
 
         Application application = Objects.requireNonNull(getActivity()).getApplication();
 
@@ -97,12 +116,6 @@ public class ActividadesFragment extends Fragment {
             }
         });
 
-        tbnGuardar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                guardarRegistros();
-            }
-        });
 
         return view;
     }

@@ -65,7 +65,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="0.1"
                 android:background="@drawable/buttom_redondo"
-                android:drawableEnd="@drawable/ic_queue_play_next_24px"
+
                 android:paddingRight="@dimen/marginButtom_right" />
 
         </LinearLayout>

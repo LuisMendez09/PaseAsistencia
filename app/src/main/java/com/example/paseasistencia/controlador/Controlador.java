@@ -487,9 +487,14 @@ public class Controlador {
                     cuadrilla.setFechaInicio(horainicio);
                     cuadrilla.setFechaFin(new Date(0));
                     cuadrilla.setSended(0);
+                    if (cuadrilla.getMayordomo().equals("")) {
+                        cuadrilla.setMayordomo(getIPrimeroLista(trabajadores));
+                    }
+
                     Controlador.CONEXION.addCuadrillaRevisada(cuadrilla);
                 } else {
-                    FileLog.i(TAG, "error al guardar la cuadrilla");
+                    FileLog.i(TAG, "cuadrilla ya agregada");
+
                 }
             } else {
                 FileLog.i(TAG, "error al guardar las asistencias");
@@ -499,6 +504,17 @@ public class Controlador {
         }
 
         return b;
+    }
+
+    private String getIPrimeroLista(List<ListaAsistencia> t) {
+        for (ListaAsistencia la :
+                t) {
+            if (la.getTrabajadores().getConsecutivo() == 1) {
+                return la.getTrabajadores().getNombre();
+            }
+        }
+
+        return "";
     }
 
     private Long actualizarListaAsistencia(ListaAsistencia listaAsistencia) {
