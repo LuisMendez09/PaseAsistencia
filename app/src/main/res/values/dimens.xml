@@ -11,6 +11,8 @@
     <dimen name="margin_top">25dp</dimen>
     <dimen name="margin_bottom">25dp</dimen>
 
+    <dimen name="margin_card">5dp</dimen>
+
     <dimen name="marginButtom_left">10dp</dimen>
     <dimen name="marginButtom_right">10dp</dimen>
     <dimen name="marginButtom_top">10dp</dimen>

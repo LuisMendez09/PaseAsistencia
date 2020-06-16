@@ -102,9 +102,13 @@ public class Complementos {
      * @return string con el ofrmato de fecha
      */
     public static String obtenerFechaString(Date fecha){
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        if (fecha != null) {
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            return sdf.format(fecha);
+        }
 
-        return sdf.format(fecha);
+        return "";
+
     }
 
     public static String fechaInicioSemana() {
@@ -138,14 +142,15 @@ public class Complementos {
     }
 
     public static String obtenerHoraString(Date hora){
+        if (hora != null) {
+            if (hora.getTime() != Long.valueOf(0)) {
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 
-        if(hora.getTime()!=Long.valueOf(0)){
-            @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-
-            return sdf.format(hora);
-        }else{
-            return "";
+                return sdf.format(hora);
+            }
         }
+
+        return "";
 
     }
 }

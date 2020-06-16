@@ -96,6 +96,7 @@ public class HomeFragment extends Fragment {
 
                 mCuadrillasAdapter = new CuadrillasAdapter(getContext(), cuadrillas, new HomeListener());
                 mRecyclerView.setAdapter(mCuadrillasAdapter);
+
             }
         });
     }

@@ -35,13 +35,6 @@ public class Cuadrillas implements Parcelable {
         this.mayordomo = mayordomo;
     }
 
-    /*public Cuadrillas(Integer cuadrilla, String mayordomo,Date fechaInicio,Date fechaFin,Integer sended) {
-        this.cuadrilla = cuadrilla;
-        this.mayordomo = mayordomo;
-        this.fechaInicio = fechaInicio;
-        this.fechaFin = fechaFin;
-    }*/
-
     public Cuadrillas(String cuadrilla, String mayordomo, Date fechaInicio, Date fechaFin, Integer sended) {
         this.cuadrilla = Integer.parseInt(cuadrilla);
         this.mayordomo = mayordomo;

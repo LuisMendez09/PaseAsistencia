@@ -1,18 +1,22 @@
 package com.example.paseasistencia.ui.home;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.paseasistencia.R;
 import com.example.paseasistencia.model.Cuadrillas;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CuadrillasAdapter extends RecyclerView.Adapter<CuadrillasAdapter.CuadrillaViewHolder> {
@@ -21,10 +25,10 @@ public class CuadrillasAdapter extends RecyclerView.Adapter<CuadrillasAdapter.Cu
     private HomeAdapterListener mListener;
 
     public CuadrillasAdapter(Context mContext, List<Cuadrillas> mCuadrillasList, HomeAdapterListener mListener) {
-
         this.mContext = mContext;
         this.mCuadrillasList = mCuadrillasList;
         this.mListener = mListener;
+
     }
 
     /***
@@ -32,18 +36,20 @@ public class CuadrillasAdapter extends RecyclerView.Adapter<CuadrillasAdapter.Cu
      */
     public interface HomeAdapterListener {
         void onCuadrillaSelected(Cuadrillas cuadrillas, View view);
-
         void onDeleteCuadrilla(Cuadrillas cuadrillas);
     }
 
     class CuadrillaViewHolder extends RecyclerView.ViewHolder {
         private TextView mNumCuadrillaView;
         private TextView mMayordomoTextView;
+        private CardView view;
+
 
         public CuadrillaViewHolder(@NonNull final View itemView) {
             super(itemView);
             mNumCuadrillaView = itemView.findViewById(R.id.detail_cuadrilla_name_text_view);
             mMayordomoTextView = itemView.findViewById(R.id.trabajador);
+            view = itemView.findViewById(R.id.cv_cuadrillas);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -67,6 +73,7 @@ public class CuadrillasAdapter extends RecyclerView.Adapter<CuadrillasAdapter.Cu
                 }
             });
         }
+
     }
 
     /***
@@ -79,6 +86,7 @@ public class CuadrillasAdapter extends RecyclerView.Adapter<CuadrillasAdapter.Cu
     @Override
     public CuadrillaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.item_cuadrilla,parent,false);
+
         return new CuadrillaViewHolder(view);
     }
 
@@ -88,11 +96,22 @@ public class CuadrillasAdapter extends RecyclerView.Adapter<CuadrillasAdapter.Cu
      * @param holder el ViewHolder que debe de actualizarde para representar el contenido del elemento en la posicion dada en el conjunto de datos
      * @param position la posicion del item dentro de los datos del adapter
      */
+    @SuppressLint("ResourceAsColor")
     @Override
     public void onBindViewHolder(@NonNull CuadrillaViewHolder holder, int position) {
+
         Cuadrillas cuadrillas = mCuadrillasList.get(position);
         holder.mNumCuadrillaView.setText(cuadrillas.getCuadrilla().toString());
         holder.mMayordomoTextView.setText(cuadrillas.getMayordomo());
+
+        if (!cuadrillas.getHoraInicio().equals("") && cuadrillas.getHoraFinal().equals("")) {
+            holder.itemView.setBackgroundColor(this.mContext.getResources().getColor(R.color.colorActivo));
+        } else if (!cuadrillas.getHoraFinal().equals("")) {
+            holder.view.setBackgroundColor(this.mContext.getResources().getColor(R.color.colorFinalizado));
+        } else {
+            holder.view.setBackgroundColor(this.mContext.getResources().getColor(R.color.colorDefault));
+        }
+
     }
 
     /**
@@ -103,4 +122,5 @@ public class CuadrillasAdapter extends RecyclerView.Adapter<CuadrillasAdapter.Cu
     public int getItemCount() {
         return mCuadrillasList.size();
     }
+
 }

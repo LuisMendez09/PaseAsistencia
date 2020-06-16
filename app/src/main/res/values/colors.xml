@@ -7,4 +7,8 @@
     <color name="colorImput">#f0f0f0</color>
 
     <color name="colorButtom">#333700B3</color>
+
+    <color name="colorActivo">#52BE80</color>
+    <color name="colorFinalizado">#EC7063</color>
+    <color name="colorDefault">#F2F3F4</color>
 </resources>
