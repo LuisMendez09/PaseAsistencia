@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.paseasistencia.R;
 import com.example.paseasistencia.model.Cuadrillas;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CuadrillasAdapter extends RecyclerView.Adapter<CuadrillasAdapter.CuadrillaViewHolder> {
