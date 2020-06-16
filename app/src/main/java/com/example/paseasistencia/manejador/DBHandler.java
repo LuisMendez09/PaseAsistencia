@@ -1307,7 +1307,7 @@ public class DBHandler extends SQLiteOpenHelper {
                     listaAsistencias.add(new ListaAsistencia(t,a));
                 }
             }else{
-                listaAsistencias.add(new ListaAsistencia(t, new Asistencia(t, t.getPuesto(), cuadrilla.getFechaInicio(), new Date(0), 0)));
+                listaAsistencias.add(new ListaAsistencia(t, new Asistencia(t, getPuestos(11)/*t.getPuesto()*/, cuadrilla.getFechaInicio(), new Date(0), 0)));
             }
 
         }

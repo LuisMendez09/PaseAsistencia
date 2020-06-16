@@ -101,7 +101,7 @@ public class ImportarCatalogos extends AsyncTask<Void, Integer, String> {
                     FileLog.i(TAG, Controlador.getCONTEXT().getString(R.string.msn_enesperado));
                 }
 
-                FileLog.i(TAG, "termina peticion de mallas, Total mallas " + listaPuestos.size());
+                FileLog.i(TAG, "termina peticion de puestos, Total puestos " + listaPuestos.size());
             }catch(BridgeException e){
                 respuesta = Controlador.getCONTEXT().getString(R.string.msn_sinConexion);
                 FileLog.i(TAG, "Error al conectar con el servidor " + e.getMessage());
@@ -144,7 +144,7 @@ public class ImportarCatalogos extends AsyncTask<Void, Integer, String> {
                     FileLog.i(TAG, Controlador.getCONTEXT().getString(R.string.msn_enesperado));
                 }
 
-                FileLog.i(TAG, "termina peticion de mallas, Total mallas " + listaActividades.size());
+                FileLog.i(TAG, "termina peticion de actividades, Total actividades " + listaActividades.size());
             }catch(BridgeException e){
                 respuesta = Controlador.getCONTEXT().getString(R.string.msn_sinConexion);
                 FileLog.i(TAG, "Error al conectar con el servidor " + e.getMessage());
@@ -228,7 +228,7 @@ public class ImportarCatalogos extends AsyncTask<Void, Integer, String> {
                     FileLog.i(TAG, Controlador.getCONTEXT().getString(R.string.msn_enesperado));
                 }
 
-                FileLog.i(TAG, "termina peticion de mallas, Total mallas " + listaPermisos.size());
+                FileLog.i(TAG, "termina peticion de permisos, Total permisos " + listaPermisos.size());
             }catch(BridgeException e){
                 respuesta = Controlador.getCONTEXT().getString(R.string.msn_sinConexion);
                 FileLog.i(TAG, "Error al conectar con el servidor " + e.getMessage());
@@ -249,7 +249,7 @@ public class ImportarCatalogos extends AsyncTask<Void, Integer, String> {
         String respuesta=null;
         try {
             String url = this.servidor+"TRABAJADOREs?fechaInicioSem="+ Complementos.getDateActualToStringServidor();
-            FileLog.i(TAG, "Inicia peticion de tipos de permisos ");
+            FileLog.i(TAG, "Inicia peticion de trabajadores ");
 
             try{
                 Request request = Bridge.get(url).throwIfNotSuccess().request();
@@ -280,7 +280,7 @@ public class ImportarCatalogos extends AsyncTask<Void, Integer, String> {
                     FileLog.i(TAG, Controlador.getCONTEXT().getString(R.string.msn_enesperado));
                 }
 
-                FileLog.i(TAG, "termina peticion de mallas, Total mallas " + listaPermisos.size());
+                FileLog.i(TAG, "termina peticion de trabajadores, Total trabajadores " + listaPermisos.size());
             }catch(BridgeException e){
                 respuesta = Controlador.getCONTEXT().getString(R.string.msn_sinConexion);
                 FileLog.i(TAG, "Error al conectar con el servidor " + e.getMessage());
