@@ -1299,6 +1299,9 @@ public class DBHandler extends SQLiteOpenHelper {
         ArrayList<ListaAsistencia> listaAsistencias = new ArrayList<>() ;
 
         ArrayList<Trabajadores> trabajadoresCuadrilla = getTrabajadoresCuadrilla(cuadrilla.getCuadrilla());
+
+        Puestos puestosDefault = getPuestos(11);
+
         for (Trabajadores t : trabajadoresCuadrilla) {
             ArrayList<Asistencia> asistencia = getAsistencia(fecha, t);
 
@@ -1307,7 +1310,7 @@ public class DBHandler extends SQLiteOpenHelper {
                     listaAsistencias.add(new ListaAsistencia(t,a));
                 }
             }else{
-                listaAsistencias.add(new ListaAsistencia(t, new Asistencia(t, getPuestos(11)/*t.getPuesto()*/, cuadrilla.getFechaInicio(), new Date(0), 0)));
+                listaAsistencias.add(new ListaAsistencia(t, new Asistencia(t, puestosDefault/*t.getPuesto()*/, cuadrilla.getFechaInicio(), new Date(0), 0)));
             }
 
         }
