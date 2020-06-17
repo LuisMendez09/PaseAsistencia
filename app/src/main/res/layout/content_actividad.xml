@@ -98,13 +98,16 @@
 
                     <Button
                         android:id="@+id/btn_guardar"
-                        android:layout_width="100sp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="16dp"
+                        android:layout_width="126dp"
+                        android:layout_height="39dp"
                         android:layout_weight="1"
                         android:background="@drawable/buttom_redondo"
+                        android:paddingLeft="@dimen/margin_left"
                         android:text="@string/btn_guardar"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

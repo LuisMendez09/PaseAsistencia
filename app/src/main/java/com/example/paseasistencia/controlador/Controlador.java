@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 import com.example.paseasistencia.complementos.Complementos;
 import com.example.paseasistencia.manejador.DBHandler;
 import com.example.paseasistencia.model.Actividades;
-import com.example.paseasistencia.model.ActividadesRealizadas;
+import com.example.paseasistencia.model.MallasRealizadas;
 import com.example.paseasistencia.model.Asistencia;
 import com.example.paseasistencia.model.Configuracion;
 import com.example.paseasistencia.model.Cuadrillas;
@@ -458,7 +458,7 @@ public class Controlador {
     }
 
 
-    public boolean setNuevasAsistencias(Cuadrillas cuadrilla, List<ListaAsistencia> trabajadores, List<ActividadesRealizadas> actividadesRealizadas, String hora, String fecha) {
+    public boolean setNuevasAsistencias(Cuadrillas cuadrilla, List<ListaAsistencia> trabajadores, List<MallasRealizadas> mallasRealizadas, String hora, String fecha) {
         Long aLong = Long.valueOf(-1);
         Date horainicio = new Date();
         try {
@@ -469,7 +469,7 @@ public class Controlador {
         }
 
         FileLog.i(TAG, "iniciar guardado de actividades realizadas");
-        boolean b = setActividadesRealizadas(actividadesRealizadas, cuadrilla.getCuadrilla());
+        boolean b = setActividadesRealizadas(mallasRealizadas, cuadrilla.getCuadrilla());
 
         if (b) {
             FileLog.i(TAG, "iniciar guardado de asistencia");
@@ -553,16 +553,16 @@ public class Controlador {
         return Controlador.CONEXION.updateAsistencia(asistencia);
     }
     /******************************actividades realizadas*****************************************************/
-    public ArrayList<ActividadesRealizadas> getActividadesResalizadas(String fecha,Cuadrillas cuadrillas){
+    public ArrayList<MallasRealizadas> getActividadesResalizadas(String fecha, Cuadrillas cuadrillas) {
         return Controlador.CONEXION.getActividadesRealizadas(fecha,cuadrillas);
     }
 
-    private boolean setActividadesRealizadas(List<ActividadesRealizadas> actividadesRealizadas, Integer cuadrilla) {
+    private boolean setActividadesRealizadas(List<MallasRealizadas> mallasRealizadas, Integer cuadrilla) {
         Long aLong = Long.valueOf(-1);
 
         Controlador.CONEXION.deleteMallasRealizadas(getSettings().getFecha(), cuadrilla.toString());
 
-        for (ActividadesRealizadas lar : actividadesRealizadas) {
+        for (MallasRealizadas lar : mallasRealizadas) {
             aLong = Controlador.CONEXION.addActividadesRealizadas(lar);
         }
 
@@ -573,11 +573,11 @@ public class Controlador {
             return false;
     }
 
-    public ArrayList<ActividadesRealizadas> getActividadesRealizadasPendientesPorEnviar() {
+    public ArrayList<MallasRealizadas> getActividadesRealizadasPendientesPorEnviar() {
         return Controlador.CONEXION.getActividadesRealizadasPendientesPorEnviar();
     }
 
-    public int updateActividadesRealizadas(ActividadesRealizadas actividadRealizada) {
+    public int updateActividadesRealizadas(MallasRealizadas actividadRealizada) {
         return Controlador.CONEXION.updateActividadesRealizadas(actividadRealizada);
     }
 

@@ -20,11 +20,12 @@ import androidx.fragment.app.DialogFragment;
 import com.example.paseasistencia.R;
 import com.example.paseasistencia.complementos.Complementos;
 import com.example.paseasistencia.controlador.Controlador;
+import com.example.paseasistencia.controlador.FileLog;
 import com.example.paseasistencia.model.Actividades;
-import com.example.paseasistencia.model.ActividadesRealizadas;
+import com.example.paseasistencia.model.ListaActividades;
+import com.example.paseasistencia.model.MallasRealizadas;
 import com.example.paseasistencia.model.Cuadrillas;
 import com.example.paseasistencia.model.Mallas;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,8 @@ public class DialogAddActividad extends DialogFragment {
     private ActividadesResalizadasAdapter actividadesResalizadasAdapter;
     private List<Mallas> Catalogomallas = new ArrayList<>();
     private List<Mallas> mallasSeleccionadas = new ArrayList<>();
-    private ListaActividades listaActividad;
+    private ListaActividades listaActividadEditar = null;
+    private Integer posicion;
 
     private Button btnSector;
     private TextView tvSector;
@@ -46,15 +48,14 @@ public class DialogAddActividad extends DialogFragment {
     private Spinner sp_actividad;
     private Spinner sp_tipoActividad;
 
-    public DialogAddActividad(ActividadesResalizadasAdapter actividadesResalizadasAdapter, Integer index/*String actividad,Integer tipoActiviad,String sector*/, Cuadrillas cuadrilla) {
+    public DialogAddActividad(ActividadesResalizadasAdapter actividadesResalizadasAdapter, Integer posicion, Cuadrillas cuadrilla) {
         this.controlador = Controlador.getInstance(getContext());
         this.cuadrilla = cuadrilla;
+        this.posicion = posicion;
 
         this.actividadesResalizadasAdapter = actividadesResalizadasAdapter;
-        if (index != -1)
-            this.listaActividad = this.actividadesResalizadasAdapter.getItem(index);
-
-
+        if (posicion != -1)
+            this.listaActividadEditar = this.actividadesResalizadasAdapter.getItem(posicion);
     }
 
     @NonNull
@@ -80,11 +81,11 @@ public class DialogAddActividad extends DialogFragment {
         ArrayAdapter<String> tipoActividadAdapter = new ArrayAdapter<>(this.getContext(), R.layout.support_simple_spinner_dropdown_item, Controlador.TIPOS_ACTIVIDADES);
         sp_tipoActividad.setAdapter(tipoActividadAdapter);
 
-        if (this.listaActividad != null) {
-            this.sp_actividad.setSelection(Complementos.getIndex(sp_actividad, this.listaActividad.getActividad().getNombre()));
-            this.sp_tipoActividad.setSelection(listaActividad.getTipoActividad());
-            this.tvSector.setText(this.listaActividad.getSector());
-            this.mallasSeleccionadas = this.actividadesResalizadasAdapter.getMallasList(this.listaActividad.getActividad().getNombre(), this.listaActividad.getTipoActividad(), this.listaActividad.getSector());
+        if (this.listaActividadEditar != null) {
+            this.sp_actividad.setSelection(Complementos.getIndex(sp_actividad, this.listaActividadEditar.getActividad().getNombre()));
+            this.sp_tipoActividad.setSelection(listaActividadEditar.getTipoActividad());
+            this.tvSector.setText(this.listaActividadEditar.getSector());
+            this.mallasSeleccionadas = this.actividadesResalizadasAdapter.getMallasList(this.listaActividadEditar.getActividad().getNombre(), this.listaActividadEditar.getTipoActividad(), this.listaActividadEditar.getSector());
         }
 
 
@@ -111,26 +112,35 @@ public class DialogAddActividad extends DialogFragment {
     }
 
     private void guardar(View v) {
-        ArrayList<ActividadesRealizadas> listaActividades = new ArrayList<>();
+        ArrayList<MallasRealizadas> listaMallasRealizadas = new ArrayList<>();
         if (sp_tipoActividad.getSelectedItemPosition() != 0 && !tvMallas.getText().equals("")) {
             for (Mallas m : mallasSeleccionadas) {
-                listaActividades.add(new ActividadesRealizadas(Integer.parseInt(cuadrilla.getCuadrilla().toString())
+                listaMallasRealizadas.add(new MallasRealizadas(Integer.parseInt(cuadrilla.getCuadrilla().toString())
                         , (Actividades) sp_actividad.getSelectedItem(), tvSector.getText().toString(), m, controlador.getSettings().getFecha(), sp_tipoActividad.getSelectedItemPosition(), 0));
             }
-            int respuesta = actividadesResalizadasAdapter.add(cuadrilla.getCuadrilla(), (Actividades) sp_actividad.getSelectedItem(), sp_tipoActividad.getSelectedItemPosition(), tvSector.getText().toString(), listaActividades, listaActividad);
 
+            Log.i("actividades", listaMallasRealizadas.size() + "");
+            Integer respuesta = actividadesResalizadasAdapter.add(this.posicion, cuadrilla.getCuadrilla(), (Actividades) sp_actividad.getSelectedItem(), sp_tipoActividad.getSelectedItemPosition(), tvSector.getText().toString(), listaMallasRealizadas, listaActividadEditar);
+            FileLog.i(ActividadesResalizadasAdapter.TAG, " " + respuesta);
+            if (respuesta == ActividadesResalizadasAdapter.NUEVO)
+                Toast.makeText(getContext(), "Nuevo registro agregado", Toast.LENGTH_LONG).show();
+            else if (respuesta == ActividadesResalizadasAdapter.ACTUALIZACION)
+                Toast.makeText(getContext(), "registro actualizado", Toast.LENGTH_LONG).show();
+            else
+                Toast.makeText(getContext(), "registro duplicado", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getContext(), "Valores no validos", Toast.LENGTH_LONG).show();
         }
 
     }
 
     private void SeleccionSector() {
-
         btnSector.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Seleccione un sector")
-                        .setSingleChoiceItems(items, getIndex(), new DialogInterface.OnClickListener() {
+                        .setSingleChoiceItems(items, getPosicion(), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 agregarSector(items[which].toString());
@@ -144,7 +154,6 @@ public class DialogAddActividad extends DialogFragment {
     }
 
     private void seleccionarMallas() {
-
         this.Catalogomallas = controlador.getMallas(tvSector.getText().toString());
 
         final CharSequence m[] = new CharSequence[this.Catalogomallas.size()];
@@ -231,7 +240,7 @@ public class DialogAddActividad extends DialogFragment {
         }
     }
 
-    private int getIndex() {
+    private int getPosicion() {
         for (int i = 0; i < items.length; i++) {
             if (items[i].equals(tvSector.getText().toString())) {
                 return i;

@@ -77,7 +77,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.7"
                 android:background="@drawable/border_layout"
-                android:text=""
+                android:text="16:00"
                 android:textSize="@dimen/size_texto" />
         </LinearLayout>
     </LinearLayout>

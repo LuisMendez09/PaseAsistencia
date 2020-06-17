@@ -48,14 +48,13 @@
                 android:layout_height="50sp"
                 android:layout_weight="0.4"
                 android:text="ASISTENCIAS: "
-                android:textAlignment="textEnd"
                 android:textSize="@dimen/size_titulos" />
 
             <TextView
                 android:id="@+id/tv_asistencia"
                 android:layout_width="0sp"
                 android:layout_height="50sp"
-                android:layout_weight="0.5"
+                android:layout_weight="0.2"
                 android:text=""
                 android:textSize="@dimen/size_titulos" />
 
@@ -63,9 +62,9 @@
                 android:id="@+id/btn_guardar"
                 android:layout_width="0sp"
                 android:layout_height="match_parent"
-                android:layout_weight="0.1"
+                android:layout_weight="0.2"
                 android:background="@drawable/buttom_redondo"
-
+                android:text="continuar"
                 android:paddingRight="@dimen/marginButtom_right" />
 
         </LinearLayout>

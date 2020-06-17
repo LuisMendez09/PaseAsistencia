@@ -3,23 +3,19 @@ package com.example.paseasistencia.controlador;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.afollestad.bridge.Bridge;
 import com.afollestad.bridge.BridgeException;
 import com.afollestad.bridge.Request;
-import com.afollestad.bridge.RequestBuilder;
 import com.afollestad.bridge.Response;
-import com.example.paseasistencia.model.ActividadesRealizadas;
+import com.example.paseasistencia.model.MallasRealizadas;
 import com.example.paseasistencia.model.Asistencia;
 import com.example.paseasistencia.model.Cuadrillas;
 import com.example.paseasistencia.model.Trabajadores;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 
 public class EnviarDatos extends AsyncTask<Void, Integer, Controlador.STATUS_CONEXION> {
@@ -57,7 +53,7 @@ public class EnviarDatos extends AsyncTask<Void, Integer, Controlador.STATUS_CON
         Controlador.STATUS_CONEXION status_conexion = Controlador.STATUS_CONEXION.ENVIO_EXITOSO;
         Integer increment = 0;
         ArrayList<Trabajadores> trabajadoresPendientesPorEnviar = controlador.getTrabajadoresPendientesPorEnviar();
-        ArrayList<ActividadesRealizadas> actividadesRealizadasPendientesPorEnviar = controlador.getActividadesRealizadasPendientesPorEnviar();
+        ArrayList<MallasRealizadas> mallasRealizadasPendientesPorEnviar = controlador.getActividadesRealizadasPendientesPorEnviar();
         ArrayList<Asistencia> asistenciasPendientesPorEnviar = controlador.getAsistenciasPendientesPorEnviar();
         ArrayList<Cuadrillas> cuadrillasPendientesPorEnviar = controlador.getCuadrillasPendientesPorEnviar();
 
@@ -80,7 +76,7 @@ public class EnviarDatos extends AsyncTask<Void, Integer, Controlador.STATUS_CON
 
             FileLog.i(TAG, "inicia el envio de actividades realizadas");
             url = this.servidor + "actividadesRealizadas_asistencia";
-            for (ActividadesRealizadas ar : actividadesRealizadasPendientesPorEnviar) {
+            for (MallasRealizadas ar : mallasRealizadasPendientesPorEnviar) {
 
                 status_conexion = peticionEnvio(url, ar.toJson());
 

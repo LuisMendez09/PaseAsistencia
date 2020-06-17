@@ -74,11 +74,12 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
         lvTrabajadores = view.findViewById(R.id.lv_lista_cuadrilla);
         tvAsistencia = view.findViewById(R.id.tv_asistencia);
         Button btnAguardar = view.findViewById(R.id.btn_guardar);
+
         Drawable rightDrawable = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            rightDrawable = AppCompatResources.getDrawable(getContext(), R.drawable.ic_queue_play_next_24px);
+            rightDrawable = AppCompatResources.getDrawable(getContext(), R.drawable.ic_arrow_forward_ios_24px);
         } else {
-            rightDrawable = VectorDrawableCompat.create(getResources(), R.drawable.ic_queue_play_next_24px, null);
+            rightDrawable = VectorDrawableCompat.create(getResources(), R.drawable.ic_arrow_forward_ios_24px, null);
         }
 
         btnAguardar.setCompoundDrawablesWithIntrinsicBounds(null, null, rightDrawable, null);

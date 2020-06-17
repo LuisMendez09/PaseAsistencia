@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +25,7 @@ import com.example.paseasistencia.complementos.Complementos;
 import com.example.paseasistencia.controlador.Controlador;
 import com.example.paseasistencia.controlador.FileLog;
 import com.example.paseasistencia.model.Cuadrillas;
+import com.example.paseasistencia.model.ListaActividades;
 import com.example.paseasistencia.model.ListaAsistencia;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -43,6 +43,7 @@ public class ActividadesFragment extends Fragment {
     private ListaAsistencia listaAsistencia[];
     private ActividadesResalizadasAdapter actividadesResalizadasAdapter;
     private static final String TAG = "ActividadesFragment";
+    private static final int NUEVO_REGISTRO = -1;
 
 
 
@@ -58,13 +59,13 @@ public class ActividadesFragment extends Fragment {
         final ListView lvActividades = view.findViewById(R.id.lv_actividades);
 
         Button btnGuardar = view.findViewById(R.id.btn_guardar);
-        Drawable rightDrawable = null;
+        Drawable leftDrawable = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            rightDrawable = AppCompatResources.getDrawable(getContext(), R.drawable.ic_save_24px);
+            leftDrawable = AppCompatResources.getDrawable(getContext(), R.drawable.ic_save_24px);
         } else {
-            rightDrawable = VectorDrawableCompat.create(getResources(), R.drawable.ic_save_24px, null);
+            leftDrawable = VectorDrawableCompat.create(getResources(), R.drawable.ic_save_24px, null);
         }
-        btnGuardar.setCompoundDrawablesWithIntrinsicBounds(null, null, rightDrawable, null);
+        btnGuardar.setCompoundDrawablesWithIntrinsicBounds(leftDrawable, null, null, null);
 
         btnGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,13 +94,13 @@ public class ActividadesFragment extends Fragment {
                 tvAsistencia.setText(viewModel.getTotalAsistencia());
 
                 Controlador c = Controlador.getInstance(ActividadesFragment.this.getContext());
-                actividadesResalizadasAdapter = new ActividadesResalizadasAdapter(ActividadesFragment.this.getContext(), new ArrayList<ListaActividades>(), c.getActividadesResalizadas(c.getSettings().getFecha(), cuadrillas));
+                actividadesResalizadasAdapter = new ActividadesResalizadasAdapter(ActividadesFragment.this.getContext(), new ArrayList<ListaActividades>(), cuadrillas);
                 lvActividades.setAdapter(actividadesResalizadasAdapter);
                 lvActividades.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         //editar
-                        new DialogAddActividad(actividadesResalizadasAdapter/*,item.getActividad().getNombre(),item.getTipoActividad(),item.getSector(),ActividadesFragment.*/, position, ActividadesFragment.this.cuadrillas)
+                        new DialogAddActividad(actividadesResalizadasAdapter, position, ActividadesFragment.this.cuadrillas)
                                 .show(getActivity().getSupportFragmentManager(), "nuevaActividad");
                     }
                 });
@@ -123,7 +124,7 @@ public class ActividadesFragment extends Fragment {
 
     private void agregarActividad(){
         FileLog.i(TAG, "agregar nueva actividad");
-        new DialogAddActividad(this.actividadesResalizadasAdapter, -1/*"",-1,""*/, this.cuadrillas).show(getActivity().getSupportFragmentManager(), "nuevaActividad");
+        new DialogAddActividad(this.actividadesResalizadasAdapter, this.NUEVO_REGISTRO, this.cuadrillas).show(getActivity().getSupportFragmentManager(), "nuevaActividad");
     }
 
     private void guardarRegistros(){
@@ -133,7 +134,7 @@ public class ActividadesFragment extends Fragment {
             Controlador c = Controlador.getInstance(this.getContext());
 
             List<ListaAsistencia> t = Arrays.asList(listaAsistencia);
-            b = c.setNuevasAsistencias(cuadrillas, t, actividadesResalizadasAdapter.getActividadesRealizadas(), Complementos.obtenerHoraString(cuadrillas.getFechaInicio()), cuadrillas.getFecha());
+            b = c.setNuevasAsistencias(cuadrillas, t, actividadesResalizadasAdapter.getMallasRealizadas(), Complementos.obtenerHoraString(cuadrillas.getFechaInicio()), cuadrillas.getFecha());
 
             if (b)
                 NavHostFragment.findNavController(ActividadesFragment.this).popBackStack(R.id.nav_homeFragmen, false);

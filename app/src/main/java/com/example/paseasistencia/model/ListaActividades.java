@@ -1,7 +1,9 @@
-package com.example.paseasistencia.ui.actividad;
+package com.example.paseasistencia.model;
+
+import android.util.Log;
 
 import com.example.paseasistencia.model.Actividades;
-import com.example.paseasistencia.model.ActividadesRealizadas;
+import com.example.paseasistencia.model.MallasRealizadas;
 import com.example.paseasistencia.model.Mallas;
 
 import java.util.ArrayList;
@@ -11,18 +13,18 @@ public class ListaActividades {
     private Actividades actividad;
     private Integer tipoActividad;
     private String sector;
-    private ArrayList<ActividadesRealizadas> listaActividadesRealizadas;//lista de mallas realizadas
+    private ArrayList<MallasRealizadas> listaMallasRealizadas;//lista de mallas realizadas
     //private ArrayList<ActividadesRealizadas> listaActividadesDescartadas;//lista de mallas descartadas
 
     public ListaActividades() {
     }
 
-    public ListaActividades(Integer cuadrillas, Actividades actividad, Integer tipoActividad, String sector, ArrayList<ActividadesRealizadas> listaActividadesRealizadas) {
+    public ListaActividades(Integer cuadrillas, Actividades actividad, Integer tipoActividad, String sector, ArrayList<MallasRealizadas> listaMallasRealizadas) {
         this.cuadrillas = cuadrillas;
         this.actividad = actividad;
         this.tipoActividad = tipoActividad;
         this.sector = sector;
-        this.listaActividadesRealizadas = listaActividadesRealizadas;
+        this.listaMallasRealizadas = listaMallasRealizadas;
         //this.listaActividadesDescartadas = new ArrayList<>();
     }
 
@@ -54,41 +56,34 @@ public class ListaActividades {
         return cuadrillas;
     }
 
-    public ArrayList<ActividadesRealizadas> getListaActividadesRealizadas() {
-        return listaActividadesRealizadas;
+    public ArrayList<MallasRealizadas> getListaMallasRealizadas() {
+        return listaMallasRealizadas;
     }
 
-    public void setListaActividadesRealizadas(ArrayList<ActividadesRealizadas> listaActividadesRealizadas) {
-        this.listaActividadesRealizadas = listaActividadesRealizadas;
+    public void setListaMallasRealizadas(ArrayList<MallasRealizadas> listaMallasRealizadas) {
+        this.listaMallasRealizadas = null;
+        this.listaMallasRealizadas = listaMallasRealizadas;
     }
 
     public void setCuadrillas(Integer cuadrillas) {
         this.cuadrillas = cuadrillas;
     }
 
-    public void addActividadRealizada(ActividadesRealizadas actividadesRealizadas) {
-        for (ActividadesRealizadas ar :
-                this.listaActividadesRealizadas) {
-            if (actividadesRealizadas.getMalla().getId().equals(ar.getMalla().getId())) {
+    public void addActividadRealizada(MallasRealizadas mallasRealizadas) {
+        for (MallasRealizadas ar : this.listaMallasRealizadas) {
+            if (mallasRealizadas.getMalla().getId().equals(ar.getMalla().getId())) {
                 return;
             }
         }
 
-        this.listaActividadesRealizadas.add(actividadesRealizadas);
+        this.listaMallasRealizadas.add(mallasRealizadas);
     }
 
-   /* public ArrayList<ActividadesRealizadas> getListaActividadesDescartadas() {
-        return listaActividadesDescartadas;
-    }
-
-    public void setListaActividadesDescartadas(ActividadesRealizadas listaActividadesDescartadas) {
-        this.listaActividadesDescartadas.add( listaActividadesDescartadas);
-    }*/
 
     public String getMallas() {
         String r = "";
 
-        for (ActividadesRealizadas ar : listaActividadesRealizadas) {
+        for (MallasRealizadas ar : listaMallasRealizadas) {
             r = r.equals("") ? ar.getMalla().getId() : r + ", " + ar.getMalla().getId();
         }
 
@@ -98,7 +93,7 @@ public class ListaActividades {
     public ArrayList<Mallas> getListaMallas() {
         ArrayList<Mallas> r = new ArrayList<>();
 
-        for (ActividadesRealizadas ar : listaActividadesRealizadas) {
+        for (MallasRealizadas ar : listaMallasRealizadas) {
             r.add(ar.getMalla());
         }
 

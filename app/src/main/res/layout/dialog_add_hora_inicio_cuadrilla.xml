@@ -17,7 +17,7 @@
         android:id="@+id/tv_horaInicio"
         android:layout_width="match_parent"
         android:layout_height="50sp"
-        android:text=""
+        android:text="07:00"
         android:gravity="center_vertical"
         android:background="@drawable/border_layout"
         android:layout_marginLeft="@dimen/margin_left"

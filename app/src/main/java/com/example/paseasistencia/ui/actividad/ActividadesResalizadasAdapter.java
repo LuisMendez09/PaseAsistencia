@@ -1,7 +1,6 @@
 package com.example.paseasistencia.ui.actividad;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +12,11 @@ import androidx.annotation.Nullable;
 
 import com.example.paseasistencia.R;
 import com.example.paseasistencia.controlador.Controlador;
+import com.example.paseasistencia.controlador.FileLog;
 import com.example.paseasistencia.model.Actividades;
-import com.example.paseasistencia.model.ActividadesRealizadas;
+import com.example.paseasistencia.model.Cuadrillas;
+import com.example.paseasistencia.model.ListaActividades;
+import com.example.paseasistencia.model.MallasRealizadas;
 import com.example.paseasistencia.model.Mallas;
 
 import java.util.ArrayList;
@@ -22,29 +24,40 @@ import java.util.List;
 
 public class ActividadesResalizadasAdapter extends ArrayAdapter<ListaActividades> {
     private List<ListaActividades> listaMallas;
-    private List<ActividadesRealizadas> actividadesRealizadas;
     private Context context;
     private Controlador controlador;
 
-    public ActividadesResalizadasAdapter(@NonNull Context context, List<ListaActividades> listaMallas, List<ActividadesRealizadas> actividadesRealizadas) {
+    public static final String TAG = "ActividadesResalizadasAdapter";
+    public static final int NUEVO = 0;
+    public static final int ACTUALIZACION = 1;
+    public static final int DUPLICADO = 2;
+
+    public ActividadesResalizadasAdapter(@NonNull Context context, List<ListaActividades> listaMallas, Cuadrillas cuadrillas) {
         super(context, R.layout.item_actividades_mallas, listaMallas);
         this.listaMallas = listaMallas;
-        this.actividadesRealizadas = actividadesRealizadas;
         this.controlador = Controlador.getInstance(context);
         this.context = context;
 
-        actualizarRegistros();
+        actualizarRegistros(controlador.getActividadesResalizadas(controlador.getSettings().getFecha(), cuadrillas));
     }
 
-    public List<ActividadesRealizadas> getActividadesRealizadas() {
-        actividadesRealizadas = new ArrayList<>();
-        for (ListaActividades la : listaMallas) {
-            for (ActividadesRealizadas ar : la.getListaActividadesRealizadas()) {
-                actividadesRealizadas.add(ar);
+    private void actualizarRegistros(List<MallasRealizadas> mallasRealizadas) {
+        FileLog.i(TAG, "inicializar lista de actividades con sus respectivas mallas");
+        for (MallasRealizadas ar : mallasRealizadas) {
+            Integer index = getIndex(ar.getActividad().getNombre(), ar.getTipoActividad(), ar.getSector());//index del arrayAdapter
+
+            if (index != -1) {
+                //actualiza la lista de las mallas
+                ListaActividades lar = listaMallas.get(index);
+                lar.addActividadRealizada(ar);
+            } else {
+                //insertar nueva lista de malla
+                ArrayList<MallasRealizadas> lar = new ArrayList<>();
+                lar.add(ar);
+                ListaActividades la = new ListaActividades(ar.getCuadrlla(), ar.getActividad(), ar.getTipoActividad(), ar.getSector(), lar);
+                listaMallas.add(la);
             }
         }
-
-        return this.actividadesRealizadas;
     }
 
     @NonNull
@@ -64,90 +77,58 @@ public class ActividadesResalizadasAdapter extends ArrayAdapter<ListaActividades
         return convertView;
     }
 
+    public void update(int posicion, ArrayList<MallasRealizadas> la, Actividades actividades, Integer tipoActividad, String sector) {
+        ListaActividades listaActividades = listaMallas.get(posicion);
+        listaActividades.setActividad(actividades);
+        listaActividades.setTipoActividad(tipoActividad);
+        listaActividades.setSector(sector);
+        listaActividades.setListaMallasRealizadas(la);
+        this.notifyDataSetChanged();
+    }
 
-    public int add(Integer cuadrilla, Actividades actividad, Integer tipoActividad, String sector, ArrayList<ActividadesRealizadas> lar, ListaActividades listaActividadesAnterior) {
-        Integer index = -1;
+    public Integer add(Integer posicion, Integer cuadrilla, Actividades actividad, Integer tipoActividad, String sector, ArrayList<MallasRealizadas> lar, ListaActividades listaActividadesAnterior) {
+        Integer index = getIndex(actividad.getNombre(), tipoActividad, sector);
 
-        if (listaActividadesAnterior != null) {
-            index = getIndex(actividad.getNombre(), tipoActividad, sector);
+        if (listaActividadesAnterior == null) {
             if (index == -1) {
-                index = getIndex(listaActividadesAnterior.getActividad().getNombre(), listaActividadesAnterior.getTipoActividad(), listaActividadesAnterior.getSector());
+                FileLog.i(TAG, "agregar nueva actividad");
+                ListaActividades la = new ListaActividades(cuadrilla, actividad, tipoActividad, sector, lar);
+                add(la);
+                return NUEVO;
             } else {
-                index = -2;
+                FileLog.i(TAG, "registro duplicado");
+                return DUPLICADO;
             }
         } else {
-
-            index = getIndex(actividad.getNombre(), tipoActividad, sector);
-        }
-
-        //actualizar mallas
-
-        ListaActividades la = null;
-        if (index == -1) {
-            la = new ListaActividades(cuadrilla, actividad, tipoActividad, sector, lar);
-            this.add(la);
-        } else if (index > -1) {
-            la = listaMallas.get(index);
-            la.setActividad(actividad);
-            la.setTipoActividad(tipoActividad);
-            la.setSector(sector);
-            la.setListaActividadesRealizadas(lar);
-
-            if (listaActividadesAnterior != null) {
-                int len = actividadesRealizadas.size();
-                int i = 0;
-                while (i < len) {
-                    ActividadesRealizadas ar = actividadesRealizadas.get(i);
-                    if (ar.getActividad().getId() != listaActividadesAnterior.getActividad().getId() || ar.getTipoActividad() != listaActividadesAnterior.getTipoActividad() || !ar.getSector().equals(listaActividadesAnterior.getSector())) {
-                        actividadesRealizadas.remove(ar);
-                        len--;
-                    } else {
-                        i++;
-                    }
-                }
-
-                actualizarRegistros();
+            if (index == posicion || index == -1) {
+                FileLog.i(TAG, "actualizar registro");
+                update(posicion, lar, actividad, tipoActividad, sector);
+                return ACTUALIZACION;
+            } else {
+                FileLog.i(TAG, "registro duplicado");
+                return DUPLICADO;
             }
-            this.notifyDataSetChanged();
         }
-
-        return index;
     }
 
     @Override
     public void add(@Nullable ListaActividades ar) {
         super.add(ar);
         super.notifyDataSetChanged();
-        actualizarRegistros();
     }
 
-    private void actualizarRegistros(){
-
-        Log.v("actividades", actividadesRealizadas.size() + "");
-
-        for (ActividadesRealizadas ar : actividadesRealizadas) {
-            //ActividadesRealizadas ar = actividadesRealizadas.get(i);
-            Integer index = getIndex(ar.getActividad().getNombre(), ar.getTipoActividad(), ar.getSector());
-
-            if (index != -1) {
-                //actualiza la lista de las mallas
-                Log.v("actividades", "actualiza la lista de las mallas");
-                ListaActividades lar = listaMallas.get(index);
-                lar.addActividadRealizada(ar);
-                //break;
-            }else{
-                //insertar nueva lista de malla
-                Log.v("actividades", "insertar nueva lista de malla");
-                ArrayList<ActividadesRealizadas> lar = new ArrayList<>();
-                lar.add(ar);
-                ListaActividades la = new ListaActividades(ar.getCuadrlla(), ar.getActividad(), ar.getTipoActividad(), ar.getSector(), lar);
-                listaMallas.add(la);
+    public List<MallasRealizadas> getMallasRealizadas() {
+        List<MallasRealizadas> mallasRealizadas = new ArrayList<>();
+        for (ListaActividades la : listaMallas) {
+            for (MallasRealizadas ar : la.getListaMallasRealizadas()) {
+                mallasRealizadas.add(ar);
             }
         }
+
+        return mallasRealizadas;
     }
 
     public List<Mallas> getMallasList(String actividad, Integer tipoActividad, String sector) {
-
         int index = getIndex(actividad, tipoActividad, sector);
         if (index == -1) {
             return new ArrayList<Mallas>();
@@ -155,13 +136,10 @@ public class ActividadesResalizadasAdapter extends ArrayAdapter<ListaActividades
             ArrayList<Mallas> listaMallas = this.listaMallas.get(index).getListaMallas();
             return listaMallas;
         }
-
-
     }
 
     private Integer getIndex(String actividad, Integer tipoActividad, String sector) {
         for (int i = 0; i < listaMallas.size(); i++) {
-
             if (listaMallas.get(i).getActividad().getNombre().equals(actividad)
                     && listaMallas.get(i).getTipoActividad() == tipoActividad
                     && listaMallas.get(i).getSector().equals(sector)) {
@@ -171,5 +149,4 @@ public class ActividadesResalizadasAdapter extends ArrayAdapter<ListaActividades
 
         return -1;
     }
-
 }

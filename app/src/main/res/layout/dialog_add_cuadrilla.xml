@@ -40,7 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="50sp"
         android:background="@drawable/border_layout"
-        android:text=""
+        android:text="07:00"
         android:gravity="center_vertical"
         android:textSize="@dimen/size_texto"
         android:layout_marginTop="@dimen/margin_top"

@@ -4,18 +4,10 @@ import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.paseasistencia.complementos.Complementos;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-public class ActividadesRealizadas implements Parcelable {
+public class MallasRealizadas implements Parcelable {
     private Long id;
     private Integer cuadrlla;
     private Actividades actividad;
@@ -25,7 +17,7 @@ public class ActividadesRealizadas implements Parcelable {
     private Integer sended;
     private Integer tipoActividad;
 
-    public ActividadesRealizadas(Integer cuadrlla, Actividades actividad, String sector, Mallas mallas, String fecha, Integer tipoActividad, Integer sended) {
+    public MallasRealizadas(Integer cuadrlla, Actividades actividad, String sector, Mallas mallas, String fecha, Integer tipoActividad, Integer sended) {
         this.cuadrlla = cuadrlla;
         this.actividad = actividad;
         this.sector = sector;
@@ -35,7 +27,7 @@ public class ActividadesRealizadas implements Parcelable {
         this.sended = sended;
     }
 
-    public ActividadesRealizadas(Cursor cursor,Actividades actividad,Mallas mallas) {
+    public MallasRealizadas(Cursor cursor, Actividades actividad, Mallas mallas) {
         this.id = cursor.getLong(0);
         this.cuadrlla = cursor.getInt(1);
         this.actividad = actividad;
@@ -158,7 +150,7 @@ public class ActividadesRealizadas implements Parcelable {
         dest.writeValue(this.tipoActividad);
     }
 
-    protected ActividadesRealizadas(Parcel in) {
+    protected MallasRealizadas(Parcel in) {
         this.id = (Long) in.readValue(Long.class.getClassLoader());
         this.cuadrlla = (Integer) in.readValue(Integer.class.getClassLoader());
         this.actividad = in.readParcelable(Actividades.class.getClassLoader());
@@ -169,15 +161,15 @@ public class ActividadesRealizadas implements Parcelable {
         this.tipoActividad = (Integer) in.readValue(Integer.class.getClassLoader());
     }
 
-    public static final Creator<ActividadesRealizadas> CREATOR = new Creator<ActividadesRealizadas>() {
+    public static final Creator<MallasRealizadas> CREATOR = new Creator<MallasRealizadas>() {
         @Override
-        public ActividadesRealizadas createFromParcel(Parcel source) {
-            return new ActividadesRealizadas(source);
+        public MallasRealizadas createFromParcel(Parcel source) {
+            return new MallasRealizadas(source);
         }
 
         @Override
-        public ActividadesRealizadas[] newArray(int size) {
-            return new ActividadesRealizadas[size];
+        public MallasRealizadas[] newArray(int size) {
+            return new MallasRealizadas[size];
         }
     };
 }

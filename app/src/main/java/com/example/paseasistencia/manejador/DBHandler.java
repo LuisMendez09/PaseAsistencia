@@ -5,15 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteStatement;
-import android.text.LoginFilter;
 import android.util.Log;
 
 
 import com.example.paseasistencia.complementos.KeyValues;
 import com.example.paseasistencia.controlador.FileLog;
 import com.example.paseasistencia.model.Actividades;
-import com.example.paseasistencia.model.ActividadesRealizadas;
+import com.example.paseasistencia.model.MallasRealizadas;
 import com.example.paseasistencia.model.Asistencia;
 import com.example.paseasistencia.model.Configuracion;
 import com.example.paseasistencia.model.Cuadrillas;
@@ -534,24 +532,24 @@ public class DBHandler extends SQLiteOpenHelper {
         return insert;
     }
 
-    public Long addActividadesRealizadas(ActividadesRealizadas actividadesRealizadas){
-        FileLog.i(TAG, "agregar actividades realizadas " + actividadesRealizadas.toString());
+    public Long addActividadesRealizadas(MallasRealizadas mallasRealizadas) {
+        FileLog.i(TAG, "agregar actividades realizadas " + mallasRealizadas.toString());
         SQLiteDatabase  db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
 
         //values.put(KEY_ID_ACTIVIDADESREALIZADAS,actividadesRealizadas.getId());
-        values.put(KEY_CUADRILLA_ACTIVIDADESREALIZADAS,actividadesRealizadas.getCuadrlla());
-        values.put(KEY_IDACTIVIDAD_ACTIVIDADESREALIZADAS,actividadesRealizadas.getActividad().getId());
-        values.put(KEY_IDMALLA_ACTIVIDADESREALIZADAS,actividadesRealizadas.getMalla().getId());
-        values.put(KEY_FECHA_ACTIVIDADESREALIZADAS,actividadesRealizadas.getFecha());
-        values.put(KEY_TIPOACTIVIDAD_ACTIVIDADESREALIZADAS,actividadesRealizadas.getTipoActividad());
-        values.put(KEY_SENDED_ACTIVIDADESREALIZADAS,actividadesRealizadas.getSended());
+        values.put(KEY_CUADRILLA_ACTIVIDADESREALIZADAS, mallasRealizadas.getCuadrlla());
+        values.put(KEY_IDACTIVIDAD_ACTIVIDADESREALIZADAS, mallasRealizadas.getActividad().getId());
+        values.put(KEY_IDMALLA_ACTIVIDADESREALIZADAS, mallasRealizadas.getMalla().getId());
+        values.put(KEY_FECHA_ACTIVIDADESREALIZADAS, mallasRealizadas.getFecha());
+        values.put(KEY_TIPOACTIVIDAD_ACTIVIDADESREALIZADAS, mallasRealizadas.getTipoActividad());
+        values.put(KEY_SENDED_ACTIVIDADESREALIZADAS, mallasRealizadas.getSended());
 
         Long insert = db.insert(TABLE_ACTIVIDADES_REALIZADAS, null, values);
 
         if(insert !=-1)
-            actividadesRealizadas.setId(insert);
+            mallasRealizadas.setId(insert);
         else
             FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_ACTIVIDADES_REALIZADAS);
 
@@ -1397,9 +1395,9 @@ public class DBHandler extends SQLiteOpenHelper {
         return asistencias;
     }
 
-    public  ArrayList<ActividadesRealizadas> getActividadesRealizadas(String fecha, Cuadrillas cuadrilla) {
+    public ArrayList<MallasRealizadas> getActividadesRealizadas(String fecha, Cuadrillas cuadrilla) {
         FileLog.i(TAG, "obtener actividades realizadas cuadrilla " + cuadrilla + " fecha " + fecha);
-        ArrayList<ActividadesRealizadas> actividadesRealizadas = new ArrayList<>() ;
+        ArrayList<MallasRealizadas> mallasRealizadas = new ArrayList<>();
 
         String selectQuery = "SELECT *  FROM " + TABLE_ACTIVIDADES_REALIZADAS +" WHERE "+KEY_FECHA_REPORTE+" = '"+fecha+"' AND "+KEY_CUADRILLA_ACTIVIDADESREALIZADAS+" = "+cuadrilla.getCuadrilla();
 
@@ -1408,7 +1406,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                actividadesRealizadas.add(new ActividadesRealizadas(cursor,getActividades(cursor.getLong(2)),getMallas(cursor.getString(3))));
+                mallasRealizadas.add(new MallasRealizadas(cursor, getActividades(cursor.getLong(2)), getMallas(cursor.getString(3))));
             } while (cursor.moveToNext());
         }
         // return contact list
@@ -1416,10 +1414,10 @@ public class DBHandler extends SQLiteOpenHelper {
 
         cursor.close();
         db.close();
-        if (actividadesRealizadas.size() != 0)
-            FileLog.v(TAG, "actividades" + actividadesRealizadas.size());
+        if (mallasRealizadas.size() != 0)
+            FileLog.v(TAG, "actividades" + mallasRealizadas.size());
 
-        return actividadesRealizadas;
+        return mallasRealizadas;
     }
 
     public boolean getActividadesRealizadas(String fecha, Integer cuadrilla, Long idActividad, String idMalla, Integer tipoActividad) {
@@ -1444,9 +1442,9 @@ public class DBHandler extends SQLiteOpenHelper {
         return existe;
     }
 
-    public ArrayList<ActividadesRealizadas> getActividadesRealizadasPendientesPorEnviar() {
+    public ArrayList<MallasRealizadas> getActividadesRealizadasPendientesPorEnviar() {
         FileLog.i(TAG, "obtener actividades pendientes por enviar");
-        ArrayList<ActividadesRealizadas> actividadesRealizadas = new ArrayList<>();
+        ArrayList<MallasRealizadas> mallasRealizadas = new ArrayList<>();
 
         String selectQuery = "SELECT *  FROM " + TABLE_ACTIVIDADES_REALIZADAS + " WHERE " + KEY_SENDED_ACTIVIDADESREALIZADAS + " = 0";
         SQLiteDatabase db = this.getWritableDatabase();
@@ -1454,17 +1452,17 @@ public class DBHandler extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                actividadesRealizadas.add(new ActividadesRealizadas(cursor, getActividades(cursor.getLong(2)), getMallas(cursor.getString(3))));
+                mallasRealizadas.add(new MallasRealizadas(cursor, getActividades(cursor.getLong(2)), getMallas(cursor.getString(3))));
             } while (cursor.moveToNext());
         }
         // return contact list
 
         cursor.close();
         db.close();
-        if (actividadesRealizadas.size() != 0)
-            FileLog.v("RESULTADO_DB", "" + actividadesRealizadas.size());
+        if (mallasRealizadas.size() != 0)
+            FileLog.v("RESULTADO_DB", "" + mallasRealizadas.size());
 
-        return actividadesRealizadas;
+        return mallasRealizadas;
     }
 
     /*******************************UPDATE*******************************************************/
@@ -1592,23 +1590,23 @@ public class DBHandler extends SQLiteOpenHelper {
         return i;
     }
 
-    public int updateActividadesRealizadas(ActividadesRealizadas actividadesRealizadas){
-        FileLog.v(TAG, "update actividades realizadas" + actividadesRealizadas.toString());
+    public int updateActividadesRealizadas(MallasRealizadas mallasRealizadas) {
+        FileLog.v(TAG, "update actividades realizadas" + mallasRealizadas.toString());
         int i = -1;
         try{
             SQLiteDatabase  db = this.getWritableDatabase();
             ContentValues values = new ContentValues();
 
-            values.put(KEY_CUADRILLA_ACTIVIDADESREALIZADAS,actividadesRealizadas.getCuadrlla());
-            values.put(KEY_IDACTIVIDAD_ACTIVIDADESREALIZADAS,actividadesRealizadas.getActividad().getId());
-            values.put(KEY_IDMALLA_ACTIVIDADESREALIZADAS,actividadesRealizadas.getMalla().getId());
-            values.put(KEY_FECHA_ACTIVIDADESREALIZADAS,actividadesRealizadas.getFecha());
-            values.put(KEY_TIPOACTIVIDAD_ACTIVIDADESREALIZADAS,actividadesRealizadas.getTipoActividad());
-            values.put(KEY_SENDED_ACTIVIDADESREALIZADAS,actividadesRealizadas.getSended());
+            values.put(KEY_CUADRILLA_ACTIVIDADESREALIZADAS, mallasRealizadas.getCuadrlla());
+            values.put(KEY_IDACTIVIDAD_ACTIVIDADESREALIZADAS, mallasRealizadas.getActividad().getId());
+            values.put(KEY_IDMALLA_ACTIVIDADESREALIZADAS, mallasRealizadas.getMalla().getId());
+            values.put(KEY_FECHA_ACTIVIDADESREALIZADAS, mallasRealizadas.getFecha());
+            values.put(KEY_TIPOACTIVIDAD_ACTIVIDADESREALIZADAS, mallasRealizadas.getTipoActividad());
+            values.put(KEY_SENDED_ACTIVIDADESREALIZADAS, mallasRealizadas.getSended());
 
 
             i = db.update(TABLE_ACTIVIDADES_REALIZADAS, values, KEY_ID_ACTIVIDADESREALIZADAS + " = ?",
-                    new String[]{String.valueOf(actividadesRealizadas.getId().toString())});
+                    new String[]{String.valueOf(mallasRealizadas.getId().toString())});
 
             db.close();
         } catch (Exception e) {
