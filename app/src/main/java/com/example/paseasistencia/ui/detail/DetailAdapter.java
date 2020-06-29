@@ -71,14 +71,8 @@ public class DetailAdapter extends ArrayAdapter<ListaAsistencia> {
         ArrayAdapter<Puestos> puestosAdapter = new ArrayAdapter<>(context,R.layout.support_simple_spinner_dropdown_item,puestos);
         spPuesto.setAdapter(puestosAdapter);
 
-        //if(trabajadorSeleccionado.getAsistencia()==null){
-        //   spPuesto.setSelection(Complementos.getIndex(spPuesto,trabajadorSeleccionado.getTrabajadores().getPuesto().getNombre()));
-        //    tvTotalHoras.setText("00:00");
-        //}else{
-            spPuesto.setSelection(Complementos.getIndex(spPuesto,trabajadorSeleccionado.getAsistencia().getPuesto().getNombre()));
-            tvTotalHoras.setText(Complementos.getTotalHoras(trabajadorSeleccionado.getAsistencia().getDateInicio(),trabajadorSeleccionado.getAsistencia().getDateFin()));
-        //}
-
+        spPuesto.setSelection(Complementos.getIndex(spPuesto, trabajadorSeleccionado.getAsistencia().getPuesto().getNombre()));
+        tvTotalHoras.setText(Complementos.getTotalHoras(trabajadorSeleccionado.getAsistencia().getDateInicio(), trabajadorSeleccionado.getAsistencia().getDateFin()));
 
         tvNombre.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,13 +87,8 @@ public class DetailAdapter extends ArrayAdapter<ListaAsistencia> {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                    //if(trabajadorSeleccionado.getAsistencia()==null){
-                    //    trabajadorSeleccionado.getTrabajadores().setPuesto((Puestos) spPuesto.getItemAtPosition(position));
-                    //}
-                    //else{
                         trabajadorSeleccionado.getAsistencia().setPuesto((Puestos) spPuesto.getItemAtPosition(position));
                         trabajadorSeleccionado.getTrabajadores().setPuesto((Puestos) spPuesto.getItemAtPosition(position));
-                    //}
 
                 iDetallesAsistencia.actualziarAsistencia(getTotalAsistencia());
             }
