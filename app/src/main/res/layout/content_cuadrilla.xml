@@ -17,9 +17,9 @@
 
             <TextView
                 android:id="@+id/detail_cuadrilla_name_text_view"
-                android:layout_width="130dp"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="0.1"
+                android:layout_weight="0.2"
                 android:gravity="center"
                 android:text="TextView"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
@@ -28,9 +28,9 @@
 
             <TextView
                 android:id="@+id/trabajador"
-                android:layout_width="253dp"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="0.9"
+                android:layout_weight="0.8"
                 android:gravity="center"
                 android:text="Motorcycle"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
@@ -40,8 +40,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_bottom">
+            android:layout_height="wrap_content">
 
             <TextView
                 android:layout_width="0sp"
@@ -64,10 +63,28 @@
                 android:layout_height="match_parent"
                 android:layout_weight="0.2"
                 android:background="@drawable/buttom_redondo"
-                android:text="continuar"
-                android:paddingRight="@dimen/marginButtom_right" />
+                android:paddingRight="@dimen/marginButtom_right"
+                android:text="continuar" />
 
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_bottom"
+            android:orientation="vertical">
+
+
+            <Button
+                android:id="@+id/btn_paseLista"
+                android:layout_width="145dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/buttom_redondo"
+                android:paddingRight="@dimen/marginButtom_right"
+                android:text="asistencias" />
+        </LinearLayout>
+
 
     </LinearLayout>
 

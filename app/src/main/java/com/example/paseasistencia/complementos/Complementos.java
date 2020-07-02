@@ -55,6 +55,16 @@ public class Complementos {
         return 0;
     }
 
+    public static int getIndex(CharSequence[] array, String myString) {
+        for (int i = 0; i < array.length; i++) {
+            if (array[i].equals(myString)) {
+                return i;
+            }
+        }
+
+        return 0;
+    }
+
     public static Long getDateTimeActual(){
         return new Date().getTime();
     }

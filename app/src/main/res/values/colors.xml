@@ -11,4 +11,15 @@
     <color name="colorActivo">#52BE80</color>
     <color name="colorFinalizado">#EC7063</color>
     <color name="colorDefault">#F2F3F4</color>
+
+    <color name="colorText">#000000</color>
+    <color name="colorText2">#ffffff</color>
+
+    <color name="colorMayordomo">#52BE80</color>
+    <color name="colorNoTrabajo">#EC7063</color>
+    <color name="colorNoTrabajo2">#F0B4AD</color>
+    <color name="colorPersonalCampo">#2E86C1</color>
+    <color name="colorPersonalCampo2">#6EA6CC</color>
+    <color name="colorOtros">#F1C40F</color>
+    <color name="colorOtros2">#F4D558</color>
 </resources>

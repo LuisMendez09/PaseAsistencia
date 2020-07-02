@@ -5,6 +5,9 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -23,6 +28,7 @@ import androidx.annotation.Nullable;
 import com.example.paseasistencia.R;
 import com.example.paseasistencia.complementos.Complementos;
 import com.example.paseasistencia.controlador.Controlador;
+import com.example.paseasistencia.controlador.FileLog;
 import com.example.paseasistencia.model.Asistencia;
 import com.example.paseasistencia.model.Cuadrillas;
 import com.example.paseasistencia.model.ListaAsistencia;
@@ -43,6 +49,11 @@ public class DetailAdapter extends ArrayAdapter<ListaAsistencia> {
     private Context context;
     private List<ListaAsistencia> trabajadores;
     private ArrayList<Puestos> puestos;
+    private CharSequence[] items;
+
+    private int PUESTO_MAYORDOMO = 3;
+    private int PUESTO_NO_TRABAJO = 11;
+    private int PUESTO_PERSONAL_CAMPO = 2;
 
     public DetailAdapter(@NonNull Context context, List<ListaAsistencia> trabajadores,IDetallesAsistencia iDetallesAsistencia) {
         super(context, R.layout.item_lista_cuadrilla,trabajadores);
@@ -51,6 +62,11 @@ public class DetailAdapter extends ArrayAdapter<ListaAsistencia> {
         this.controlador = Controlador.getInstance(context);
         this.puestos = Controlador.getInstance(context).getPuestos();
         this.iDetallesAsistencia=iDetallesAsistencia;
+
+        items = new CharSequence[this.puestos.size()];
+        for (int i = 0; i < this.puestos.size(); i++) {
+            items[i] = this.puestos.get(i).toString();
+        }
     }
 
     @NonNull
@@ -61,18 +77,24 @@ public class DetailAdapter extends ArrayAdapter<ListaAsistencia> {
         TextView tvConsecutivo = convertView.findViewById(R.id.tv_consecutivo);
         TextView tvNombre = convertView.findViewById(R.id.tv_trabajador);
         TextView tvTotalHoras = convertView.findViewById(R.id.tv_totalHoras);
-        final Spinner spPuesto = convertView.findViewById(R.id.sp_puesto);
+        LinearLayout fila = convertView.findViewById(R.id.ly_itemCuadralla);
+
+        final TextView tvPuesto = convertView.findViewById(R.id.tv_puesto);
 
         final ListaAsistencia trabajadorSeleccionado = trabajadores.get(position);
 
         tvConsecutivo.setText(trabajadorSeleccionado.getTrabajadores().getConsecutivo().toString());
         tvNombre.setText(trabajadorSeleccionado.getTrabajadores().getNombre());
+        tvPuesto.setText(trabajadorSeleccionado.getAsistencia().getPuesto().getNombre());
 
-        ArrayAdapter<Puestos> puestosAdapter = new ArrayAdapter<>(context,R.layout.support_simple_spinner_dropdown_item,puestos);
-        spPuesto.setAdapter(puestosAdapter);
+        colorearFinla(position, fila);
 
-        spPuesto.setSelection(Complementos.getIndex(spPuesto, trabajadorSeleccionado.getAsistencia().getPuesto().getNombre()));
-        tvTotalHoras.setText(Complementos.getTotalHoras(trabajadorSeleccionado.getAsistencia().getDateInicio(), trabajadorSeleccionado.getAsistencia().getDateFin()));
+        //ArrayAdapter<Puestos> puestosAdapter = new ArrayAdapter<>(context,R.layout.support_simple_spinner_dropdown_item,puestos);
+        //spPuesto.setAdapter(puestosAdapter);
+
+        //spPuesto.setSelection(Complementos.getIndex(spPuesto, trabajadorSeleccionado.getAsistencia().getPuesto().getNombre()));
+        String horas = Complementos.getTotalHoras(trabajadorSeleccionado.getAsistencia().getDateInicio(), trabajadorSeleccionado.getAsistencia().getDateFin());
+        tvTotalHoras.setText(horas.equals("00:00") ? "" : horas);
 
         tvNombre.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,8 +104,18 @@ public class DetailAdapter extends ArrayAdapter<ListaAsistencia> {
             }
         });
 
+        View.OnClickListener c = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogPuestos(trabajadorSeleccionado);
+            }
+        };
 
-        spPuesto.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        tvConsecutivo.setOnClickListener(c);
+        tvPuesto.setOnClickListener(c);
+
+
+        /*spPuesto.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
@@ -97,12 +129,30 @@ public class DetailAdapter extends ArrayAdapter<ListaAsistencia> {
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
-        });
+        });*/
 
         iDetallesAsistencia.actualziarAsistencia(getTotalAsistencia());
 
-
         return convertView;
+    }
+
+
+    private void dialogPuestos(final ListaAsistencia trabajadorSeleccionado) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        int seleccion = Complementos.getIndex(items, trabajadorSeleccionado.getAsistencia().getPuesto().getNombre());
+        builder.setTitle("Seleccione un puesto")
+                .setSingleChoiceItems(items, seleccion, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //agregarSector(items[which].toString());
+                        trabajadorSeleccionado.getAsistencia().setPuesto(puestos.get(which));
+                        trabajadorSeleccionado.getTrabajadores().setPuesto(puestos.get(which));
+                        DetailAdapter.this.notifyDataSetChanged();
+                        dialog.dismiss();
+                    }
+                });
+        builder.create().show();
     }
 
     @Override
@@ -235,5 +285,55 @@ public class DetailAdapter extends ArrayAdapter<ListaAsistencia> {
 
     public List<ListaAsistencia> getTrabajadores() {
         return trabajadores;
+    }
+
+    private ListaAsistencia getTrabajador(Integer numero) {
+        for (ListaAsistencia la : trabajadores) {
+            if (la.getTrabajadores().getConsecutivo() == numero)
+                return la;
+        }
+
+        return null;
+    }
+
+    public int asistencia(String numero) {
+        if (!numero.equals("")) {
+            Integer num = Integer.parseInt(numero);
+            ListaAsistencia trabajador = getTrabajador(num);
+
+            if (trabajador != null) {
+                Puestos p = controlador.buscarPuestos(PUESTO_PERSONAL_CAMPO, puestos);
+
+                trabajador.getAsistencia().setPuesto(p);
+                trabajador.getTrabajadores().setPuesto(p);
+
+                notifyDataSetChanged();
+                iDetallesAsistencia.actualziarAsistencia(getTotalAsistencia());
+
+                return 1;
+            }
+        }
+
+        return 0;
+    }
+
+    private void colorearFinla(int position, LinearLayout fila) {
+        ListaAsistencia trabajadorSeleccionado = trabajadores.get(position);
+
+        for (int i = 0; i < fila.getChildCount(); i++) {
+            ((TextView) fila.getChildAt(i)).setTextColor(getContext().getResources().getColor(R.color.colorText));
+        }
+
+
+        if (trabajadorSeleccionado.getAsistencia().getPuesto().getId() == this.PUESTO_MAYORDOMO)
+            fila.setBackgroundColor(getContext().getResources().getColor(R.color.colorMayordomo));
+        else if (trabajadorSeleccionado.getAsistencia().getPuesto().getId() == this.PUESTO_NO_TRABAJO)
+            fila.setBackgroundColor(getContext().getResources().getColor(R.color.colorNoTrabajo2));
+        else if (trabajadorSeleccionado.getAsistencia().getPuesto().getId() == this.PUESTO_PERSONAL_CAMPO) {
+            fila.setBackgroundColor(getContext().getResources().getColor(R.color.colorPersonalCampo2));
+        } else if (trabajadorSeleccionado.getAsistencia().getPuesto().getId() != this.PUESTO_PERSONAL_CAMPO)
+            fila.setBackgroundColor(getContext().getResources().getColor(R.color.colorOtros2));
+
+
     }
 }

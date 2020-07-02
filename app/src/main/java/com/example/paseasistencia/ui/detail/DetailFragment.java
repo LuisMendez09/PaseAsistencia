@@ -48,12 +48,14 @@ import java.util.Objects;
  * A simple {@link Fragment} subclass.
  */
 public class DetailFragment extends Fragment implements IDetallesAsistencia{
-    DetailFragmentViewModel viewModel;
-    DetailAdapter mDetailAdapter;
-    TextView tvAsistencia;
-    ListView lvTrabajadores;
-    String items[] = null;
-    Cuadrillas cuadrillas;
+    private DetailFragmentViewModel viewModel;
+    private DetailAdapter mDetailAdapter;
+    private TextView tvAsistencia;
+    private ListView lvTrabajadores;
+
+
+    private String items[] = null;
+    private Cuadrillas cuadrillas;
     private static final String TAG = "DetailFragment";
     private static final String PUESTO_BASE = "PERSONAL CAMPO";
 
@@ -74,15 +76,20 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
         lvTrabajadores = view.findViewById(R.id.lv_lista_cuadrilla);
         tvAsistencia = view.findViewById(R.id.tv_asistencia);
         Button btnAguardar = view.findViewById(R.id.btn_guardar);
+        Button btnCapturaAsistencia = view.findViewById(R.id.btn_paseLista);
 
         Drawable rightDrawable = null;
+        Drawable leftDrawable = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             rightDrawable = AppCompatResources.getDrawable(getContext(), R.drawable.ic_arrow_forward_ios_24px);
+            leftDrawable = AppCompatResources.getDrawable(getContext(), R.drawable.ic_list_alt_24px);
         } else {
             rightDrawable = VectorDrawableCompat.create(getResources(), R.drawable.ic_arrow_forward_ios_24px, null);
+            leftDrawable = AppCompatResources.getDrawable(getContext(), R.drawable.ic_list_alt_24px);
         }
 
         btnAguardar.setCompoundDrawablesWithIntrinsicBounds(null, null, rightDrawable, null);
+        btnCapturaAsistencia.setCompoundDrawablesWithIntrinsicBounds(leftDrawable, null, null, null);
 
         Application application = Objects.requireNonNull(getActivity()).getApplication();
 
@@ -107,6 +114,7 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 if (viewModel.getStatusSesion()==Controlador.STATUS_SESION.SESION_ACTIVA)
                         agregarTrabajador();
             }
@@ -117,6 +125,13 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
             public void onClick(View v) {
                 if(viewModel.getStatusSesion()==Controlador.STATUS_SESION.SESION_ACTIVA)
                     guardarCambios(v);
+            }
+        });
+
+        btnCapturaAsistencia.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DialogCapturaAsistencia(mDetailAdapter).show(getActivity().getSupportFragmentManager(), "capturaAsistencia");
             }
         });
 
@@ -199,7 +214,7 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
         });
     }
 
-    public void editarnombre(final ListaAsistencia asistencia) {
+    private void editarnombre(final ListaAsistencia asistencia) {
         FileLog.v(TAG, "inicia edicion del nombre del trabajador");
         final AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
 
@@ -228,7 +243,7 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
 
     }
 
-    public void editarPuesto(final ListaAsistencia a, final int fila) {
+    private void editarPuesto(final ListaAsistencia a, final int fila) {
         FileLog.v(TAG, "inicia edicion de de puesto " + a.toString());
         final AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
 
@@ -284,7 +299,7 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
                 .show();
     }
 
-    public void agregarPuesto(final ListaAsistencia a) {
+    private void agregarPuesto(final ListaAsistencia a) {
         FileLog.v(TAG, "agregar nuevo puesto " + a.toString());
         final AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
 
@@ -339,8 +354,9 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
                 .show();
     }
 
-    public void agregarTrabajador(){
+    private void agregarTrabajador() {
         FileLog.v(TAG, "agregar nuevo trabajador");
+        FileLog.v(TAG, "sadasdasdasd");
         final AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
 
         LayoutInflater layoutInflater = this.getActivity().getLayoutInflater();
@@ -377,5 +393,6 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
                 .create()
                 .show();
     }
+
 
 }

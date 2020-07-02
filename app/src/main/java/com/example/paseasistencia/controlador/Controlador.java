@@ -21,6 +21,8 @@ import com.example.paseasistencia.model.Trabajadores;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -263,7 +265,21 @@ public class Controlador {
 
     /********************************Catalogo de puestos*****************************************************/
     public ArrayList<Puestos> getPuestos(){
-        return Controlador.CONEXION.getPuestos();
+        ArrayList<Puestos> puestos = Controlador.CONEXION.getPuestos();
+        Collections.sort(puestos);
+        return puestos;
+    }
+
+    public Puestos buscarPuestos(int id, ArrayList<Puestos> puestos) {
+        if (puestos != null) {
+            for (Puestos p :
+                    puestos) {
+                if (p.getId() == id)
+                    return p;
+            }
+        }
+
+        return Controlador.CONEXION.getPuestos(id);
     }
 
     public Puestos getPuestos(String descripcion){
@@ -282,6 +298,7 @@ public class Controlador {
         return i==-1? false : true;
 
     }
+
 
     /******************************Catalogo de Actividades*****************************************************/
     public ArrayList<Actividades> getActividades(){
