@@ -2,6 +2,7 @@ package com.example.paseasistencia.ui.home;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
@@ -68,22 +70,42 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.v("ciclo", "fragment onActivityCreated");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.v("ciclo", "fragment onStart");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.v("ciclo", "fragment onResume");
+
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Log.v("ciclo", "fragment onViewCreated");
 
-
-        if (controlador.sesionNoFinalizada()) {
-            if (controlador.getCuadrillasPendientesPorFinalizar() > 0) {
+        Controlador.STATUS_SESION sesion = controlador.validarSesion();
+        switch (sesion) {
+            case CUADRILLA_PENDIENTES_POR_FINALIZAR:
                 Navigation.findNavController(view).navigate(R.id.nav_finalizarCuadrilla);
-            } else {
+                break;
+            case ACTUALIZAR_CATALOGO_TRABAJADORES:
+                Navigation.findNavController(view).navigate(R.id.nav_importacion);
+                break;
+            default:
                 controlador.iniciarSession();
                 inicializarListadoCuadrillas();
-            }
-        } else {
-            controlador.iniciarSession();
-            inicializarListadoCuadrillas();
+                break;
         }
-
     }
 
     private void inicializarListadoCuadrillas() {

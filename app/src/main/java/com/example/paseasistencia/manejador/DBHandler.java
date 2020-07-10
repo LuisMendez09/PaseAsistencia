@@ -20,6 +20,7 @@ import com.example.paseasistencia.model.Mallas;
 import com.example.paseasistencia.model.Puestos;
 import com.example.paseasistencia.model.Reportes;
 import com.example.paseasistencia.model.Settings;
+import com.example.paseasistencia.model.TiposActividades;
 import com.example.paseasistencia.model.TiposPermisos;
 import com.example.paseasistencia.model.Trabajadores;
 
@@ -40,6 +41,7 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String TABLE_SETTINGS = "Settings";
     private static final String TABLE_CONFIGURACION = "Configuracion";
     private static final String TABLE_CUADRILLAS_REVISADAS = "CuadrillasRevisadas";
+    private static final String TABLE_TIPOS_ACTIVIDADES = "TiposActividades";
 
     // Configuracion table columnas name
     private static final String KEY_ID_CONFIGURACION = "id";
@@ -55,6 +57,7 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String KEY_JORNADAFINALIZADA_SETTINGS = "FinJornada";//INDICADOR DE FIN DE JORNADA
     private static final String KEY_JORNADAINICIADA_SETTINGS = "InicioJornada";//INDICADOR DE INICIO DE JORNADA
     private static final String KEY_ENVIODATOS_SETTINGS = "EnviarInformacion";//INDICADOR DE INFORMACION PENDIENTE
+    private static final String KEY_DATEACTUALIZACIOIN_SETTINGS = "DateActualizacion";//INDICADOR DE INFORMACION PENDIENTE
 
     //cuadrillas
     private static final String KEY_ID_CUADRILLASREVISADAS = "id";
@@ -68,6 +71,10 @@ public class DBHandler extends SQLiteOpenHelper {
     // catalogo actividades Table Columns names
     private static final String KEY_ID_ACTIVIDADES = "id";
     private static final String KEY_DESCRIPCION_ACTIVIDADES = "Descripcion";
+
+    // catalogo actividades Table Columns names
+    private static final String KEY_ID_TIPOSACTIVIDADES = "id";
+    private static final String KEY_DESCRIPCION_TIPOSACTIVIDADES = "Descripcion";
 
     // catalogo Puestos Table Columns names
     private static final String KEY_ID_PUESTOS = "id";
@@ -149,7 +156,8 @@ public class DBHandler extends SQLiteOpenHelper {
                 +KEY_HORAFINSTRING_SETTINGS + " TEXT,"
                 +KEY_JORNADAFINALIZADA_SETTINGS + " INTEGER,"
                 +KEY_JORNADAINICIADA_SETTINGS + " INTEGER,"
-                +KEY_ENVIODATOS_SETTINGS + " INTEGER"
+                + KEY_ENVIODATOS_SETTINGS + " INTEGER,"
+                + KEY_DATEACTUALIZACIOIN_SETTINGS + " INTEGER"
                 +")";
         db.execSQL(CREATE_SETTINGS_TABLE);
 
@@ -178,6 +186,13 @@ public class DBHandler extends SQLiteOpenHelper {
                 + KEY_DESCRIPCION_PUESTOS + " TEXT"
                 + ")";
         db.execSQL(CREATE_TABLE_CATOLOGO_PUESTOS);
+
+        String CREATE_TABLE_TIPOS_ACTIVIDADES = " CREATE TABLE " + TABLE_TIPOS_ACTIVIDADES + " ("
+                + KEY_ID_TIPOSACTIVIDADES + " INTEGER PRIMARY KEY,"
+                + KEY_DESCRIPCION_TIPOSACTIVIDADES + " TEXT"
+                + ")";
+        db.execSQL(CREATE_TABLE_TIPOS_ACTIVIDADES);
+
 
         String CREATE_TABLE_TIPOS_PERMISOS= " CREATE TABLE "+ TABLE_TIPOS_PERMISOS + " ("
                 + KEY_ID_TIPOSPERMISOS + " INTEGER PRIMARY KEY,"
@@ -254,6 +269,7 @@ public class DBHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORTES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ASISTENCIA);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CUADRILLAS_REVISADAS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TIPOS_ACTIVIDADES);
 
         onCreate(db);
     }
@@ -268,6 +284,18 @@ public class DBHandler extends SQLiteOpenHelper {
                 + KEY_DESCRIPCION_PUESTOS + " TEXT"
                 + ")";
         db.execSQL(CREATE_TABLE_CATOLOGO_PUESTOS);
+    }
+
+    public void recrearTablaTiposActividades() {
+        FileLog.i(TAG, "REINICIAR LA TABLA tipos actividades");
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TIPOS_ACTIVIDADES);
+
+        String CREATE_TABLE_TIPOS_ACTIVIDADES = " CREATE TABLE " + TABLE_TIPOS_ACTIVIDADES + " ("
+                + KEY_ID_TIPOSACTIVIDADES + " INTEGER PRIMARY KEY,"
+                + KEY_DESCRIPCION_TIPOSACTIVIDADES + " TEXT"
+                + ")";
+        db.execSQL(CREATE_TABLE_TIPOS_ACTIVIDADES);
     }
 
     public void recrearTablaListaActividades(){
@@ -365,6 +393,7 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_JORNADAFINALIZADA_SETTINGS ,settings.getJornadaFinalizada());
         values.put(KEY_JORNADAINICIADA_SETTINGS,+ settings.getJornadaIniciada());
         values.put(KEY_ENVIODATOS_SETTINGS,settings.getEnvioDatos());
+        values.put(KEY_DATEACTUALIZACIOIN_SETTINGS, settings.getFechaActualizacion().getTime());
 
         Long insert = db.insert(TABLE_SETTINGS, null, values);
         if(insert !=-1)
@@ -410,6 +439,24 @@ public class DBHandler extends SQLiteOpenHelper {
             puestos.setId(Integer.valueOf(insert.toString()));
         else
             FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_PUESTOS);
+
+        db.close();
+
+        return insert;
+    }
+
+    public Long addTiposActividades(TiposActividades tiposActividades) {
+        FileLog.i(TAG, "agregar catalogo Puestos " + tiposActividades.toString());
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(KEY_ID_TIPOSACTIVIDADES, tiposActividades.getId());
+        values.put(KEY_DESCRIPCION_TIPOSACTIVIDADES, tiposActividades.getDescripcion());
+
+        Long insert = db.insert(TABLE_TIPOS_ACTIVIDADES, null, values);
+
+        if (insert == -1)
+            FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_TIPOS_ACTIVIDADES);
 
         db.close();
 
@@ -543,7 +590,7 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_IDACTIVIDAD_ACTIVIDADESREALIZADAS, mallasRealizadas.getActividad().getId());
         values.put(KEY_IDMALLA_ACTIVIDADESREALIZADAS, mallasRealizadas.getMalla().getId());
         values.put(KEY_FECHA_ACTIVIDADESREALIZADAS, mallasRealizadas.getFecha());
-        values.put(KEY_TIPOACTIVIDAD_ACTIVIDADESREALIZADAS, mallasRealizadas.getTipoActividad());
+        values.put(KEY_TIPOACTIVIDAD_ACTIVIDADESREALIZADAS, mallasRealizadas.getTipoActividad().getId());
         values.put(KEY_SENDED_ACTIVIDADESREALIZADAS, mallasRealizadas.getSended());
 
         Long insert = db.insert(TABLE_ACTIVIDADES_REALIZADAS, null, values);
@@ -864,6 +911,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return puestos;
     }
 
+
     public TiposPermisos getTiposPermisos(Long id) {
         FileLog.i(TAG, "obtener tipo de permiso id" + id);
         TiposPermisos tiposPermiso = null;
@@ -908,6 +956,54 @@ public class DBHandler extends SQLiteOpenHelper {
             FileLog.v(TAG, "" + tiposPermisos.size());
 
         return tiposPermisos;
+    }
+
+    public TiposActividades getTipoActividad(Integer id) {
+        FileLog.i(TAG, "obtener tipo actividad id" + id);
+        TiposActividades tipoActividad = null;
+
+        String selectQuery = "SELECT * FROM " + TABLE_TIPOS_ACTIVIDADES + " WHERE " + KEY_ID_TIPOSACTIVIDADES + " = '" + id + "' ";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                tipoActividad = new TiposActividades(cursor);
+            } while (cursor.moveToNext());
+        }
+        // return contact list
+
+        cursor.close();
+        db.close();
+        if (tipoActividad != null)
+            FileLog.v(TAG, tipoActividad.toString());
+
+        return tipoActividad;
+    }
+
+
+    public ArrayList<TiposActividades> getTiposActividades() {
+        FileLog.i(TAG, "obtener catalogo de tipo de actividades");
+        ArrayList<TiposActividades> tiposActividades = new ArrayList<>();
+
+        String selectQuery = "SELECT * FROM " + TABLE_TIPOS_ACTIVIDADES + " WHERE " + KEY_ID_TIPOSACTIVIDADES + " <> 1";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // looping through all rows and adding to list
+        tiposActividades.add(new TiposActividades(-1, "Selecciones tipo Actividad"));
+        if (cursor.moveToFirst()) {
+            do {
+                tiposActividades.add(new TiposActividades(cursor));
+            } while (cursor.moveToNext());
+        }
+        // return contact list
+
+        cursor.close();
+        db.close();
+        if (tiposActividades.size() != 0)
+            FileLog.v(TAG, "" + tiposActividades.size());
+
+        return tiposActividades;
     }
 
     public Actividades getActividades(Long id) {
@@ -1045,6 +1141,22 @@ public class DBHandler extends SQLiteOpenHelper {
             FileLog.v(TAG, "" + trabajadores.size());
 
         return trabajadores;
+    }
+
+    public int getTotalTrabajadores() {
+        FileLog.i(TAG, "obtener total de trabajadores");
+        int total = 0;
+        String selectQuery = "SELECT COUNT(*) FROM " + TABLE_TRABAJADORES;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            total = cursor.getInt(0);
+        }
+
+        cursor.close();
+        db.close();
+        return total;
     }
 
     public ArrayList<Trabajadores> getTrabajadoresPendientesPorEnviar() {
@@ -1406,7 +1518,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                mallasRealizadas.add(new MallasRealizadas(cursor, getActividades(cursor.getLong(2)), getMallas(cursor.getString(3))));
+                mallasRealizadas.add(new MallasRealizadas(cursor, getActividades(cursor.getLong(2)), getMallas(cursor.getString(3)), getTipoActividad(cursor.getInt(5))));
             } while (cursor.moveToNext());
         }
         // return contact list
@@ -1452,7 +1564,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                mallasRealizadas.add(new MallasRealizadas(cursor, getActividades(cursor.getLong(2)), getMallas(cursor.getString(3))));
+                mallasRealizadas.add(new MallasRealizadas(cursor, getActividades(cursor.getLong(2)), getMallas(cursor.getString(3)), getTipoActividad(cursor.getInt(5))));
             } while (cursor.moveToNext());
         }
         // return contact list
@@ -1499,6 +1611,8 @@ public class DBHandler extends SQLiteOpenHelper {
             values.put(KEY_JORNADAFINALIZADA_SETTINGS, settings.getJornadaFinalizada());
             values.put(KEY_JORNADAINICIADA_SETTINGS, settings.getJornadaIniciada());
             values.put(KEY_ENVIODATOS_SETTINGS, settings.getEnvioDatos());
+            values.put(KEY_DATEACTUALIZACIOIN_SETTINGS, settings.getFechaActualizacion().getTime());
+
 
             i = db.update(TABLE_SETTINGS, values, KEY_ID_SETTINGS + " = ?",
                     new String[]{String.valueOf(settings.getId().toString())});
@@ -1601,7 +1715,7 @@ public class DBHandler extends SQLiteOpenHelper {
             values.put(KEY_IDACTIVIDAD_ACTIVIDADESREALIZADAS, mallasRealizadas.getActividad().getId());
             values.put(KEY_IDMALLA_ACTIVIDADESREALIZADAS, mallasRealizadas.getMalla().getId());
             values.put(KEY_FECHA_ACTIVIDADESREALIZADAS, mallasRealizadas.getFecha());
-            values.put(KEY_TIPOACTIVIDAD_ACTIVIDADESREALIZADAS, mallasRealizadas.getTipoActividad());
+            values.put(KEY_TIPOACTIVIDAD_ACTIVIDADESREALIZADAS, mallasRealizadas.getTipoActividad().getId());
             values.put(KEY_SENDED_ACTIVIDADESREALIZADAS, mallasRealizadas.getSended());
 
 

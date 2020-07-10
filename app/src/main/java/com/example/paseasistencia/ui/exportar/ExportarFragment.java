@@ -1,7 +1,6 @@
 package com.example.paseasistencia.ui.exportar;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,31 +55,40 @@ public class ExportarFragment extends Fragment implements IactualizacionDatos {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        FinalizarCuadrillaModel viewModel = ViewModelProviders.of(requireActivity()).get(FinalizarCuadrillaModel.class);
-
         final NavController navController = Navigation.findNavController(view);
 
-        viewModel.getmCuadrillasData(getContext()).observe(getViewLifecycleOwner(), new Observer<List<Cuadrillas>>() {
-            @Override
-            public void onChanged(List<Cuadrillas> cuadrillas) {
-                if (cuadrillas.size() > 0) {
-                    navController.navigate(R.id.nav_finalizarCuadrilla);
+        if (Controlador.getInstance(this.getContext()).configuracionValida()) {
+            FinalizarCuadrillaModel viewModel = ViewModelProviders.of(requireActivity()).get(FinalizarCuadrillaModel.class);
+
+
+            viewModel.getmCuadrillasData(getContext()).observe(getViewLifecycleOwner(), new Observer<List<Cuadrillas>>() {
+                @Override
+                public void onChanged(List<Cuadrillas> cuadrillas) {
+                    if (cuadrillas.size() > 0) {
+                        navController.navigate(R.id.nav_finalizarCuadrilla);
+                    }
                 }
-            }
-        });
+            });
 
-        btnAceptar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //iniciar el envio
-                FileLog.i(TAG, "iniciar envios de datos");
-                EnviarDatos ed = new EnviarDatos(ExportarFragment.this, ExportarFragment.this.getContext());
-                ed.execute();
-            }
-        });
+            btnAceptar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //iniciar el envio
+                    FileLog.i(TAG, "iniciar envios de datos");
+                    EnviarDatos ed = new EnviarDatos(ExportarFragment.this, ExportarFragment.this.getContext());
+                    ed.execute();
+                }
+            });
 
-        inicializarEnvio(0, 0);
+            inicializarEnvio(0, 0);
+        } else {
+            navController.navigate(R.id.nav_configuracion);
+        }
+
+
     }
+
+
 
     private void inicializarEnvio(Integer min, Integer max) {
         tvMensaje.setText("");
@@ -111,6 +119,7 @@ public class ExportarFragment extends Fragment implements IactualizacionDatos {
     }
 
     @Override
-    public void finalizarAnimacion() {
+    public void finalizarAnimacion(String mensaje) {
     }
+
 }

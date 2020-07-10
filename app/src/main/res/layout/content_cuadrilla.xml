@@ -80,6 +80,7 @@
                 android:layout_width="145dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:visibility="invisible"
                 android:background="@drawable/buttom_redondo"
                 android:paddingRight="@dimen/marginButtom_right"
                 android:text="asistencias" />

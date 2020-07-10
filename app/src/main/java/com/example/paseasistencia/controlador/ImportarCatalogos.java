@@ -10,8 +10,10 @@ import com.afollestad.bridge.Response;
 import com.example.paseasistencia.R;
 import com.example.paseasistencia.complementos.Complementos;
 import com.example.paseasistencia.model.Actividades;
+import com.example.paseasistencia.model.Configuracion;
 import com.example.paseasistencia.model.Mallas;
 import com.example.paseasistencia.model.Puestos;
+import com.example.paseasistencia.model.TiposActividades;
 import com.example.paseasistencia.model.TiposPermisos;
 
 import org.json.JSONArray;
@@ -22,14 +24,22 @@ import java.util.List;
 public class ImportarCatalogos extends AsyncTask<Void, Integer, String> {
     private Controlador controlador;
     private IactualizacionDatos iactualizacionDatos;
-    private String servidor;
+    private String servidor = "";
+    private TIPO_CATALOGO tipoCatalogo;
     private static final String TAG = "ImportarCatalogos";
 
-    public ImportarCatalogos(IactualizacionDatos iactualizacionDatos, Controlador controlador) {
+    public enum TIPO_CATALOGO {
+        TRABAJADORES,
+        OTROS
+    }
+
+    public ImportarCatalogos(IactualizacionDatos iactualizacionDatos, Controlador controlador, TIPO_CATALOGO tipoCatalogo) {
         this.controlador = controlador;
         this.iactualizacionDatos = iactualizacionDatos;
+        this.tipoCatalogo = tipoCatalogo;
 
         this.servidor = this.controlador.getConfiguracion().getUrl();
+
         if(!this.servidor.endsWith("/"))
             this.servidor = this.servidor+"/";
     }
@@ -37,6 +47,7 @@ public class ImportarCatalogos extends AsyncTask<Void, Integer, String> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+
         iactualizacionDatos.iniciarAnimacion(0, 0);
         iactualizacionDatos.actualizacionMensajes(Controlador.getCONTEXT().getString(R.string.msn_inicio));
         FileLog.i(TAG, "iniciar la importacion de catalogos");
@@ -46,7 +57,7 @@ public class ImportarCatalogos extends AsyncTask<Void, Integer, String> {
     protected void onPostExecute(String mensaje) {
         super.onPostExecute(mensaje);
         iactualizacionDatos.actualizacionMensajes(mensaje);
-        iactualizacionDatos.finalizarAnimacion();
+        iactualizacionDatos.finalizarAnimacion(mensaje);
         FileLog.i(TAG, "finalizo la importacion");
     }
 
@@ -59,15 +70,22 @@ public class ImportarCatalogos extends AsyncTask<Void, Integer, String> {
     protected String doInBackground(Void... voids) {
         String respuesta = null;
 
-        respuesta = buscarListaPuestos();
-        if(!respuesta.equals(Controlador.getCONTEXT().getString(R.string.msn_fin))||!respuesta.equals(Controlador.getCONTEXT().getString(R.string.msn_lista_vacios))){
-            respuesta = buscarListaActividades();
-            if(!respuesta.equals(Controlador.getCONTEXT().getString(R.string.msn_fin))||!respuesta.equals(Controlador.getCONTEXT().getString(R.string.msn_lista_vacios))){
-                respuesta = buscarListaMallas();
-                if(!respuesta.equals(Controlador.getCONTEXT().getString(R.string.msn_fin))||!respuesta.equals(Controlador.getCONTEXT().getString(R.string.msn_lista_vacios))){
-                    respuesta = buscarListaPermisos();
-                    if(!respuesta.equals(Controlador.getCONTEXT().getString(R.string.msn_fin))||!respuesta.equals(Controlador.getCONTEXT().getString(R.string.msn_lista_vacios))){
-                        respuesta = buscarListaTrabajadores();
+        if (tipoCatalogo == TIPO_CATALOGO.TRABAJADORES) {
+            respuesta = buscarListaTrabajadores();
+            if (respuesta.equals(Controlador.getCONTEXT().getString(R.string.msn_fin))) {
+                controlador.actualizarFechaActualziacion();
+            }
+        } else {
+            respuesta = buscarListaPuestos();
+            if (!respuesta.equals(Controlador.getCONTEXT().getString(R.string.msn_fin)) || !respuesta.equals(Controlador.getCONTEXT().getString(R.string.msn_lista_vacios))) {
+                respuesta = buscarListaActividades();
+                if (!respuesta.equals(Controlador.getCONTEXT().getString(R.string.msn_fin)) || !respuesta.equals(Controlador.getCONTEXT().getString(R.string.msn_lista_vacios))) {
+                    respuesta = buscarListaMallas();
+                    if (!respuesta.equals(Controlador.getCONTEXT().getString(R.string.msn_fin)) || !respuesta.equals(Controlador.getCONTEXT().getString(R.string.msn_lista_vacios))) {
+                        respuesta = buscarTiposActividades();
+                        //if(!respuesta.equals(Controlador.getCONTEXT().getString(R.string.msn_fin))||!respuesta.equals(Controlador.getCONTEXT().getString(R.string.msn_lista_vacios))){
+                        //respuesta = buscarListaTrabajadores();
+                        //}
                     }
                 }
             }
@@ -237,6 +255,50 @@ public class ImportarCatalogos extends AsyncTask<Void, Integer, String> {
             respuesta = Controlador.getCONTEXT().getString(R.string.msn_enesperado);
             FileLog.i(TAG, ee.getMessage());
 
+        } catch (Exception e) {
+            respuesta = Controlador.getCONTEXT().getString(R.string.msn_enesperado);
+            FileLog.i(TAG, e.getMessage());
+        }
+
+        return respuesta;
+    }
+
+    private String buscarTiposActividades() {
+        String respuesta = null;
+        try {
+            String url = this.servidor + "tipos_actividad";
+
+            FileLog.i(TAG, "Inicia peticion de tipos de actividad ");
+
+            try {
+                Request request = Bridge.get(url).throwIfNotSuccess().request();
+                Response response = request.response();
+
+                List<TiposActividades> tiposActividades = response.asClassList(TiposActividades.class);
+
+                if (tiposActividades.size() == 0) {
+                    respuesta = Controlador.getCONTEXT().getString(R.string.msn_lista_vacios);
+                    FileLog.i(TAG, Controlador.getCONTEXT().getString(R.string.msn_lista_vacios));
+                } else if (tiposActividades.size() > 0) {
+                    controlador.reiniciarTiposActividades();
+                    for (TiposActividades ta : tiposActividades) {
+                        controlador.setTiposActividad(ta);
+                    }
+                    respuesta = Controlador.getCONTEXT().getString(R.string.msn_fin);
+                } else {
+                    respuesta = Controlador.getCONTEXT().getString(R.string.msn_enesperado);
+                    FileLog.i(TAG, Controlador.getCONTEXT().getString(R.string.msn_enesperado));
+                }
+
+                FileLog.i(TAG, "termina peticion de puestos, Total tipos de actividades " + tiposActividades.size());
+            } catch (BridgeException e) {
+                respuesta = Controlador.getCONTEXT().getString(R.string.msn_sinConexion);
+                FileLog.i(TAG, "Error al conectar con el servidor " + e.getMessage());
+            }
+        } catch (RuntimeException ee) {
+            respuesta = Controlador.getCONTEXT().getString(R.string.msn_enesperado);
+            FileLog.i(TAG, ee.getMessage() + "");
+
         }catch (Exception e){
             respuesta = Controlador.getCONTEXT().getString(R.string.msn_enesperado);
             FileLog.i(TAG, e.getMessage());
@@ -256,7 +318,7 @@ public class ImportarCatalogos extends AsyncTask<Void, Integer, String> {
                 Response response = request.response();
 
                 JSONArray jsonArray = response.asJsonArray();
-                List<TiposPermisos>listaPermisos = response.asClassList(TiposPermisos.class);
+                //List<TiposPermisos>listaPermisos = response.asClassList(TiposPermisos.class);
 
                 if(jsonArray.length() == 0){
                     respuesta = Controlador.getCONTEXT().getString(R.string.msn_lista_vacios);
@@ -274,13 +336,13 @@ public class ImportarCatalogos extends AsyncTask<Void, Integer, String> {
 
                         controlador.setTrabajadores(clave,consecutivo,nombre,numero,puesto);
                     }
-                    respuesta = Controlador.getCONTEXT().getString(R.string.msn_fin);
+                    respuesta = Controlador.getCONTEXT().getString(R.string.msn_fin_trabajadores);
                 }else{
                     respuesta = Controlador.getCONTEXT().getString(R.string.msn_enesperado);
                     FileLog.i(TAG, Controlador.getCONTEXT().getString(R.string.msn_enesperado));
                 }
 
-                FileLog.i(TAG, "termina peticion de trabajadores, Total trabajadores " + listaPermisos.size());
+                FileLog.i(TAG, "termina peticion de trabajadores, Total trabajadores " + jsonArray.length());
             }catch(BridgeException e){
                 respuesta = Controlador.getCONTEXT().getString(R.string.msn_sinConexion);
                 FileLog.i(TAG, "Error al conectar con el servidor " + e.getMessage());

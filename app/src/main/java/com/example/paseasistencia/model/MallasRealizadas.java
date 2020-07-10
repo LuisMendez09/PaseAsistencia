@@ -15,9 +15,9 @@ public class MallasRealizadas implements Parcelable {
     private Mallas mallas;
     private String fecha;
     private Integer sended;
-    private Integer tipoActividad;
+    private TiposActividades tipoActividad;
 
-    public MallasRealizadas(Integer cuadrlla, Actividades actividad, String sector, Mallas mallas, String fecha, Integer tipoActividad, Integer sended) {
+    public MallasRealizadas(Integer cuadrlla, Actividades actividad, String sector, Mallas mallas, String fecha, TiposActividades tipoActividad, Integer sended) {
         this.cuadrlla = cuadrlla;
         this.actividad = actividad;
         this.sector = sector;
@@ -27,15 +27,17 @@ public class MallasRealizadas implements Parcelable {
         this.sended = sended;
     }
 
-    public MallasRealizadas(Cursor cursor, Actividades actividad, Mallas mallas) {
+    public MallasRealizadas(Cursor cursor, Actividades actividad, Mallas mallas, TiposActividades tiposActividades) {
         this.id = cursor.getLong(0);
         this.cuadrlla = cursor.getInt(1);
         this.actividad = actividad;
         this.sector = mallas.getSector();
         this.mallas = mallas;
         this.fecha = cursor.getString(4);
-        this.tipoActividad = cursor.getInt(5);
+        this.tipoActividad = tiposActividades;//cursor.getInt(5);
         this.sended = cursor.getInt(6);
+
+
     }
 
     public Long getId() {
@@ -101,11 +103,11 @@ public class MallasRealizadas implements Parcelable {
         this.sended = sended;
     }
 
-    public Integer getTipoActividad() {
+    public TiposActividades getTipoActividad() {
         return tipoActividad;
     }
 
-    public void setTipoActividad(Integer tipoActividad) {
+    public void setTipoActividad(TiposActividades tipoActividad) {
         this.tipoActividad = tipoActividad;
     }
 
@@ -127,7 +129,7 @@ public class MallasRealizadas implements Parcelable {
         json.put("fecha", this.getFechaServidor());
         json.put("cuadrilla", this.getCuadrlla());
         json.put("idActividad", this.getActividad().getId());
-        json.put("tipoActividad", this.getTipoActividad());
+        json.put("tipoActividad", this.getTipoActividad().getId());
         json.put("idMalla", this.getMalla().getId());
 
         return json;
@@ -147,7 +149,7 @@ public class MallasRealizadas implements Parcelable {
         dest.writeParcelable(this.mallas, flags);
         dest.writeString(this.fecha);
         dest.writeValue(this.sended);
-        dest.writeValue(this.tipoActividad);
+        dest.writeParcelable(this.tipoActividad, flags);
     }
 
     protected MallasRealizadas(Parcel in) {
@@ -158,7 +160,7 @@ public class MallasRealizadas implements Parcelable {
         this.mallas = in.readParcelable(Mallas.class.getClassLoader());
         this.fecha = in.readString();
         this.sended = (Integer) in.readValue(Integer.class.getClassLoader());
-        this.tipoActividad = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.tipoActividad = in.readParcelable(TiposActividades.class.getClassLoader());
     }
 
     public static final Creator<MallasRealizadas> CREATOR = new Creator<MallasRealizadas>() {

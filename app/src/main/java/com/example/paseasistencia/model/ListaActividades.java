@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class ListaActividades {
     private Integer cuadrillas;
     private Actividades actividad;
-    private Integer tipoActividad;
+    private TiposActividades tipoActividad;
     private String sector;
     private ArrayList<MallasRealizadas> listaMallasRealizadas;//lista de mallas realizadas
     //private ArrayList<ActividadesRealizadas> listaActividadesDescartadas;//lista de mallas descartadas
@@ -19,7 +19,7 @@ public class ListaActividades {
     public ListaActividades() {
     }
 
-    public ListaActividades(Integer cuadrillas, Actividades actividad, Integer tipoActividad, String sector, ArrayList<MallasRealizadas> listaMallasRealizadas) {
+    public ListaActividades(Integer cuadrillas, Actividades actividad, TiposActividades tipoActividad, String sector, ArrayList<MallasRealizadas> listaMallasRealizadas) {
         this.cuadrillas = cuadrillas;
         this.actividad = actividad;
         this.tipoActividad = tipoActividad;
@@ -36,11 +36,11 @@ public class ListaActividades {
         this.actividad = actividad;
     }
 
-    public Integer getTipoActividad() {
+    public TiposActividades getTipoActividad() {
         return tipoActividad;
     }
 
-    public void setTipoActividad(Integer tipoActividad) {
+    public void setTipoActividad(TiposActividades tipoActividad) {
         this.tipoActividad = tipoActividad;
     }
 

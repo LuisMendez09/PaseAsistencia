@@ -120,8 +120,6 @@ public class Puestos implements Parcelable, Comparable<Puestos> {
 
     @Override
     public int compareTo(Puestos o) {
-        Log.v("orden", this.orden + "----" + o.orden);
         return this.orden.compareTo(o.orden);
-
     }
 }

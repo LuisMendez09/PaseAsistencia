@@ -1,6 +1,7 @@
 package com.example.paseasistencia.controlador;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -15,13 +16,14 @@ import com.example.paseasistencia.model.ListaAsistencia;
 import com.example.paseasistencia.model.Mallas;
 import com.example.paseasistencia.model.Puestos;
 import com.example.paseasistencia.model.Settings;
+import com.example.paseasistencia.model.TiposActividades;
 import com.example.paseasistencia.model.TiposPermisos;
 import com.example.paseasistencia.model.Trabajadores;
 
 
+import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -31,14 +33,25 @@ public class Controlador {
     private static Controlador INSTANCIA = null;
     private static Context CONTEXT = null;
     private static DBHandler CONEXION = null;
-    public static final String TIPOS_ACTIVIDADES[] = new String[]{"Slecciones tipo Actividad", "RECOLECCION", "HORAS", "TAREA"};
+    private static ArrayList<TiposActividades> TIPOS_ACTIVIDADES = null;//new String[]{"Selecciones tipo Actividad", "RECOLECCION", "HORAS", "TAREA"};
     public static final String TAG = "Controlador";
+
+    public enum STATUS_APP {
+        SESION_APP_ACTIVA,
+        SESION_APP_REINICAR,
+        SESION_APP_INICIAR,
+        SESION_APP_FECHA_DISPOSITIVO_NO_VALIDA,
+        SESION_APP_ERROR_NO_ESPERADO
+    }
 
     public enum STATUS_SESION {
         SESION_ACTIVA,
         SESION_NO_INICIADA,
         SESION_NO_FINALIZADA,
-        SESION_FINALIZADA
+        SESION_FINALIZADA,
+        REINICIAR_APP,
+        CUADRILLA_PENDIENTES_POR_FINALIZAR,
+        ACTUALIZAR_CATALOGO_TRABAJADORES
     }
 
     public enum STATUS_CONEXION {
@@ -50,7 +63,7 @@ public class Controlador {
         ERROR_JSON,
         ERROR_ENVIO,
         INICIO_ENVIO,
-        FINALIZACION_ENVIO,
+        FINALIZACION_ENVIO
     }
 
     private Controlador(Context context){
@@ -87,6 +100,10 @@ public class Controlador {
     public void reiniciarListaPuestos(){
         Controlador.CONEXION.recrearTablaListaPuestos();
     }
+
+    public void reiniciarTiposActividades() {
+        Controlador.CONEXION.recrearTablaTiposActividades();
+    }
     public void reiniciarListaActividades(){
         Controlador.CONEXION.recrearTablaListaActividades();
     }
@@ -109,6 +126,10 @@ public class Controlador {
     /********************************Configuracion*****************************************************/
     public Configuracion getConfiguracion(){
         return Controlador.CONEXION.getConfiguracion(Long.valueOf(1));
+    }
+
+    public boolean configuracionValida() {
+        return Controlador.CONEXION.getConfiguracion(Long.valueOf(1)) == null ? false : true;
     }
 
     public Boolean setConfiguracion(String url,String id){
@@ -147,7 +168,7 @@ public class Controlador {
     }
 
     private Settings setSetting(Date dateInicio,Date dateFin,Integer jornadaFinalizada,Integer jornadaInicia,Integer envioDatos){
-        Settings s = new Settings(dateInicio,dateFin,jornadaFinalizada,jornadaInicia,envioDatos);
+        Settings s = new Settings(dateInicio, dateFin, jornadaFinalizada, jornadaInicia, envioDatos, Complementos.fechaInicioSemanaDate());
         FileLog.i(TAG, "agregar settings");
         Long aLong = Controlador.CONEXION.addSettings(s);
         s.setId(aLong);
@@ -161,6 +182,18 @@ public class Controlador {
             return false;
         else
             return true;
+    }
+
+    public void actualizarFechaActualziacion() {
+        Settings settings = getSettings();
+        if (settings != null) {
+            Date da = Complementos.fechaInicioSemanaDate();
+            settings.setFechaActualizacion(da);
+
+            CONEXION.updateSetting(settings);
+        }
+
+
     }
 
     private void inicarFinalizarSettings(int iniciarJorjana, int finalizarJorjana, int enviarDatos, Date horaInicio, Date horaFin, Settings settings) {
@@ -177,16 +210,24 @@ public class Controlador {
         STATUS_SESION sesion = null;
 
         if(settings==null){
-            sesion = STATUS_SESION.SESION_NO_INICIADA;
+            if (CONEXION.getTotalTrabajadores() > 0) {
+                sesion = STATUS_SESION.SESION_NO_INICIADA;
+            } else {
+                sesion = STATUS_SESION.ACTUALIZAR_CATALOGO_TRABAJADORES;
+            }
+
         }else{
             String fecha = Complementos.getDateActualToString();
 
             if(!settings.getFecha().equals(fecha)){
-                if(settings.getJornadaFinalizada()==0){
-                    sesion = STATUS_SESION.SESION_NO_FINALIZADA;
-                }else{
-                    sesion = STATUS_SESION.SESION_FINALIZADA;
+                if (getCuadrillasPendientesPorFinalizar() > 0) {
+                    sesion = STATUS_SESION.CUADRILLA_PENDIENTES_POR_FINALIZAR;
+                } else if (!settings.getFechaActualizacionString().equals(Complementos.fechaInicioSemana())) {
+                    sesion = STATUS_SESION.ACTUALIZAR_CATALOGO_TRABAJADORES;
+                } else {
+                    sesion = STATUS_SESION.REINICIAR_APP;
                 }
+                //}
             }else{
                 if(settings.getJornadaFinalizada()==1){
                     sesion = STATUS_SESION.SESION_FINALIZADA;
@@ -262,6 +303,34 @@ public class Controlador {
         return status;
     }
 
+    public STATUS_APP inisiarDia() {
+        Publicacion publicacion = new Publicacion(Controlador.getCONTEXT());
+        Long fechaSesion = publicacion.leerArchivoPublicacion();
+        try {
+
+            Long fechaActual = Complementos.convertirStringAlong(Complementos.getDateActualToString(), "00:00");
+            Settings settings = getSettings();
+            if (fechaActual >= fechaSesion) {
+
+                if (fechaSesion == 0) {
+                    publicacion.escribir(fechaActual);
+                    return STATUS_APP.SESION_APP_INICIAR;
+                } else if (fechaActual > fechaSesion) {
+                    publicacion.escribir(fechaActual);
+                    return STATUS_APP.SESION_APP_REINICAR;
+                } else {
+                    return STATUS_APP.SESION_APP_ACTIVA;
+                }
+            } else {
+                return STATUS_APP.SESION_APP_FECHA_DISPOSITIVO_NO_VALIDA;
+            }
+
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return STATUS_APP.SESION_APP_ERROR_NO_ESPERADO;
+        }
+    }
 
     /********************************Catalogo de puestos*****************************************************/
     public ArrayList<Puestos> getPuestos(){
@@ -314,6 +383,45 @@ public class Controlador {
 
         return i==-1? false : true;
 
+    }
+
+    /******************************Catalogo de tipos activdades**********************************************/
+    public ArrayList<TiposActividades> getTiposActividades() {
+        if (TIPOS_ACTIVIDADES == null) {
+            TIPOS_ACTIVIDADES = Controlador.CONEXION.getTiposActividades();
+        }
+        Log.v("tiposActividades", TIPOS_ACTIVIDADES + "-----");
+        return TIPOS_ACTIVIDADES;
+    }
+
+    public TiposActividades getTiposActividades(Integer id) {
+        TiposActividades tiposActividades = null;
+
+        if (TIPOS_ACTIVIDADES == null) {
+            TIPOS_ACTIVIDADES = Controlador.CONEXION.getTiposActividades();
+        }
+
+        for (TiposActividades ta : this.TIPOS_ACTIVIDADES) {
+            if (ta.getId() == id) {
+                tiposActividades = ta;
+                break;
+            }
+        }
+
+        if (tiposActividades == null)
+            tiposActividades = Controlador.CONEXION.getTipoActividad(id);
+
+        return tiposActividades;
+    }
+
+    public Boolean setTiposActividad(TiposActividades ta) {
+        Long i = Long.valueOf(-1);
+
+        if (ta != null) {
+            i = Controlador.CONEXION.addTiposActividades(ta);
+        }
+
+        return i == -1 ? false : true;
     }
 
     /******************************Catalogo de mallas*****************************************************/
@@ -385,7 +493,9 @@ public class Controlador {
 
 
     public ArrayList<Cuadrillas> getCuadrillas(){
-        return Controlador.CONEXION.getCuadrillas(getSettings().getFecha());
+        ArrayList<Cuadrillas> cuadrillas = Controlador.CONEXION.getCuadrillas(getSettings().getFecha());
+        Collections.sort(cuadrillas);
+        return cuadrillas;
     }
 
     public ArrayList<Cuadrillas> getCuadrillasActivas() {

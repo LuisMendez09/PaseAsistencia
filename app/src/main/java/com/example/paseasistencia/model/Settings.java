@@ -10,22 +10,18 @@ public class Settings {
     private Long id;
     private Date inicio;
     private Date fin;
-    /*private String fecha;
-    private String horainicio;
-    private String horaFinal;*/
+    private Date fechaActualizacion;
     private Integer jornadaFinalizada;
     private Integer jornadaIniciada;
     private Integer envioDatos;
 
-    public Settings(Date inicio, Date fin,  Integer jornadaFinalizada, Integer jornadaIniciada, Integer envioDatos) {
+    public Settings(Date inicio, Date fin, Integer jornadaFinalizada, Integer jornadaIniciada, Integer envioDatos, Date fechaActualizacion) {
         this.inicio = inicio;
         this.fin = fin;
-        //this.fecha = Complementos.obtenerFechaString(this.inicio);
-        //this.horainicio = Complementos.obtenerHoraString(this.inicio);
-        //this.horaFinal = Complementos.obtenerHoraString(this.fin);
         this.jornadaFinalizada = jornadaFinalizada;
         this.jornadaIniciada = jornadaIniciada;
         this.envioDatos = envioDatos;
+        this.fechaActualizacion = fechaActualizacion;
     }
 
     public Settings(Cursor cursor) {
@@ -38,6 +34,7 @@ public class Settings {
         this.jornadaFinalizada = cursor.getInt(6);
         this.jornadaIniciada = cursor.getInt(7);
         this.envioDatos = cursor.getInt(8);
+        this.fechaActualizacion = new Date(cursor.getLong(9));
     }
 
     public Long getId() {
@@ -96,6 +93,18 @@ public class Settings {
         this.jornadaFinalizada = jornadaFinalizada;
     }
 
+    public Date getFechaActualizacion() {
+        return fechaActualizacion;
+    }
+
+    public void setFechaActualizacion(Date fechaActualizacion) {
+        this.fechaActualizacion = fechaActualizacion;
+    }
+
+    public String getFechaActualizacionString() {
+        return Complementos.obtenerFechaString(this.fechaActualizacion);
+    }
+
     public Integer getJornadaIniciada() {
         return jornadaIniciada;
     }
@@ -123,6 +132,7 @@ public class Settings {
                 ", jornadaFinalizada=" + jornadaFinalizada +
                 ", jornadaIniciada=" + jornadaIniciada +
                 ", envioDatos=" + envioDatos +
+                ", fechaImportacion='" + Complementos.obtenerFechaString(this.fechaActualizacion) + '\'' +
                 '}';
     }
 }

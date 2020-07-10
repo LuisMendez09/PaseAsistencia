@@ -3,11 +3,14 @@ package com.example.paseasistencia.controlador;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.util.Log;
 
 import com.afollestad.bridge.Bridge;
 import com.afollestad.bridge.BridgeException;
 import com.afollestad.bridge.Request;
 import com.afollestad.bridge.Response;
+import com.example.paseasistencia.model.Configuracion;
 import com.example.paseasistencia.model.MallasRealizadas;
 import com.example.paseasistencia.model.Asistencia;
 import com.example.paseasistencia.model.Cuadrillas;
@@ -16,7 +19,10 @@ import com.example.paseasistencia.model.Trabajadores;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.NetworkInterface;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class EnviarDatos extends AsyncTask<Void, Integer, Controlador.STATUS_CONEXION> {
     private IactualizacionDatos iactualizacionDatos;
@@ -31,6 +37,7 @@ public class EnviarDatos extends AsyncTask<Void, Integer, Controlador.STATUS_CON
         this.context = context;
 
         this.servidor = this.controlador.getConfiguracion().getUrl();
+
         if (!this.servidor.endsWith("/"))
             this.servidor = this.servidor + "/";
     }
@@ -112,8 +119,14 @@ public class EnviarDatos extends AsyncTask<Void, Integer, Controlador.STATUS_CON
             }
             FileLog.i(TAG, "inicia el envio cuadrillas revisadas");
             url = this.servidor + "asistenciaCuadrillas";
+
+            String mac = getMacAddress();
+            Log.v("MacAddress", mac);
             for (Cuadrillas c : cuadrillasPendientesPorEnviar) {
-                status_conexion = peticionEnvio(url, c.toJson());
+                JSONObject jsonObject = c.toJson();
+                jsonObject.put("capturado", mac);
+                Log.v("MacAddress", jsonObject.toString());
+                status_conexion = peticionEnvio(url, jsonObject);
 
                 if (status_conexion == Controlador.STATUS_CONEXION.ENVIO_EXITOSO || status_conexion == Controlador.STATUS_CONEXION.REGISTRO_DUPLICADO) {
                     c.setSended(1);
@@ -176,6 +189,38 @@ public class EnviarDatos extends AsyncTask<Void, Integer, Controlador.STATUS_CON
             r = Controlador.STATUS_CONEXION.ERROR_ENVIO;
         }
         return r;
+    }
+
+    private static String getMacAddress() {
+        try {
+            List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface nif : all) {
+                if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
+
+                byte[] macBytes = nif.getHardwareAddress();
+                if (macBytes == null) {
+                    return "";
+                }
+
+                StringBuilder res1 = new StringBuilder();
+                for (byte b : macBytes) {
+                    String s = Integer.toHexString(b & 0xFF);
+
+                    if (s.length() == 1)
+                        s = "0" + s;
+
+                    res1.append(s + ":");
+                }
+
+                if (res1.length() > 0) {
+                    res1.deleteCharAt(res1.length() - 1);
+                }
+                return res1.toString();
+            }
+        } catch (Exception ex) {
+            Log.e("Error", ex.getMessage());
+        }
+        return "";
     }
 
 }

@@ -11,7 +11,7 @@ import org.json.JSONObject;
 
 import java.util.Date;
 
-public class Cuadrillas implements Parcelable {
+public class Cuadrillas implements Parcelable, Comparable<Cuadrillas> {
     private Integer id;
     private Integer cuadrilla;
     private String mayordomo;
@@ -19,6 +19,12 @@ public class Cuadrillas implements Parcelable {
     private Date fechaFin;
     private String fecha;
     private Integer sended;
+
+    public enum STATUS_CUADRILLA {
+        REVISADA,
+        FINALIZADA,
+        SIN_REVISION,
+    }
 
     public Cuadrillas(Cursor c){
         this.id = c.getInt(0);
@@ -101,6 +107,16 @@ public class Cuadrillas implements Parcelable {
         return Complementos.obtenerFechaServidor(this.fechaInicio);
     }
 
+    public STATUS_CUADRILLA status() {
+        if (this.getId() != null && this.getHoraFinal().equals("")) {
+            return STATUS_CUADRILLA.REVISADA;
+        } else if (!this.getHoraFinal().equals("")) {
+            return STATUS_CUADRILLA.FINALIZADA;
+        } else {
+            return STATUS_CUADRILLA.SIN_REVISION;
+        }
+    }
+
     public Integer getSended() {
         return sended;
     }
@@ -110,7 +126,24 @@ public class Cuadrillas implements Parcelable {
     }
 
     @Override
+    public int compareTo(Cuadrillas o) {
+        return o.getHoraInicio().compareTo(this.getHoraInicio());
+    }
+
+    @Override
     public String toString() {
+        return "Cuadrillas{" +
+                "id=" + id +
+                ", cuadrilla=" + cuadrilla +
+                ", mayordomo='" + mayordomo + '\'' +
+                ", fechaInicio=" + fechaInicio +
+                ", fechaFin=" + fechaFin +
+                ", fecha='" + fecha + '\'' +
+                ", sended=" + sended +
+                '}';
+    }
+
+    public String toString1() {
         return "Cuadrillas{" +
                 "id=" + id +
                 ", cuadrilla=" + cuadrilla +

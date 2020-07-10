@@ -114,7 +114,6 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 if (viewModel.getStatusSesion()==Controlador.STATUS_SESION.SESION_ACTIVA)
                         agregarTrabajador();
             }
@@ -134,6 +133,11 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
                 new DialogCapturaAsistencia(mDetailAdapter).show(getActivity().getSupportFragmentManager(), "capturaAsistencia");
             }
         });
+
+
+        if (cuadrillas.status() == Cuadrillas.STATUS_CUADRILLA.SIN_REVISION) {
+            btnCapturaAsistencia.setVisibility(View.VISIBLE);
+        }
 
         return view;
     }

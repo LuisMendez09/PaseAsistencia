@@ -26,6 +26,7 @@ import com.example.paseasistencia.model.ListaActividades;
 import com.example.paseasistencia.model.MallasRealizadas;
 import com.example.paseasistencia.model.Cuadrillas;
 import com.example.paseasistencia.model.Mallas;
+import com.example.paseasistencia.model.TiposActividades;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,16 +75,16 @@ public class DialogAddActividad extends DialogFragment {
         btnMallas = viewDialog.findViewById(R.id.btn_mallas);
         tvMallas = viewDialog.findViewById(R.id.tv_mallas);
 
-        ArrayAdapter<Actividades> actividadesAdapter = new ArrayAdapter<>(this.getContext(), R.layout.support_simple_spinner_dropdown_item, Controlador.getInstance(this.getContext()).getActividades());
+        ArrayAdapter<Actividades> actividadesAdapter = new ArrayAdapter<>(this.getContext(), R.layout.support_simple_spinner_dropdown_item, controlador.getActividades());
         sp_actividad.setAdapter(actividadesAdapter);
 
 
-        ArrayAdapter<String> tipoActividadAdapter = new ArrayAdapter<>(this.getContext(), R.layout.support_simple_spinner_dropdown_item, Controlador.TIPOS_ACTIVIDADES);
+        ArrayAdapter<TiposActividades> tipoActividadAdapter = new ArrayAdapter<>(this.getContext(), R.layout.support_simple_spinner_dropdown_item, controlador.getTiposActividades());
         sp_tipoActividad.setAdapter(tipoActividadAdapter);
 
         if (this.listaActividadEditar != null) {
             this.sp_actividad.setSelection(Complementos.getIndex(sp_actividad, this.listaActividadEditar.getActividad().getNombre()));
-            this.sp_tipoActividad.setSelection(listaActividadEditar.getTipoActividad());
+            this.sp_tipoActividad.setSelection(Complementos.getIndex(sp_tipoActividad, this.listaActividadEditar.getTipoActividad().getDescripcion()));
             this.tvSector.setText(this.listaActividadEditar.getSector());
             this.mallasSeleccionadas = this.actividadesResalizadasAdapter.getMallasList(this.listaActividadEditar.getActividad().getNombre(), this.listaActividadEditar.getTipoActividad(), this.listaActividadEditar.getSector());
         }
@@ -116,11 +117,11 @@ public class DialogAddActividad extends DialogFragment {
         if (sp_tipoActividad.getSelectedItemPosition() != 0 && !tvMallas.getText().equals("")) {
             for (Mallas m : mallasSeleccionadas) {
                 listaMallasRealizadas.add(new MallasRealizadas(Integer.parseInt(cuadrilla.getCuadrilla().toString())
-                        , (Actividades) sp_actividad.getSelectedItem(), tvSector.getText().toString(), m, controlador.getSettings().getFecha(), sp_tipoActividad.getSelectedItemPosition(), 0));
+                        , (Actividades) sp_actividad.getSelectedItem(), tvSector.getText().toString(), m, controlador.getSettings().getFecha(), (TiposActividades) sp_tipoActividad.getSelectedItem(), 0));
             }
 
             Log.i("actividades", listaMallasRealizadas.size() + "");
-            Integer respuesta = actividadesResalizadasAdapter.add(this.posicion, cuadrilla.getCuadrilla(), (Actividades) sp_actividad.getSelectedItem(), sp_tipoActividad.getSelectedItemPosition(), tvSector.getText().toString(), listaMallasRealizadas, listaActividadEditar);
+            Integer respuesta = actividadesResalizadasAdapter.add(this.posicion, cuadrilla.getCuadrilla(), (Actividades) sp_actividad.getSelectedItem(), (TiposActividades) sp_tipoActividad.getSelectedItem(), tvSector.getText().toString(), listaMallasRealizadas, listaActividadEditar);
             FileLog.i(ActividadesResalizadasAdapter.TAG, " " + respuesta);
             if (respuesta == ActividadesResalizadasAdapter.NUEVO)
                 Toast.makeText(getContext(), "Nuevo registro agregado", Toast.LENGTH_LONG).show();

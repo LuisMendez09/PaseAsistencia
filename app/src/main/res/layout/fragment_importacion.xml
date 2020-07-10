@@ -10,15 +10,15 @@
     <TextView
         android:id="@+id/textView2"
         android:layout_width="match_parent"
-        android:layout_height="59dp"
-        android:text="@string/titulo_importacion"
-        android:textSize="@dimen/size_titulos"
-        android:textAlignment="center"
-        android:textStyle="bold"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/margin_left"
         android:layout_marginTop="@dimen/margin_top"
         android:layout_marginRight="@dimen/margin_left"
-        android:layout_marginBottom="@dimen/margin_bottom"/>
+        android:layout_marginBottom="@dimen/margin_bottom"
+        android:text="@string/titulo_importacion"
+        android:textAlignment="center"
+        android:textSize="@dimen/size_titulos"
+        android:textStyle="bold" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -43,15 +43,26 @@
         android:textAlignment="center"
         android:textSize="30dp"
         android:textStyle="bold" />
+
     <Button
         android:id="@+id/btn_guardar"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
         android:layout_marginLeft="@dimen/margin_left"
         android:layout_marginTop="@dimen/margin_top"
         android:layout_marginRight="@dimen/margin_left"
         android:layout_marginBottom="@dimen/margin_bottom"
+        android:text="Actualziar catalogos" />
+
+    <Button
+        android:id="@+id/btn_actualizarCatalogoTrabajadores"
         android:layout_width="match_parent"
         android:layout_height="64dp"
-        android:text="Actualziar catalogos" />
+        android:layout_marginLeft="@dimen/margin_left"
+        android:layout_marginTop="@dimen/margin_top"
+        android:layout_marginRight="@dimen/margin_left"
+        android:layout_marginBottom="@dimen/margin_bottom"
+        android:text="Actualizar trabajadores" />
 
 
 </LinearLayout>

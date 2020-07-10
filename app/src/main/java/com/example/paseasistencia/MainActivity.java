@@ -1,14 +1,16 @@
 package com.example.paseasistencia;
 
+import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.example.paseasistencia.complementos.Complementos;
 import com.example.paseasistencia.controlador.Controlador;
 import com.example.paseasistencia.controlador.FileLog;
 import com.google.android.material.navigation.NavigationView;
@@ -24,17 +26,18 @@ import androidx.appcompat.widget.Toolbar;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
+    private boolean mostrarMensajeDeCierre = false;
 
     private AppBarConfiguration mAppBarConfiguration;
-    private Controlador controlador;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         FileLog.open(this.getBaseContext(), Log.VERBOSE, 3000000);
-        FileLog.i(this.getClass().getClass().toString(), "Log iniciado");
+        FileLog.i("MainActivity", "Log iniciado");
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -50,9 +53,50 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-
-
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.v("MainActivity", "onStart");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Controlador.STATUS_APP status_app = Controlador.getInstance(this.getBaseContext()).inisiarDia();
+        FileLog.v("MainActivity", "iniciar dia: " + status_app.name());
+        switch (status_app) {
+
+            case SESION_APP_ACTIVA:
+                break;
+            case SESION_APP_REINICAR:
+                Intent i = getBaseContext().getPackageManager()
+                        .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
+                break;
+            case SESION_APP_INICIAR:
+                break;
+            case SESION_APP_FECHA_DISPOSITIVO_NO_VALIDA:
+                //mostrar mensaje antes de cerrar la app
+                Log.v("ciclo", "Mostrar mensaje de cierre");
+                mostrarMensajeDeCierre = true;
+                //mensajeDeCierre();
+                finishAffinity();
+                break;
+        }
+
+        //Log.v("ciclo",Controlador.getInstance(this.getBaseContext()).getSettings().toString());
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.v("MainActivity", "onReatar");
+    }
+
 
 
     @Override
@@ -88,4 +132,25 @@ public class MainActivity extends AppCompatActivity {
 
         timePickerDialog.show();
     }
+
+    private void mensajeDeCierre() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getBaseContext());
+
+        builder.setTitle("ERROR EN LA FECHA!!!")
+                .setMessage("LA FECHA DE LA TABLETA NO ES CORRECTA.\n FOVOR DE REVISAR SI LA HORA DE LA TABLETA ES CORRECTA")
+                .setPositiveButton("Cerrar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finishAffinity();
+                    }
+                });
+
+        AlertDialog dialog = builder.create();
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+    }
+
+
+
 }

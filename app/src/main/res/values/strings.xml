@@ -29,6 +29,7 @@
     <string name="msn_inicio_envio">INICIANDO ENVIO DE DATOS</string>
     <string name="msn_buscando">BUSCANDO DATOS</string>
     <string name="msn_fin">IMPORTACION DE DATOS EXITOSAMENTE</string>
+    <string name="msn_fin_trabajadores">IMPORTACION DE TRABAJADORES EXITOSAMENTE</string>
     <string name="msn_sinConexion">CONEXION CON EL SERVIDOR NO ESTABLECIDA</string>
     <string name="msn_lista_vacios">NO SE ENCONTRARON DATOS</string>
     <string name="msn_enesperado">!!!ERROR INESPERADO</string>

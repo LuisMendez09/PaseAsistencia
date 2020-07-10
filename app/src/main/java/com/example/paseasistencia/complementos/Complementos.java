@@ -130,9 +130,20 @@ public class Complementos {
         while (c.get(Calendar.DAY_OF_WEEK) != Calendar.THURSDAY) {
             c.add(Calendar.DAY_OF_YEAR, -1);
         }
-        return obtenerFechaServidor(c.getTime());
+        return obtenerFechaString(c.getTime());
     }
 
+    public static Date fechaInicioSemanaDate() {
+        Date date = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+
+
+        while (c.get(Calendar.DAY_OF_WEEK) != Calendar.THURSDAY) {
+            c.add(Calendar.DAY_OF_YEAR, -1);
+        }
+        return c.getTime();
+    }
     public static String fechaFinSemana() {
         Date d = new Date();
         Calendar c = Calendar.getInstance();
@@ -161,6 +172,12 @@ public class Complementos {
         }
 
         return "";
+    }
 
+    public static final int getNombreDia(Date fecha) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(fecha);
+
+        return c.get(Calendar.DAY_OF_WEEK);
     }
 }

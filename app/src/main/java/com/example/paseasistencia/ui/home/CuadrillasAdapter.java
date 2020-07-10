@@ -101,14 +101,29 @@ public class CuadrillasAdapter extends RecyclerView.Adapter<CuadrillasAdapter.Cu
         Cuadrillas cuadrillas = mCuadrillasList.get(position);
         holder.mNumCuadrillaView.setText(cuadrillas.getCuadrilla().toString());
         holder.mMayordomoTextView.setText(cuadrillas.getMayordomo());
+        Cuadrillas.STATUS_CUADRILLA status = cuadrillas.status();
 
-        if (!cuadrillas.getHoraInicio().equals("") && cuadrillas.getHoraFinal().equals("")) {
+        int color = 0;
+        switch (status) {
+            case REVISADA:
+                color = this.mContext.getResources().getColor(R.color.colorActivo);
+                break;
+            case FINALIZADA:
+                color = this.mContext.getResources().getColor(R.color.colorFinalizado);
+                break;
+            case SIN_REVISION:
+                color = this.mContext.getResources().getColor(R.color.colorDefault);
+                break;
+        }
+        holder.itemView.setBackgroundColor(color);
+
+        /*if (!cuadrillas.getHoraInicio().equals("") && cuadrillas.getHoraFinal().equals("")) {
             holder.itemView.setBackgroundColor(this.mContext.getResources().getColor(R.color.colorActivo));
         } else if (!cuadrillas.getHoraFinal().equals("")) {
             holder.view.setBackgroundColor(this.mContext.getResources().getColor(R.color.colorFinalizado));
         } else {
             holder.view.setBackgroundColor(this.mContext.getResources().getColor(R.color.colorDefault));
-        }
+        }*/
 
     }
 

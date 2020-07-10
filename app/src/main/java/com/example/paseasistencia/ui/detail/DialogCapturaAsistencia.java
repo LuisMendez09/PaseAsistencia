@@ -3,15 +3,11 @@ package com.example.paseasistencia.ui.detail;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.res.Resources;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.fragment.app.DialogFragment;
 
@@ -36,6 +32,17 @@ public class DialogCapturaAsistencia extends DialogFragment {
         etNumeroTrabajador = (EditText) v.findViewById(R.id.et_numeroTrabajador);
 
         etNumeroTrabajador.requestFocus();
+        etNumeroTrabajador.setOnKeyListener(new View.OnKeyListener() {
+
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_UP) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    actualizar(v);
+                    return true;
+                }
+                return false;
+            }
+        });
 
         builder.setTitle("Capturar asistencia ")
                 .setView(v)
@@ -63,41 +70,18 @@ public class DialogCapturaAsistencia extends DialogFragment {
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String num = etNumeroTrabajador.getText().toString();
-                int respuesta = adapter.asistencia(num);
-
-                if (respuesta == 1)
-                    etNumeroTrabajador.setText("");
-                else
-                    Snackbar.make(v, "el numero " + num + " no es valido", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
-
+                actualizar(v);
             }
         });
+    }
 
-        //Personalizamos
-        //Resources res = getResources();
+    private void actualizar(View v) {
+        String num = etNumeroTrabajador.getText().toString();
+        int respuesta = adapter.asistencia(num);
 
-        //Buttons
-        // Button positive_button = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-        //positive_button.setBackground(res.getDrawable(R.drawable.buttom_redondo));
-
-        //Button negative_button =  dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-        //negative_button.setBackground(res.getDrawable(R.drawable.buttom_redondo));
-
-        //int color = Color.parseColor("#304f5a");
-
-        //Title
-        //int titleId = res.getIdentifier("alertTitle", "id", "Android");
-        //View title = dialog.findViewById(titleId);
-        /*if (title != null) {
-            ((TextView) title).setTextColor(color);
-        }*/
-
-        //Title divider
-        //int titleDividerId = res.getIdentifier("titleDivider", "id", "Android");
-        //View titleDivider = dialog.findViewById(titleDividerId);
-        //if (titleDivider != null) {
-        //    titleDivider.setBackgroundColor(res.getColor(R.color.design_default_color_error));
-        //}
+        if (respuesta == DetailAdapter.GUARDADO_EXITOSO)
+            etNumeroTrabajador.setText("");
+        else
+            Snackbar.make(v, "el numero " + num + " no es valido", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
     }
 }

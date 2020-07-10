@@ -18,6 +18,7 @@ import com.example.paseasistencia.model.Cuadrillas;
 import com.example.paseasistencia.model.ListaActividades;
 import com.example.paseasistencia.model.MallasRealizadas;
 import com.example.paseasistencia.model.Mallas;
+import com.example.paseasistencia.model.TiposActividades;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,13 +72,13 @@ public class ActividadesResalizadasAdapter extends ArrayAdapter<ListaActividades
 
         ListaActividades listaActividades = listaMallas.get(position);
         tv_actividad.setText(listaActividades.getActividad().getNombre());
-        tv_tipoActividad.setText(Controlador.TIPOS_ACTIVIDADES[listaActividades.getTipoActividad()]);
+        tv_tipoActividad.setText(listaActividades.getTipoActividad().getDescripcion());
         tv_mallas.setText(listaActividades.getMallas());
 
         return convertView;
     }
 
-    public void update(int posicion, ArrayList<MallasRealizadas> la, Actividades actividades, Integer tipoActividad, String sector) {
+    public void update(int posicion, ArrayList<MallasRealizadas> la, Actividades actividades, TiposActividades tipoActividad, String sector) {
         ListaActividades listaActividades = listaMallas.get(posicion);
         listaActividades.setActividad(actividades);
         listaActividades.setTipoActividad(tipoActividad);
@@ -86,7 +87,7 @@ public class ActividadesResalizadasAdapter extends ArrayAdapter<ListaActividades
         this.notifyDataSetChanged();
     }
 
-    public Integer add(Integer posicion, Integer cuadrilla, Actividades actividad, Integer tipoActividad, String sector, ArrayList<MallasRealizadas> lar, ListaActividades listaActividadesAnterior) {
+    public Integer add(Integer posicion, Integer cuadrilla, Actividades actividad, TiposActividades tipoActividad, String sector, ArrayList<MallasRealizadas> lar, ListaActividades listaActividadesAnterior) {
         Integer index = getIndex(actividad.getNombre(), tipoActividad, sector);
 
         if (listaActividadesAnterior == null) {
@@ -128,7 +129,7 @@ public class ActividadesResalizadasAdapter extends ArrayAdapter<ListaActividades
         return mallasRealizadas;
     }
 
-    public List<Mallas> getMallasList(String actividad, Integer tipoActividad, String sector) {
+    public List<Mallas> getMallasList(String actividad, TiposActividades tipoActividad, String sector) {
         int index = getIndex(actividad, tipoActividad, sector);
         if (index == -1) {
             return new ArrayList<Mallas>();
@@ -138,10 +139,10 @@ public class ActividadesResalizadasAdapter extends ArrayAdapter<ListaActividades
         }
     }
 
-    private Integer getIndex(String actividad, Integer tipoActividad, String sector) {
+    private Integer getIndex(String actividad, TiposActividades tipoActividad, String sector) {
         for (int i = 0; i < listaMallas.size(); i++) {
             if (listaMallas.get(i).getActividad().getNombre().equals(actividad)
-                    && listaMallas.get(i).getTipoActividad() == tipoActividad
+                    && listaMallas.get(i).getTipoActividad().getDescripcion().equals(tipoActividad.getDescripcion())
                     && listaMallas.get(i).getSector().equals(sector)) {
                 return i;
             }

@@ -1,26 +1,15 @@
 package com.example.paseasistencia.ui.detail;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,7 +17,6 @@ import androidx.annotation.Nullable;
 import com.example.paseasistencia.R;
 import com.example.paseasistencia.complementos.Complementos;
 import com.example.paseasistencia.controlador.Controlador;
-import com.example.paseasistencia.controlador.FileLog;
 import com.example.paseasistencia.model.Asistencia;
 import com.example.paseasistencia.model.Cuadrillas;
 import com.example.paseasistencia.model.ListaAsistencia;
@@ -36,7 +24,6 @@ import com.example.paseasistencia.model.Puestos;
 import com.example.paseasistencia.model.Trabajadores;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -54,6 +41,9 @@ public class DetailAdapter extends ArrayAdapter<ListaAsistencia> {
     private int PUESTO_MAYORDOMO = 3;
     private int PUESTO_NO_TRABAJO = 11;
     private int PUESTO_PERSONAL_CAMPO = 2;
+    public static final int GUARDADO_EXITOSO = 1;
+    public static final int ERROR_GUARDAR = 0;
+
 
     public DetailAdapter(@NonNull Context context, List<ListaAsistencia> trabajadores,IDetallesAsistencia iDetallesAsistencia) {
         super(context, R.layout.item_lista_cuadrilla,trabajadores);
@@ -87,12 +77,8 @@ public class DetailAdapter extends ArrayAdapter<ListaAsistencia> {
         tvNombre.setText(trabajadorSeleccionado.getTrabajadores().getNombre());
         tvPuesto.setText(trabajadorSeleccionado.getAsistencia().getPuesto().getNombre());
 
-        colorearFinla(position, fila);
+        colorearFila(position, fila);
 
-        //ArrayAdapter<Puestos> puestosAdapter = new ArrayAdapter<>(context,R.layout.support_simple_spinner_dropdown_item,puestos);
-        //spPuesto.setAdapter(puestosAdapter);
-
-        //spPuesto.setSelection(Complementos.getIndex(spPuesto, trabajadorSeleccionado.getAsistencia().getPuesto().getNombre()));
         String horas = Complementos.getTotalHoras(trabajadorSeleccionado.getAsistencia().getDateInicio(), trabajadorSeleccionado.getAsistencia().getDateFin());
         tvTotalHoras.setText(horas.equals("00:00") ? "" : horas);
 
@@ -113,23 +99,6 @@ public class DetailAdapter extends ArrayAdapter<ListaAsistencia> {
 
         tvConsecutivo.setOnClickListener(c);
         tvPuesto.setOnClickListener(c);
-
-
-        /*spPuesto.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                        trabajadorSeleccionado.getAsistencia().setPuesto((Puestos) spPuesto.getItemAtPosition(position));
-                        trabajadorSeleccionado.getTrabajadores().setPuesto((Puestos) spPuesto.getItemAtPosition(position));
-
-                iDetallesAsistencia.actualziarAsistencia(getTotalAsistencia());
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });*/
 
         iDetallesAsistencia.actualziarAsistencia(getTotalAsistencia());
 
@@ -310,14 +279,14 @@ public class DetailAdapter extends ArrayAdapter<ListaAsistencia> {
                 notifyDataSetChanged();
                 iDetallesAsistencia.actualziarAsistencia(getTotalAsistencia());
 
-                return 1;
+                return GUARDADO_EXITOSO;
             }
         }
 
-        return 0;
+        return ERROR_GUARDAR;
     }
 
-    private void colorearFinla(int position, LinearLayout fila) {
+    private void colorearFila(int position, LinearLayout fila) {
         ListaAsistencia trabajadorSeleccionado = trabajadores.get(position);
 
         for (int i = 0; i < fila.getChildCount(); i++) {
