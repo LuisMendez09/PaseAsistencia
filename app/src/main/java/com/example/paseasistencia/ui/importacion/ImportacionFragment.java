@@ -110,7 +110,6 @@ public class ImportacionFragment extends Fragment implements IactualizacionDatos
     @Override
     public void finalizarAnimacion(String mensaje) {
         unSetLoadingAnimation();
-
         if (mensaje.equals(Controlador.getCONTEXT().getString(R.string.msn_fin_trabajadores))) {
             NavHostFragment.findNavController(ImportacionFragment.this).popBackStack(R.id.nav_homeFragmen, false);
         }

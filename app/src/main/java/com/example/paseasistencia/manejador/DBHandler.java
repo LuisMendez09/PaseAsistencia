@@ -426,7 +426,7 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public Long addPuestos(Puestos puestos){
-        FileLog.i(TAG, "agregar catalogo Puestos " + puestos.toString());
+        FileLog.i(TAG, "agregar catalogo Puestos " + puestos.toString1());
         SQLiteDatabase  db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 

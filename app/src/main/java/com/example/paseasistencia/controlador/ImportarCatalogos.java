@@ -72,7 +72,7 @@ public class ImportarCatalogos extends AsyncTask<Void, Integer, String> {
 
         if (tipoCatalogo == TIPO_CATALOGO.TRABAJADORES) {
             respuesta = buscarListaTrabajadores();
-            if (respuesta.equals(Controlador.getCONTEXT().getString(R.string.msn_fin))) {
+            if (respuesta.equals(Controlador.getCONTEXT().getString(R.string.msn_fin_trabajadores))) {
                 controlador.actualizarFechaActualziacion();
             }
         } else {
@@ -103,6 +103,7 @@ public class ImportarCatalogos extends AsyncTask<Void, Integer, String> {
             try{
                 Request request = Bridge.get(url).throwIfNotSuccess().request();
                 Response response = request.response();
+                Log.v("puestos", response.asJsonArray().toString());
                 List<Puestos>listaPuestos = response.asClassList(Puestos.class);
 
                 if(listaPuestos.size() == 0){
@@ -312,7 +313,7 @@ public class ImportarCatalogos extends AsyncTask<Void, Integer, String> {
         try {
             String url = this.servidor+"TRABAJADOREs?fechaInicioSem="+ Complementos.getDateActualToStringServidor();
             FileLog.i(TAG, "Inicia peticion de trabajadores ");
-
+            FileLog.i(TAG, url);
             try{
                 Request request = Bridge.get(url).throwIfNotSuccess().request();
                 Response response = request.response();

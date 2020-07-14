@@ -84,6 +84,12 @@ public class Puestos implements Parcelable, Comparable<Puestos> {
     }
 
 
+    public String toString1() {
+        return "Puestos{" +
+                "Nombre='" + Nombre + '\'' +
+                ", id=" + id +
+                '}';
+    }
     @Override
     public String toString() {
         return Nombre;

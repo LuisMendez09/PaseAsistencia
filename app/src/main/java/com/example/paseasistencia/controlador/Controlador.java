@@ -549,6 +549,7 @@ public class Controlador {
 
             ArrayList<ListaAsistencia> asistencia = getAsistencia(getSettings().getFecha(), cuadrilla);
             for (ListaAsistencia la : asistencia) {
+
                 finalizarAsistencias(la.getAsistencia(), date);
             }
 
@@ -572,16 +573,17 @@ public class Controlador {
     }
 
     public boolean finalizarAsistencias(Asistencia asistencia,Date fin){
-        Boolean r = true;
+        if (asistencia.getHoraFinal().equals("")) {
+            asistencia.setDateFin(fin);
 
-        asistencia.setDateFin(fin);
+            int i = Controlador.CONEXION.updateAsistencia(asistencia);
 
-        int i = Controlador.CONEXION.updateAsistencia(asistencia);
-
-        if(i>-1)
-            return true;
-        else
-            return false;
+            if (i > -1)
+                return true;
+            else
+                return false;
+        }
+        return true;
     }
 
 
