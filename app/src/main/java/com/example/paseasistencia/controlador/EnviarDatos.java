@@ -69,7 +69,7 @@ public class EnviarDatos extends AsyncTask<Void, Integer, Controlador.STATUS_CON
             String url = this.servidor + "TRABAJADOREs";
             for (Trabajadores t : trabajadoresPendientesPorEnviar) {
                 status_conexion = peticionEnvio(url, t.toJson());
-
+               
                 if (status_conexion == Controlador.STATUS_CONEXION.ENVIO_EXITOSO || status_conexion == Controlador.STATUS_CONEXION.REGISTRO_DUPLICADO) {
                     t.setSended(1);
                     controlador.updateTrabajador(t);

@@ -130,7 +130,7 @@ public class Complementos {
         while (c.get(Calendar.DAY_OF_WEEK) != Calendar.THURSDAY) {
             c.add(Calendar.DAY_OF_YEAR, -1);
         }
-        return obtenerFechaString(c.getTime());
+        return obtenerFechaServidor(c.getTime());
     }
 
     public static Date fechaInicioSemanaDate() {
