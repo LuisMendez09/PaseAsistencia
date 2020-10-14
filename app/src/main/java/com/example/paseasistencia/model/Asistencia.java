@@ -29,7 +29,6 @@ public class Asistencia implements Parcelable {
     }
 
     public Asistencia(Cursor cursor,Trabajadores trabajador,Puestos puesto) {
-        Log.i("inisersion",trabajador.toString()+"--"+puesto.toString());
 
         this.id = cursor.getLong(0);
         this.trabajador = trabajador;
@@ -37,6 +36,8 @@ public class Asistencia implements Parcelable {
         this.dateInicio = new Date(cursor.getLong(3));
         this.dateFin = new Date(cursor.getLong(4));
         this.sended = cursor.getInt(8);
+
+        //Log.i("inisersion",trabajador.toString()+"--"+puesto.toString());
     }
 
     public Long getId() {

@@ -1138,7 +1138,7 @@ public class DBHandler extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         if (trabajadores.size() != 0)
-            FileLog.v(TAG, "" + trabajadores.size());
+            FileLog.v(TAG, "trabajadores " + trabajadores.size());
 
         return trabajadores;
     }
@@ -1361,6 +1361,7 @@ public class DBHandler extends SQLiteOpenHelper {
         ArrayList<Asistencia> asistencias = new ArrayList<>() ;
 
         String selectQuery = "SELECT * FROM " + TABLE_ASISTENCIA +" WHERE "+KEY_FECHA_ASISTECNIA+" = '"+fecha+"' ORDER BY "+KEY_IDTRABAJADOR_ASISTECNIA;
+
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list

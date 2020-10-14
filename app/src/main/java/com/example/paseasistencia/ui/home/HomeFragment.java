@@ -91,7 +91,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.v("ciclo", "fragment onViewCreated");
+        Log.v("ciclo", "Homefragment onViewCreated");
 
         Controlador.STATUS_SESION sesion = controlador.validarSesion();
         switch (sesion) {
@@ -118,7 +118,6 @@ public class HomeFragment extends Fragment {
 
                 mCuadrillasAdapter = new CuadrillasAdapter(getContext(), cuadrillas, new HomeListener());
                 mRecyclerView.setAdapter(mCuadrillasAdapter);
-
             }
         });
     }

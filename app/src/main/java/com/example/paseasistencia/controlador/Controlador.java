@@ -21,7 +21,6 @@ import com.example.paseasistencia.model.TiposPermisos;
 import com.example.paseasistencia.model.Trabajadores;
 
 
-import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -189,6 +188,7 @@ public class Controlador {
         if (settings != null) {
             Date da = Complementos.fechaInicioSemanaDate();
             settings.setFechaActualizacion(da);
+            inicarFinalizarSettings(1, 0, 0, new Date(), new Date(0), settings);
 
             CONEXION.updateSetting(settings);
         }
@@ -206,6 +206,7 @@ public class Controlador {
     }
 
     public STATUS_SESION validarSesion(){
+        Log.v("ciclo", "Controlador validarSesion");
         Settings settings = getSettings();
         STATUS_SESION sesion = null;
 
@@ -219,15 +220,14 @@ public class Controlador {
         }else{
             String fecha = Complementos.getDateActualToString();
 
-            if(!settings.getFecha().equals(fecha)){
+            if (!settings.getFecha().equals(fecha)) {//validar cambio de dia
                 if (getCuadrillasPendientesPorFinalizar() > 0) {
                     sesion = STATUS_SESION.CUADRILLA_PENDIENTES_POR_FINALIZAR;
-                } else if (!settings.getFechaActualizacionString().equals(Complementos.fechaInicioSemana())) {
+                } else if (actualizarListaTrabajadores(settings)) {
                     sesion = STATUS_SESION.ACTUALIZAR_CATALOGO_TRABAJADORES;
                 } else {
                     sesion = STATUS_SESION.REINICIAR_APP;
                 }
-                //}
             }else{
                 if(settings.getJornadaFinalizada()==1){
                     sesion = STATUS_SESION.SESION_FINALIZADA;
@@ -237,8 +237,17 @@ public class Controlador {
             }
         }
 
+        Log.v("ciclo", sesion + "");
         FileLog.i(TAG, "status settings " + sesion);
         return sesion;
+    }
+
+    private boolean actualizarListaTrabajadores(Settings settings) {
+        if (!Complementos.obtenerFechaServidor(settings.getFechaActualizacion()).equals(Complementos.fechaInicioSemana())) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public boolean sesionNoFinalizada() {
@@ -256,6 +265,7 @@ public class Controlador {
     }
 
     public STATUS_SESION iniciarSession(){
+        Log.v("ciclo", "Controlador iniciarSession");
         Settings settings = getSettings();
         STATUS_SESION status = null;
 
@@ -267,6 +277,7 @@ public class Controlador {
             if(!settings.getFecha().equals(fecha)){
                 if(settings.getJornadaFinalizada()==0){
                     //finalizar asistencias
+                    Log.v("ciclo", "Controlador jornada no finalizada");
                     ArrayList<Asistencia> asistencias = getAsistencias(settings.getFecha());
                     try {
                         Date fin = new Date(Complementos.convertirStringAlong(settings.getFecha(), "16:00"));
