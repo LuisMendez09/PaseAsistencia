@@ -39,7 +39,7 @@ public class ImportarCatalogos extends AsyncTask<Void, Integer, String> {
         this.tipoCatalogo = tipoCatalogo;
 
         this.servidor = this.controlador.getConfiguracion().getUrl();
-
+        sss
         if(!this.servidor.endsWith("/"))
             this.servidor = this.servidor+"/";
     }
