@@ -141,6 +141,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 MainActivity.getTimePiker(horaInicio,HomeFragment.this.getContext());
+
             }
         });
 
