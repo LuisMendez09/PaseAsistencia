@@ -2,7 +2,6 @@ package com.example.paseasistencia.ui.home;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,12 +12,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.WorkInfo;
 
 import com.example.paseasistencia.MainActivity;
 import com.example.paseasistencia.R;
@@ -26,7 +24,7 @@ import com.example.paseasistencia.complementos.Complementos;
 import com.example.paseasistencia.controlador.Controlador;
 import com.example.paseasistencia.controlador.FileLog;
 import com.example.paseasistencia.model.Cuadrillas;
-import com.example.paseasistencia.ui.finalizarCuadrilla.FinalizarCuadrillaModel;
+import com.example.paseasistencia.ui.importacion.ImportacionFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -102,8 +100,16 @@ public class HomeFragment extends Fragment {
                 Navigation.findNavController(view).navigate(R.id.nav_importacion);
                 break;
             default:
-                controlador.iniciarSession();
-                inicializarListadoCuadrillas();
+                //String ids [] = {getString(R.string.channel_id_trabajadores),getString(R.string.channel_id_catalogos)};
+                WorkInfo.State state = ImportacionFragment.consultaStatusServicio(getContext());
+
+
+                if(state == WorkInfo.State.RUNNING || state == WorkInfo.State.FAILED){
+                    Navigation.findNavController(view).navigate(R.id.nav_importacion);
+                }else{
+                    controlador.iniciarSession();
+                    inicializarListadoCuadrillas();
+                }
                 break;
         }
     }

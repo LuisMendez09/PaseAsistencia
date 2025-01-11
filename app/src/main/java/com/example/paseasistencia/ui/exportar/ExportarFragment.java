@@ -36,7 +36,6 @@ public class ExportarFragment extends Fragment implements IactualizacionDatos {
     private TextView tvMensaje;
     private ProgressBar progressBar;
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -49,7 +48,6 @@ public class ExportarFragment extends Fragment implements IactualizacionDatos {
 
         return root;
     }
-
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -64,8 +62,10 @@ public class ExportarFragment extends Fragment implements IactualizacionDatos {
             viewModel.getmCuadrillasData(getContext()).observe(getViewLifecycleOwner(), new Observer<List<Cuadrillas>>() {
                 @Override
                 public void onChanged(List<Cuadrillas> cuadrillas) {
-                    if (cuadrillas.size() > 0) {
-                        navController.navigate(R.id.nav_finalizarCuadrilla);
+                    if(cuadrillas !=null){
+                        if (cuadrillas.size() > 0) {
+                            navController.navigate(R.id.nav_finalizarCuadrilla);
+                        }
                     }
                 }
             });
@@ -84,11 +84,7 @@ public class ExportarFragment extends Fragment implements IactualizacionDatos {
         } else {
             navController.navigate(R.id.nav_configuracion);
         }
-
-
     }
-
-
 
     private void inicializarEnvio(Integer min, Integer max) {
         tvMensaje.setText("");

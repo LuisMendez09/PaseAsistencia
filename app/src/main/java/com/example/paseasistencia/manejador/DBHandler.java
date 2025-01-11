@@ -353,6 +353,8 @@ public class DBHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_CUADRILLAS);
     }
 
+
+
     /*******************************ADD*******************************************************/
 
     /***
@@ -374,7 +376,7 @@ public class DBHandler extends SQLiteOpenHelper {
         else
             FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_CONFIGURACION);
 
-        db.close();
+        //db.close();
 
         return insert;
     }
@@ -401,7 +403,7 @@ public class DBHandler extends SQLiteOpenHelper {
         else
             FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_SETTINGS);
 
-        db.close();
+        //db.close();
 
         return insert;
     }
@@ -420,7 +422,7 @@ public class DBHandler extends SQLiteOpenHelper {
         if(insert == -1)
             FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_MALLAS);
 
-        db.close();
+        //db.close();
 
         return insert;
     }
@@ -440,7 +442,7 @@ public class DBHandler extends SQLiteOpenHelper {
         else
             FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_PUESTOS);
 
-        db.close();
+        //db.close();
 
         return insert;
     }
@@ -458,7 +460,7 @@ public class DBHandler extends SQLiteOpenHelper {
         if (insert == -1)
             FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_TIPOS_ACTIVIDADES);
 
-        db.close();
+        //db.close();
 
         return insert;
     }
@@ -478,7 +480,7 @@ public class DBHandler extends SQLiteOpenHelper {
         else
             FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_TIPOS_PERMISOS);
 
-        db.close();
+        //db.close();
 
         return insert;
     }
@@ -498,7 +500,7 @@ public class DBHandler extends SQLiteOpenHelper {
         else
             FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_ACTIVIDADES);
 
-        db.close();
+        //db.close();
 
         return insert;
     }
@@ -520,9 +522,9 @@ public class DBHandler extends SQLiteOpenHelper {
         if(insert !=-1)
             trabajadores.setId(Integer.parseInt(insert.toString()));
         else
-            FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_TRABAJADORES);
+           FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_TRABAJADORES);
 
-        db.close();
+        //db.close();
 
         return insert;
     }
@@ -547,7 +549,7 @@ public class DBHandler extends SQLiteOpenHelper {
         else
             FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_REPORTES);
 
-        db.close();
+        //db.close();
 
         return insert;
     }
@@ -574,7 +576,7 @@ public class DBHandler extends SQLiteOpenHelper {
         else
             FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_ASISTENCIA);
 
-        db.close();
+        //db.close();
 
         return insert;
     }
@@ -600,7 +602,7 @@ public class DBHandler extends SQLiteOpenHelper {
         else
             FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_ACTIVIDADES_REALIZADAS);
 
-        db.close();
+        //db.close();
         return insert;
     }
 
@@ -623,7 +625,7 @@ public class DBHandler extends SQLiteOpenHelper {
         else
             FileLog.e(TAG, "error en la inserion de datos en la tabla" + TABLE_CUADRILLAS_REVISADAS);
 
-        db.close();
+        //db.close();
 
         return insert;
     }
@@ -671,7 +673,7 @@ public class DBHandler extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
+        //db.close();
 
         return total;
     }
@@ -693,7 +695,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if(cuadrillas != null)
             FileLog.v(TAG, cuadrillas.toString());
         return cuadrillas;
@@ -715,7 +717,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if(configuracion != null)
             FileLog.v(TAG, configuracion.toString());
         return configuracion;
@@ -737,7 +739,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if(settings != null)
             FileLog.v(TAG, settings.toString());
         return settings;
@@ -759,7 +761,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if(mallas != null)
             FileLog.v(TAG, mallas.toString());
 
@@ -782,7 +784,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if(mallas.size() !=  0)
             FileLog.v(TAG, "" + mallas.size());
 
@@ -805,7 +807,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if(sectores.size() !=  0)
             FileLog.v(TAG, "" + sectores.size());
 
@@ -828,7 +830,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if(mallas.size() !=  0)
             FileLog.v(TAG, "" + mallas.size());
 
@@ -853,7 +855,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if(puesto != null)
             FileLog.v(TAG, puesto.toString());
 
@@ -876,7 +878,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        // db.close();
 
         if(puesto==null){
             puesto = getPuestos(2);
@@ -904,7 +906,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if (puestos.size() != 0)
             FileLog.v(TAG, "" + puestos.size());
 
@@ -928,7 +930,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if(tiposPermiso != null)
             FileLog.v(TAG, tiposPermiso.toString());
 
@@ -951,7 +953,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if (tiposPermisos.size() != 0)
             FileLog.v(TAG, "" + tiposPermisos.size());
 
@@ -974,7 +976,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if (tipoActividad != null)
             FileLog.v(TAG, tipoActividad.toString());
 
@@ -999,7 +1001,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if (tiposActividades.size() != 0)
             FileLog.v(TAG, "" + tiposActividades.size());
 
@@ -1022,7 +1024,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if(actividad != null)
             FileLog.v(TAG, actividad.toString());
 
@@ -1045,7 +1047,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if (actividades.size() != 0)
             FileLog.v(TAG, "" + actividades.size());
 
@@ -1068,7 +1070,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if(trabajador != null)
             FileLog.v(TAG, trabajador.toString());
 
@@ -1092,7 +1094,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if(trabajador != null)
             FileLog.v(TAG, trabajador.toString());
 
@@ -1115,7 +1117,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        // db.close();
         FileLog.i(TAG, "ultimo consecutivo " + consecutivo);
         return consecutivo+1;
     }
@@ -1136,7 +1138,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if (trabajadores.size() != 0)
             FileLog.v(TAG, "trabajadores " + trabajadores.size());
 
@@ -1155,7 +1157,7 @@ public class DBHandler extends SQLiteOpenHelper {
         }
 
         cursor.close();
-        db.close();
+        //db.close();
         return total;
     }
 
@@ -1175,7 +1177,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if (trabajadores.size() != 0)
             FileLog.v(TAG, "" + trabajadores.size());
 
@@ -1210,7 +1212,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if (cuadrillas.size() != 0)
             FileLog.v(TAG, "" + cuadrillas.size());
 
@@ -1234,7 +1236,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if(cuadrilla !=  null)
             FileLog.v(TAG, " id cuadrilla" + cuadrilla.getId());
 
@@ -1257,7 +1259,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if (cuadrillas.size() != 0)
             FileLog.v(TAG, " total registros" + cuadrillas.size());
 
@@ -1280,7 +1282,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
 
         FileLog.v(TAG, " total cuadrillas por finalizar " + totalCuadrillasPorFinalizar);
 
@@ -1303,7 +1305,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
 
         FileLog.v(TAG, " total cuadrillas por finalizar " + cuadrillas.size());
 
@@ -1326,7 +1328,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if(reportesTrabajador != null)
             FileLog.v(TAG, reportesTrabajador.toString());
 
@@ -1349,7 +1351,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if (reportes.size() != 0)
             FileLog.v(TAG, "" + reportes.size());
 
@@ -1373,7 +1375,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if (asistencias.size() != 0)
             FileLog.v(TAG, "" + asistencias.size());
 
@@ -1398,7 +1400,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if (asistencias.size() != 0)
             FileLog.v(TAG, "" + asistencias.size());
 
@@ -1476,7 +1478,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if (cuadrillas.size() != 0)
             FileLog.v(TAG, "" + cuadrillas.size());
 
@@ -1501,7 +1503,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if (asistencias.size() != 0)
             FileLog.v(TAG, "" + asistencias.size());
 
@@ -1526,7 +1528,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
 
         cursor.close();
-        db.close();
+        //db.close();
         if (mallasRealizadas.size() != 0)
             FileLog.v(TAG, "actividades" + mallasRealizadas.size());
 
@@ -1548,7 +1550,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
 
         FileLog.v(TAG, "Existe " + existe);
 
@@ -1571,7 +1573,7 @@ public class DBHandler extends SQLiteOpenHelper {
         // return contact list
 
         cursor.close();
-        db.close();
+        //db.close();
         if (mallasRealizadas.size() != 0)
             FileLog.v("RESULTADO_DB", "" + mallasRealizadas.size());
 
@@ -1590,7 +1592,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
             i = db.update(TABLE_CONFIGURACION, values, KEY_ID_CONFIGURACION + " = ?",
                     new String[]{String.valueOf(configuracion.getId().toString())});
-            db.close();
+            //db.close();
         }catch (Exception e){
             FileLog.v(TAG, "error " + e.getMessage());
         }
@@ -1617,7 +1619,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
             i = db.update(TABLE_SETTINGS, values, KEY_ID_SETTINGS + " = ?",
                     new String[]{String.valueOf(settings.getId().toString())});
-            db.close();
+            //db.close();
         }catch (Exception e){
             FileLog.v(TAG, e.getMessage());
         }
@@ -1641,7 +1643,7 @@ public class DBHandler extends SQLiteOpenHelper {
             i = db.update(TABLE_TRABAJADORES, values, KEY_ID_TRABAJADORES + " = ?",
                     new String[]{String.valueOf(trabajadores.getId().toString())});
 
-            db.close();
+            //db.close();
         }catch (Exception e){
             FileLog.v(TAG, e.getMessage());
         }
@@ -1669,7 +1671,7 @@ public class DBHandler extends SQLiteOpenHelper {
         i = db.update(TABLE_REPORTES, values, KEY_ID_REPORTE + " = ?",
                 new String[]{String.valueOf(reportes.getId().toString())});
 
-            db.close();
+            //db.close();
         }catch (Exception e){
             FileLog.v(TAG, e.getMessage());
         }
@@ -1697,7 +1699,7 @@ public class DBHandler extends SQLiteOpenHelper {
             i = db.update(TABLE_ASISTENCIA, values, KEY_ID_ASISTECNIA + " = ?",
                     new String[]{String.valueOf(asistencia.getId().toString())});
 
-            db.close();
+            //db.close();
         }catch (Exception e){
             FileLog.v(TAG, e.getMessage());
         }
@@ -1723,7 +1725,7 @@ public class DBHandler extends SQLiteOpenHelper {
             i = db.update(TABLE_ACTIVIDADES_REALIZADAS, values, KEY_ID_ACTIVIDADESREALIZADAS + " = ?",
                     new String[]{String.valueOf(mallasRealizadas.getId().toString())});
 
-            db.close();
+            //db.close();
         } catch (Exception e) {
             FileLog.v(TAG, e.getMessage() + "");
         }
@@ -1749,7 +1751,7 @@ public class DBHandler extends SQLiteOpenHelper {
             i = db.update(TABLE_CUADRILLAS_REVISADAS, values, KEY_ID_CUADRILLASREVISADAS + " = ?",
                     new String[]{String.valueOf(cuadrilla.getId().toString())});
 
-            db.close();
+            //db.close();
         }catch (Exception e){
             FileLog.v(TAG, e.getMessage() + "");
         }
@@ -1763,14 +1765,14 @@ public class DBHandler extends SQLiteOpenHelper {
         FileLog.i(TAG, "eliminar asistencia id Trabajador " + idTrabajador + " fecha " + fecha);
         SQLiteDatabase  db = this.getWritableDatabase();
         int delete = db.delete(TABLE_ASISTENCIA, KEY_FECHA_ASISTECNIA + " =? AND " + KEY_IDTRABAJADOR_ASISTECNIA + " =? ", new String[]{fecha, idTrabajador});
-        db.close();
+        //db.close();
     }
 
     public void deleteMallasRealizadas(String fecha, String cuadrilla) {
         FileLog.i(TAG, "eliminar mallas realizadas cuadrilla " + cuadrilla + " fecha " + fecha);
         SQLiteDatabase db = this.getWritableDatabase();
         int delete = db.delete(TABLE_ACTIVIDADES_REALIZADAS, KEY_FECHA_ACTIVIDADESREALIZADAS + " =? AND " + KEY_CUADRILLA_ACTIVIDADESREALIZADAS + " =? ", new String[]{fecha, cuadrilla});
-        db.close();
+        //db.close();
     }
 
     public void deletePaseLista(String cuadrilla, String fecha, String ids) {
@@ -1794,7 +1796,7 @@ public class DBHandler extends SQLiteOpenHelper {
         } finally {
             db.setTransactionSuccessful();
             db.endTransaction();
-            db.close();
+            //db.close();
         }
         FileLog.v(TAG, "transaccion terminada");
     }

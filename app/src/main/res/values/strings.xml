@@ -7,6 +7,21 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
+    <string name="channel_id_trabajadores">100</string>
+    <string name="channel_id_catalogos">101</string>
+    <string name="notification_title_catalogos">actualizando catalogos</string>
+    <string name="notification_title">actualizando trabajadores</string>
+    <string name="notification_iniciar">Iniciando notificacion</string>
+    <string name="notification_finalizada">Proceso finalizado</string>
+    <string name="notification_fallido">Proceso fallido. Vuelva a intentar</string>
+    <string name="notification_conectaxion">Conectando al servidor</string>
+    <string name="notification_en_progreso">actualizando...</string>
+    <string name="notification_puestos">Actualizando puestos...</string>
+    <string name="notification_Actividades">Actualizando actividades...</string>
+    <string name="notification_mallas">actualizando mallas...</string>
+    <string name="notification_permisos">Actualizando permisos...</string>
+    <string name="notification_tiposActividades">Actualizando tipos de actividades...</string>
+
     <string name="menu_listaCuadrilla">Cuadrillas</string>
     <string name="menu_actualizar">actualizar</string>
     <string name="menu_enviar">enviar informacion</string>

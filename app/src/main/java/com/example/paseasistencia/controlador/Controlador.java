@@ -69,6 +69,10 @@ public class Controlador {
         Controlador.CONEXION = new DBHandler(context);
     }
 
+    public void  cerrarConexion(){
+        Controlador.CONEXION.close();
+    }
+
     private synchronized static void createInstance(Context context){
         if(Controlador.INSTANCIA == null){
             Controlador.INSTANCIA = new Controlador(context);
@@ -89,7 +93,6 @@ public class Controlador {
     protected Object clone() throws CloneNotSupportedException {
         throw new CloneNotSupportedException();
     }
-
 
     public static Context getCONTEXT() {
         return CONTEXT;
@@ -157,9 +160,22 @@ public class Controlador {
             i = Controlador.CONEXION.updateConfiguracion(c);
         }
 
-
         return i==-1? false : true;
     }
+
+    public boolean catalogosActualizados(){
+        ArrayList<TiposActividades> tiposActividades = getTiposActividades();
+        ArrayList<Mallas> mallas = getMallas();
+        ArrayList<Puestos> puestos = getPuestos();
+        ArrayList<Actividades> actividades = getActividades();
+
+        if(tiposActividades.size()>0 &&mallas.size()>0&&puestos.size()>0&&actividades.size()>0){
+            return true;
+        }
+
+        return false;
+    }
+
     /********************************Settings*****************************************************/
 
     public Settings getSettings(){
@@ -346,7 +362,7 @@ public class Controlador {
     /********************************Catalogo de puestos*****************************************************/
     public ArrayList<Puestos> getPuestos(){
         ArrayList<Puestos> puestos = Controlador.CONEXION.getPuestos();
-        Collections.sort(puestos);
+        //Collections.sort(puestos);
         return puestos;
     }
 
@@ -510,8 +526,13 @@ public class Controlador {
     }
 
     public ArrayList<Cuadrillas> getCuadrillasActivas() {
-        String fecha = getSettings().getFecha();
-        return Controlador.CONEXION.getCuadrillasActiva(fecha);
+        if(getSettings() != null){
+            String fecha = getSettings().getFecha();
+            return Controlador.CONEXION.getCuadrillasActiva(fecha);
+        }else{
+            return null;
+        }
+
     }
 
     public boolean updateCuadrilla(Cuadrillas cuadrilla) {
