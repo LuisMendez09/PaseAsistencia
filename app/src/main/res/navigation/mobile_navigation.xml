@@ -12,9 +12,7 @@
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_nav_home_to_vehicleDetailFragment"
-            app:destination="@id/DetailFragment"
-            app:enterAnim="@anim/fragment_close_enter"
-            app:exitAnim="@anim/fragment_close_exit" />
+            app:destination="@id/DetailFragment" />
     </fragment>
 
     <fragment
@@ -33,14 +31,12 @@
         android:name="com.example.paseasistencia.ui.detail.DetailFragment"
         tools:layout="@layout/fragment_detail"
         android:label="@string/menu_detalle">
-        <argument
-            android:name="detailFragmentArgs "
-            app:argType="com.example.paseasistencia.model.Cuadrillas" />
         <action
             android:id="@+id/action_DetailFragment_to_actividadesFragment"
-            app:destination="@id/actividadesFragment"
-            app:enterAnim="@anim/fragment_close_enter"
-            app:exitAnim="@anim/fragment_close_exit" />
+            app:destination="@id/actividadesFragment" />
+        <argument
+            android:name="cuadrilla"
+            app:argType="com.example.paseasistencia.model.Cuadrillas" />
     </fragment>
     <fragment
         android:id="@+id/nav_configuracion"

@@ -53,14 +53,14 @@ public class actividadXmallaAdapter extends ArrayAdapter<Mallas> {
 
         final Mallas m = this.mallasSeleccionadas.get(position);
 
-        ArrayAdapter<String> sectoresAdapter = new ArrayAdapter<>(this.getContext(),R.layout.support_simple_spinner_dropdown_item,this.sectores);
+        ArrayAdapter<String> sectoresAdapter = new ArrayAdapter<>(this.getContext(), com.google.android.material.R.layout.support_simple_spinner_dropdown_item, this.sectores);
         spSector.setAdapter(sectoresAdapter);
         spSector.setSelection(Complementos.getIndex(spSector,m.getSector()));
 
         spSector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ArrayAdapter<Mallas> mallasAdapter = new ArrayAdapter<>(actividadXmallaAdapter.this.getContext(),R.layout.support_simple_spinner_dropdown_item,mallas.get(spSector.getSelectedItem()));
+                ArrayAdapter<Mallas> mallasAdapter = new ArrayAdapter<>(actividadXmallaAdapter.this.getContext(), com.google.android.material.R.layout.support_simple_spinner_dropdown_item, mallas.get(spSector.getSelectedItem()));
                 spMalla.setAdapter(mallasAdapter);
                 spMalla.setSelection(Complementos.getIndex(spMalla,m.getMallas()));
 

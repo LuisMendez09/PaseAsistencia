@@ -20,6 +20,7 @@ import com.example.paseasistencia.model.MallasRealizadas;
 import com.example.paseasistencia.model.Mallas;
 import com.example.paseasistencia.model.TiposActividades;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +40,11 @@ public class ActividadesResalizadasAdapter extends ArrayAdapter<ListaActividades
         this.controlador = Controlador.getInstance(context);
         this.context = context;
 
-        actualizarRegistros(controlador.getActividadesResalizadas(controlador.getSettings().getFecha(), cuadrillas));
+        try {
+            actualizarRegistros(controlador.getActividadesResalizadas(controlador.getSettings().getFecha(), cuadrillas));
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void actualizarRegistros(List<MallasRealizadas> mallasRealizadas) {

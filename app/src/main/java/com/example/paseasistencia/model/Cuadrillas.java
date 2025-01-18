@@ -9,9 +9,10 @@ import com.example.paseasistencia.complementos.Complementos;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Cuadrillas implements Parcelable, Comparable<Cuadrillas> {
+public class Cuadrillas implements Parcelable, Serializable, Comparable<Cuadrillas> {
     private Integer id;
     private Integer cuadrilla;
     private String mayordomo;

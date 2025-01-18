@@ -166,8 +166,8 @@ public class Complementos {
         if (hora != null) {
             if (hora.getTime() != Long.valueOf(0)) {
                 @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-
-                return sdf.format(hora);
+                String format = sdf.format(hora);
+                return format;
             }
         }
 

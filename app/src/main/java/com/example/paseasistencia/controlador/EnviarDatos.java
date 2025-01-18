@@ -20,6 +20,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.NetworkInterface;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -60,7 +61,12 @@ public class EnviarDatos extends AsyncTask<Void, Integer, Controlador.STATUS_CON
         Controlador.STATUS_CONEXION status_conexion = Controlador.STATUS_CONEXION.ENVIO_EXITOSO;
         Integer increment = 0;
         ArrayList<Trabajadores> trabajadoresPendientesPorEnviar = controlador.getTrabajadoresPendientesPorEnviar();
-        ArrayList<MallasRealizadas> mallasRealizadasPendientesPorEnviar = controlador.getActividadesRealizadasPendientesPorEnviar();
+        ArrayList<MallasRealizadas> mallasRealizadasPendientesPorEnviar = null;
+        try {
+            mallasRealizadasPendientesPorEnviar = controlador.getActividadesRealizadasPendientesPorEnviar();
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
         ArrayList<Asistencia> asistenciasPendientesPorEnviar = controlador.getAsistenciasPendientesPorEnviar();
         ArrayList<Cuadrillas> cuadrillasPendientesPorEnviar = controlador.getCuadrillasPendientesPorEnviar();
 

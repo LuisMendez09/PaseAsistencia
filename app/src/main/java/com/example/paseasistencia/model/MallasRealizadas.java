@@ -4,8 +4,13 @@ import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.paseasistencia.complementos.Complementos;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.util.Date;
 
 public class MallasRealizadas implements Parcelable {
     private Long id;
@@ -16,8 +21,10 @@ public class MallasRealizadas implements Parcelable {
     private String fecha;
     private Integer sended;
     private TiposActividades tipoActividad;
+    private Date dateInicio;
+    private Date dateFin;
 
-    public MallasRealizadas(Integer cuadrlla, Actividades actividad, String sector, Mallas mallas, String fecha, TiposActividades tipoActividad, Integer sended) {
+    public MallasRealizadas(Integer cuadrlla, Actividades actividad, String sector, Mallas mallas, String fecha, TiposActividades tipoActividad, Integer sended, Date dateInicio, Date dateFin) {
         this.cuadrlla = cuadrlla;
         this.actividad = actividad;
         this.sector = sector;
@@ -25,9 +32,11 @@ public class MallasRealizadas implements Parcelable {
         this.fecha = fecha;
         this.tipoActividad = tipoActividad;
         this.sended = sended;
+        this.dateInicio = dateInicio;
+        this.dateFin = dateFin;
     }
 
-    public MallasRealizadas(Cursor cursor, Actividades actividad, Mallas mallas, TiposActividades tiposActividades) {
+    public MallasRealizadas(Cursor cursor, Actividades actividad, Mallas mallas, TiposActividades tiposActividades) throws ParseException {
         this.id = cursor.getLong(0);
         this.cuadrlla = cursor.getInt(1);
         this.actividad = actividad;
@@ -36,6 +45,8 @@ public class MallasRealizadas implements Parcelable {
         this.fecha = cursor.getString(4);
         this.tipoActividad = tiposActividades;//cursor.getInt(5);
         this.sended = cursor.getInt(6);
+        this.dateInicio = new Date(Complementos.convertirStringAlong(this.fecha, cursor.getString(7)));
+        this.dateFin = new Date(Complementos.convertirStringAlong(this.fecha, cursor.getString(8)));
 
 
     }
@@ -111,6 +122,22 @@ public class MallasRealizadas implements Parcelable {
         this.tipoActividad = tipoActividad;
     }
 
+    public String getDateInicio() {
+        return Complementos.obtenerHoraString(this.dateInicio);
+    }
+
+    public void setDateInicio(Date dateInicio) {
+        this.dateInicio = dateInicio;
+    }
+
+    public String getDateFin() {
+        return Complementos.obtenerHoraString(this.dateFin);
+    }
+
+    public void setDateFin(Date dateFin) {
+        this.dateFin = dateFin;
+    }
+
     @Override
     public String toString() {
         return "ActividadesRealizadas{" +
@@ -131,6 +158,8 @@ public class MallasRealizadas implements Parcelable {
         json.put("idActividad", this.getActividad().getId());
         json.put("tipoActividad", this.getTipoActividad().getId());
         json.put("idMalla", this.getMalla().getId());
+        json.put("HoraInicio", this.getDateInicio());
+        json.put("HoraFin", this.getDateFin());
 
         return json;
     }
@@ -150,6 +179,9 @@ public class MallasRealizadas implements Parcelable {
         dest.writeString(this.fecha);
         dest.writeValue(this.sended);
         dest.writeParcelable(this.tipoActividad, flags);
+        dest.writeLong(this.dateInicio != null ? this.dateInicio.getTime() : -1);
+        dest.writeLong(this.dateFin != null ? this.dateFin.getTime() : -1);
+
     }
 
     protected MallasRealizadas(Parcel in) {

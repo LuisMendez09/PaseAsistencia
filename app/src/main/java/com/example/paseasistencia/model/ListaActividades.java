@@ -84,7 +84,7 @@ public class ListaActividades {
         String r = "";
 
         for (MallasRealizadas ar : listaMallasRealizadas) {
-            r = r.equals("") ? ar.getMalla().getId() : r + ", " + ar.getMalla().getId();
+            r = r.equals("") ? ar.getMalla().getMallas() : r + ", " + ar.getMalla().getMallas();
         }
 
         return r;

@@ -91,9 +91,12 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
         btnAguardar.setCompoundDrawablesWithIntrinsicBounds(null, null, rightDrawable, null);
         btnCapturaAsistencia.setCompoundDrawablesWithIntrinsicBounds(leftDrawable, null, null, null);
 
-        Application application = Objects.requireNonNull(getActivity()).getApplication();
+        //Application application = Objects.requireNonNull(getActivity()).getApplication();
+        Application application = requireActivity().getApplication();
+        DetailFragmentArgs detailFragmentArgs = DetailFragmentArgs.fromBundle(getArguments());
+        cuadrillas = detailFragmentArgs.getCuadrilla();
 
-        cuadrillas = DetailFragmentArgs.fromBundle(Objects.requireNonNull(getArguments())).getDetailFragmentArgs();
+
 
         DetailFragmentViewModelFactory factory = new DetailFragmentViewModelFactory(application,cuadrillas);
         viewModel = ViewModelProviders.of(this,factory).get(DetailFragmentViewModel.class);
@@ -312,7 +315,7 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
         final TextView hora = viewDialog.findViewById(R.id.tv_horaInicio);
         final Spinner spPuesto = viewDialog.findViewById(R.id.sp_puesto);
 
-        ArrayAdapter<Puestos> puestosAdapter = new ArrayAdapter<>(this.getContext(),R.layout.support_simple_spinner_dropdown_item,Controlador.getInstance(this.getContext()).getPuestos());
+        ArrayAdapter<Puestos> puestosAdapter = new ArrayAdapter<>(this.getContext(), com.google.android.material.R.layout.support_simple_spinner_dropdown_item, Controlador.getInstance(this.getContext()).getPuestos());
         spPuesto.setAdapter(puestosAdapter);
 
         hora.setOnClickListener(new View.OnClickListener() {
@@ -373,7 +376,7 @@ public class DetailFragment extends Fragment implements IDetallesAsistencia{
         tvConsecutivo.setText(mDetailAdapter.getConsecutivo().toString());
         tvHoraInicio.setText(Complementos.obtenerHoraString(cuadrillas.getFechaInicio()));
 
-        ArrayAdapter<Puestos> puestosAdapter = new ArrayAdapter<>(this.getContext(),R.layout.support_simple_spinner_dropdown_item,Controlador.getInstance(this.getContext()).getPuestos());
+        ArrayAdapter<Puestos> puestosAdapter = new ArrayAdapter<>(this.getContext(), com.google.android.material.R.layout.support_simple_spinner_dropdown_item, Controlador.getInstance(this.getContext()).getPuestos());
         spPuesto.setAdapter(puestosAdapter);
         spPuesto.setSelection(Complementos.getIndex(spPuesto, PUESTO_BASE));
 

@@ -67,20 +67,15 @@ public class ActividadesFragment extends Fragment {
         }
         btnGuardar.setCompoundDrawablesWithIntrinsicBounds(leftDrawable, null, null, null);
 
-        btnGuardar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                guardarRegistros();
-            }
-        });
+        btnGuardar.setOnClickListener(v -> guardarRegistros());
 
-        Application application = Objects.requireNonNull(getActivity()).getApplication();
+        Application application = requireActivity().getApplication();
 
 
-        cuadrillas = ActividadesFragmentArgs.fromBundle(Objects.requireNonNull(getArguments())).getCuadrilla();
+        cuadrillas = ActividadesFragmentArgs.fromBundle(requireArguments()).getCuadrilla();
 
-        listaAsistencia  = ActividadesFragmentArgs.fromBundle(Objects.requireNonNull(getArguments())).getTrabajadores();
-        String asistencia = ActividadesFragmentArgs.fromBundle(Objects.requireNonNull(getArguments())).getAsistencia();
+        listaAsistencia = ActividadesFragmentArgs.fromBundle(requireArguments()).getTrabajadores();
+        String asistencia = ActividadesFragmentArgs.fromBundle(requireArguments()).getAsistencia();
 
         ActividadesFragmentViewModelFactory factory = new ActividadesFragmentViewModelFactory(application,cuadrillas,listaAsistencia,asistencia);
         viewModel = ViewModelProviders.of(this,factory).get(ActividadesViewModel.class);
