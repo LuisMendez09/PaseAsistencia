@@ -25,6 +25,15 @@ import androidx.appcompat.widget.Toolbar;
 
 import java.util.Calendar;
 
+/*
+* <service
+            android:name="androidx.work.impl.foreground.SystemForegroundService"
+            android:foregroundServiceType="location"
+            tools:node="merge"
+            tools:ignore="ForegroundServicePermission" />
+*
+* */
+
 public class MainActivity extends AppCompatActivity {
     private boolean mostrarMensajeDeCierre = false;
 

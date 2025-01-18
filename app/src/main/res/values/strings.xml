@@ -30,6 +30,9 @@
     <string name="menu_actividades">Actividades realizadas</string>
     <string name="menu_finalizar">Finalizar cudrillas</string>
 
+    <string name="horaIncio">Hora Inicial</string>
+    <string name="horaFinal">Hora Final</string>
+
     <string name="home_second">Home Second</string>
 
     <!-- TODO: Remove or change this placeholder text -->

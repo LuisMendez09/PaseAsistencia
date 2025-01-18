@@ -24,6 +24,7 @@ import com.example.paseasistencia.model.TiposActividades;
 import com.example.paseasistencia.model.TiposPermisos;
 import com.example.paseasistencia.model.Trabajadores;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -127,6 +128,8 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String KEY_FECHA_ACTIVIDADESREALIZADAS = "Fecha";
     private static final String KEY_TIPOACTIVIDAD_ACTIVIDADESREALIZADAS = "TipoActividad";
     private static final String KEY_SENDED_ACTIVIDADESREALIZADAS = "Enviado";
+    private static final String KEY_HORAINICIO_ACTIVIDADESREALIZADAS = "Hora_Inicial";
+    private static final String KEY_HORAFIN_ACTIVIDADESREALIZADAS = "Hora_Final";
 
     private static final String TAG = "DBHandler";
     //private SQLiteDatabase db;
@@ -248,7 +251,9 @@ public class DBHandler extends SQLiteOpenHelper {
                 +KEY_IDMALLA_ACTIVIDADESREALIZADAS + " TEXT,"
                 +KEY_FECHA_ACTIVIDADESREALIZADAS + " TEXT,"
                 +KEY_TIPOACTIVIDAD_ACTIVIDADESREALIZADAS+" INTEGER,"
-                +KEY_SENDED_ACTIVIDADESREALIZADAS + " INTEGER"
+                + KEY_SENDED_ACTIVIDADESREALIZADAS + " INTEGER,"
+                + KEY_HORAINICIO_ACTIVIDADESREALIZADAS + " TEXT,"
+                + KEY_HORAFIN_ACTIVIDADESREALIZADAS + " TEXT"
                 +")";
         db.execSQL(CREATE_TABLE_ACTIVIDADESREALIZADAS);
     }
@@ -257,21 +262,34 @@ public class DBHandler extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         FileLog.i(TAG, "actualizacion de tablas");
+        if (oldVersion == newVersion) {
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONFIGURACION);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_SETTINGS);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_MALLAS);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACTIVIDADES);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_PUESTOS);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_TIPOS_PERMISOS);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACTIVIDADES_REALIZADAS);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRABAJADORES);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORTES);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_ASISTENCIA);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_CUADRILLAS_REVISADAS);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_TIPOS_ACTIVIDADES);
 
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONFIGURACION);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SETTINGS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MALLAS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACTIVIDADES);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PUESTOS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TIPOS_PERMISOS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACTIVIDADES_REALIZADAS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRABAJADORES);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORTES);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ASISTENCIA);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CUADRILLAS_REVISADAS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TIPOS_ACTIVIDADES);
+            onCreate(db);
+        } else {
+            if (oldVersion == 2 && newVersion >= 3) {
+                FileLog.i(TAG, "agregar columnas hora a la tabla actividades realizadas");
 
-        onCreate(db);
+                String UPDATE = "ALTER TABLE " + TABLE_ACTIVIDADES_REALIZADAS + " ADD " + KEY_HORAINICIO_ACTIVIDADESREALIZADAS + " TEXT;";
+                db.execSQL(UPDATE);
+
+                UPDATE = "ALTER TABLE " + TABLE_ACTIVIDADES_REALIZADAS + " ADD " + KEY_HORAFIN_ACTIVIDADESREALIZADAS + " TEXT;";
+                db.execSQL(UPDATE);
+            }
+        }
+
+
     }
 
     public void recrearTablaListaPuestos(){
@@ -594,6 +612,8 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_FECHA_ACTIVIDADESREALIZADAS, mallasRealizadas.getFecha());
         values.put(KEY_TIPOACTIVIDAD_ACTIVIDADESREALIZADAS, mallasRealizadas.getTipoActividad().getId());
         values.put(KEY_SENDED_ACTIVIDADESREALIZADAS, mallasRealizadas.getSended());
+        values.put(KEY_HORAINICIO_ACTIVIDADESREALIZADAS, mallasRealizadas.getDateInicio());
+        values.put(KEY_HORAFIN_ACTIVIDADESREALIZADAS, mallasRealizadas.getDateFin());
 
         Long insert = db.insert(TABLE_ACTIVIDADES_REALIZADAS, null, values);
 
@@ -1510,7 +1530,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return asistencias;
     }
 
-    public ArrayList<MallasRealizadas> getActividadesRealizadas(String fecha, Cuadrillas cuadrilla) {
+    public ArrayList<MallasRealizadas> getActividadesRealizadas(String fecha, Cuadrillas cuadrilla) throws ParseException {
         FileLog.i(TAG, "obtener actividades realizadas cuadrilla " + cuadrilla + " fecha " + fecha);
         ArrayList<MallasRealizadas> mallasRealizadas = new ArrayList<>();
 
@@ -1557,7 +1577,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return existe;
     }
 
-    public ArrayList<MallasRealizadas> getActividadesRealizadasPendientesPorEnviar() {
+    public ArrayList<MallasRealizadas> getActividadesRealizadasPendientesPorEnviar() throws ParseException {
         FileLog.i(TAG, "obtener actividades pendientes por enviar");
         ArrayList<MallasRealizadas> mallasRealizadas = new ArrayList<>();
 
@@ -1720,6 +1740,8 @@ public class DBHandler extends SQLiteOpenHelper {
             values.put(KEY_FECHA_ACTIVIDADESREALIZADAS, mallasRealizadas.getFecha());
             values.put(KEY_TIPOACTIVIDAD_ACTIVIDADESREALIZADAS, mallasRealizadas.getTipoActividad().getId());
             values.put(KEY_SENDED_ACTIVIDADESREALIZADAS, mallasRealizadas.getSended());
+            values.put(KEY_HORAINICIO_ACTIVIDADESREALIZADAS, mallasRealizadas.getDateInicio());
+            values.put(KEY_HORAFIN_ACTIVIDADESREALIZADAS, mallasRealizadas.getDateFin());
 
 
             i = db.update(TABLE_ACTIVIDADES_REALIZADAS, values, KEY_ID_ACTIVIDADESREALIZADAS + " = ?",

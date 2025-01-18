@@ -714,7 +714,7 @@ public class Controlador {
         return Controlador.CONEXION.updateAsistencia(asistencia);
     }
     /******************************actividades realizadas*****************************************************/
-    public ArrayList<MallasRealizadas> getActividadesResalizadas(String fecha, Cuadrillas cuadrillas) {
+    public ArrayList<MallasRealizadas> getActividadesResalizadas(String fecha, Cuadrillas cuadrillas) throws ParseException {
         return Controlador.CONEXION.getActividadesRealizadas(fecha,cuadrillas);
     }
 
@@ -734,7 +734,7 @@ public class Controlador {
             return false;
     }
 
-    public ArrayList<MallasRealizadas> getActividadesRealizadasPendientesPorEnviar() {
+    public ArrayList<MallasRealizadas> getActividadesRealizadasPendientesPorEnviar() throws ParseException {
         return Controlador.CONEXION.getActividadesRealizadasPendientesPorEnviar();
     }
 
